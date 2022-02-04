@@ -1,0 +1,5 @@
+#Ignore Idea project files
+.idea
+
+#Ignore builds
+cmake-build-debug
