@@ -1,14 +1,11 @@
-///Default Libs
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-///Outside Libs
 #include <yaml.h>
 #include <curl/curl.h>
 #include <xlsxwriter.h>
 
-///General use definitions
 #include "macros.h"
 
 /**
@@ -68,12 +65,6 @@ int parseArgs(int argc, char **argv){
     }
 }
 
-
-/**
- *
- * Parse command line parameter args and start the program in one of two modes depending
- *
- */
 
 int main(int argc, char **argv) {
     int mode = parseArgs(argc, argv);
