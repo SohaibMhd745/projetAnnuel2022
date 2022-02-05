@@ -6,7 +6,7 @@ project(serverDataTransfer C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(serverDataTransfer main.c)
+add_executable(serverDataTransfer main.c macros.h)
 
 find_package(PkgConfig REQUIRED)
 
