@@ -18,14 +18,16 @@
  * @param argv command line args
  * @return Execution mode: SEND_MODE or RECEIVE_MODE, breaks the program if needed
  *
- * @TODO: Potentially make it return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be interesting
+ * @TODO: Potentially make it return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
  */
 int parseArgs(int argc, char **argv){
+    FILE* useTest;
+
     if (argc > 3){//There is technically always 1 argument: the program's name
         printf("Error: Too many arguments.\nUse -h for help");
         exit(-1);
     }
-    if (argc < 3){
+    if (argc < 3 && argv[1][1]!='h'){
         printf("Error: Not enough arguments.\nUse -h for help");
         exit(-1);
     }
@@ -33,15 +35,28 @@ int parseArgs(int argc, char **argv){
     if (argv[1][0] == '-'){//If the argument starts with - (parameter)
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
-                printf("h\t\t:\tHelp"
-                "\ns [\t:\tStart the program in sender mode"
-                "\nr\t:\tStart the program in receiver mode"
+                printf("h\t\t\t\t:\tHelp"
+                "\ns [Reporting File]\t\t:\tStart the program in sender mode"
+                "\nr [Central Excel Sheet]\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
-                break;
-            case 's':
+            case 's'://Send
+                useTest = fopen(argv[2],"rb");
+                if (useTest == NULL){
+                    fclose(useTest);
+                    printf("\nCould not open reporting file\n");
+                    exit(-1);
+                }
+                fclose(useTest);
                 return SEND_MODE;
-            case 'r':
+            case 'r'://Receive
+                useTest = fopen(argv[2],"rb");
+                if (useTest == NULL){
+                    fclose(useTest);
+                    printf("\nCould not open excel sheet\n");
+                    exit(-1);
+                }
+                fclose(useTest);
                 return RECEIVE_MODE;
             default://Ignore incorrect parameters
                 printf("Unknown parameter : %c\nUse -h for help", argv[1][1]);

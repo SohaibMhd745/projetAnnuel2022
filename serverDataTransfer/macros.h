@@ -7,8 +7,6 @@
 #define REPORT_OK 1
 #define REPORT_FAILURE -1
 
-#define NOT_PARAM -1
-
 #define SEND_MODE 1
 #define RECEIVE_MODE 2
 
