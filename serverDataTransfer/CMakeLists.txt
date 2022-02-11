@@ -7,7 +7,8 @@ project(serverDataTransfer C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(serverDataTransfer main.c macros.h
-        dataParsing/parseData.c dataParsing/parseData.h)
+        dataParsing/parseData.c dataParsing/parseData.h
+        communications/commsSafety.c communications/commsSafety.h)
 
 find_package(PkgConfig REQUIRED)
 

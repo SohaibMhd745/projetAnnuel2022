@@ -8,6 +8,9 @@
 
 #include "macros.h"
 
+#include "dataParsing/parseData.h"
+#include "communications/commsSafety.h"
+
 /**
  * @usage Returns the selected mode, checks the existence of the file and breaks the execution
  * in case of an anomaly
@@ -15,7 +18,7 @@
  * @param argv command line args
  * @return Execution mode: SEND_MODE or RECEIVE_MODE, breaks the program if needed
  *
- * @TODO: Potentially make it return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
+ * TODO: Making the function return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
  */
 int parseArgs(int argc, char **argv){
     FILE* useTest;
@@ -71,7 +74,8 @@ int main(int argc, char **argv) {
 
     switch (mode) {
         case SEND_MODE:
-            printf("Starting report...");
+            printf("Starting report...  %d", generateTimestamp() );
+
             break;
 
         case RECEIVE_MODE:
