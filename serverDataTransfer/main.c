@@ -74,8 +74,11 @@ int main(int argc, char **argv) {
 
     switch (mode) {
         case SEND_MODE:
-            printf("Starting report...  %d", generateTimestamp() );
-
+            printf("Starting report...  %d", generateTimestamp());
+            if(generateReport(argv[2]) == READ_FAILURE){
+                printf("\nError while generating report, see logs for more details.");
+                exit(-1);
+            }
             break;
 
         case RECEIVE_MODE:

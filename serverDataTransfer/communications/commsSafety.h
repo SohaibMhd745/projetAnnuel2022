@@ -1,6 +1,8 @@
 #ifndef SERVERDATATRANSFER_COMMSSAFETY_H
 #define SERVERDATATRANSFER_COMMSSAFETY_H
 
+int getFilesize(char* path);
+
 int generateTimestamp();
 
 #endif //SERVERDATATRANSFER_COMMSSAFETY_H

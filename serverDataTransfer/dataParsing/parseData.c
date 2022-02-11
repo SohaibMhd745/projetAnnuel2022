@@ -16,6 +16,7 @@
 ///json format example:
 /**
  {
+  "site": 3
   "timestamp":"1644589270",
 
   "transactions":[
@@ -37,6 +38,7 @@
 ///yaml format example:
 /**
  ---
+site: 3
 timestamp: 1644589270
 transactions:
 - article: 'char* : code article'
@@ -50,5 +52,27 @@ transactions:
 
 int generateReport(char* reportPath){
     int stamp = generateTimestamp();
-    
+    int fileSize = getFilesize(reportPath);
+
+    if (fileSize == READ_FAILURE) return READ_FAILURE;
+
+    FILE *reportFile = fopen(reportPath, "r");
+    yaml_parser_t parser;
+
+    if(!yaml_parser_initialize(&parser)){
+        fputs("Failed to initialize parser!\n", stderr);
+        return READ_FAILURE;
+    }
+    if(reportFile == NULL) {
+        fputs("Failed to open file!\n", stderr);
+        return READ_FAILURE;
+    }
+
+    yaml_parser_set_input_file(&parser, reportFile);
+
+
+
+    yaml_parser_delete(&parser);
+    fclose(reportFile);
+    return READ_OK;
 }
