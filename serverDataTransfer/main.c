@@ -5,6 +5,7 @@
 #include <yaml.h>
 #include <curl/curl.h>
 #include <xlsxwriter.h>
+#include <mysql.h>
 
 #include "macros.h"
 
