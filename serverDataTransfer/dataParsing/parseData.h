@@ -11,6 +11,6 @@ typedef struct loggedOrder{
     ///linked list
 }loggedOrder;
 
-int generateReport(char* reportPath);
+int generateReport(char* credentials);
 
 #endif //SERVERDATATRANSFER_PARSEDATA_H

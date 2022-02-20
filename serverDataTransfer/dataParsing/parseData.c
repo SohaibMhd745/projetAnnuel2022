@@ -49,10 +49,22 @@ transactions:
 
 **/
 
-int generateReport(char* reportPath){
-    int stamp = generateTimestamp();
+int generateReport(char* credentials){
+    database db;
 
+    if(parseCredentials(credentials, &db) == READ_FAILURE) return READ_FAILURE;
 
+    db.connection = mysql_init(NULL);
+
+    if (!mysql_real_connect(db.connection, db.server, db.user, db.password, db.database, 0, NULL, 0)) {
+        fprintf(stderr, "%s\n", mysql_error(db.connection));
+        return READ_FAILURE;
+    }
+
+    printf("\nDatabase Connection successful\n");
+
+    mysql_free_result(db.res);
+    mysql_close(db.connection);
 
     return READ_OK;
 }

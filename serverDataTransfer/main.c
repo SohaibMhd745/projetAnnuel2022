@@ -71,13 +71,14 @@ int parseArgs(int argc, char **argv){
 
 
 int main(int argc, char **argv) {
+    int stamp = generateTimestamp();
     int mode = parseArgs(argc, argv);
 
     switch (mode) {
         case SEND_MODE:
-            printf("Starting report...  %d", generateTimestamp());
+            printf("Starting report...");
             if(generateReport(argv[2]) == READ_FAILURE){
-                printf("\nError while generating report, see logs for more details.");
+                printf("\nError while generating report, check logs for more details.");
                 exit(-1);
             }
             break;
