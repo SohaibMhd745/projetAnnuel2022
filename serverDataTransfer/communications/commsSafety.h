@@ -10,10 +10,10 @@ typedef struct database{
 
     char* query;
 
-    char* server;
-    char* user;
-    char* password;
-    char* database;
+    char server[50];
+    char user[50];
+    char password[50];
+    char database[50];
 
 }database;
 

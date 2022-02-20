@@ -3,9 +3,8 @@
 
 #define READ_OK 1
 #define READ_FAILURE -1
-
-#define REPORT_OK 1
-#define REPORT_FAILURE -1
+#define READ_OVERSIZE -2
+#define DATABASE_FAILURE -3
 
 #define SEND_MODE 1
 #define RECEIVE_MODE 2

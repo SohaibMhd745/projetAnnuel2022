@@ -76,10 +76,18 @@ int main(int argc, char **argv) {
 
     switch (mode) {
         case SEND_MODE:
-            printf("Starting report...");
-            if(generateReport(argv[2]) == READ_FAILURE){
-                printf("\nError while generating report, check logs for more details.");
-                exit(-1);
+            printf("Starting report...\n");
+            int repStatus = generateReport(argv[2]);
+            switch (repStatus) {
+                case READ_OVERSIZE:
+                    printf("\nOne of the parameter values exceeds 50 characters in length.");
+                    exit(-1);
+                case READ_FAILURE:
+                    printf("\nCould not verify the integrity of all parameter values.");
+                    exit(-1);
+                case DATABASE_FAILURE:
+                    printf("\nCould not establish connection to database.");
+                    exit(-1);
             }
             break;
 

@@ -44,19 +44,16 @@ int generateTimestamp(){
  */
 int parseCredentials(char* path, database* db){
     FILE* credentialFile = fopen(path, "rb");
-    if(credentialFile == NULL){
-        return READ_FAILURE;
-    }
+    if(credentialFile == NULL) return READ_FAILURE;
 
-    char *line = malloc(2000*sizeof (char));
-    int i = 0;
-    char* value;
-    char* name;
+    char* line;
+    char value[2000];
+    char name[2000];
 
+    line = malloc(2000);
     while(fgets(line,2000, credentialFile)!= NULL){
-        name = malloc(2000*sizeof (char));
-        value = malloc(2000*sizeof (char));
-        fprintf(stdout,"\nLigne: %d\n%s", i, line);
+        strcpy(name, "");
+        strcpy(value, "");
 
         int breakPoint = 0;
 
@@ -68,25 +65,24 @@ int parseCredentials(char* path, database* db){
         }
 
         if(line[0] != '#' && breakPoint!=0){
+
             strncpy(name, line, breakPoint);
             *(name+breakPoint) = '\0';
 
             strcpy(value, line + breakPoint + 1);
 
-            fprintf(stdout, "\n%s|%s\n", name, value);
+            if (strlen(name)>50) return READ_OVERSIZE;
+
             if (strcmp(name, "server")==0) strcpy(db->server, value);
             if (strcmp(name, "user")==0) strcpy(db->user, value);
             if (strcmp(name, "password")==0) strcpy(db->password, value);
             if (strcmp(name, "database")==0) strcpy(db->database, value);
-
         }
-        i++;
-        free(name);
-        free(value);
-        free(line);
-        line = malloc(2000*sizeof (char));
     }
+
+    free (line);
     fclose(credentialFile);
+
     int cheksum =
             (strcmp(db->server, "")==0?1:0)+
             (strcmp(db->user, "")==0?1:0)+
@@ -95,4 +91,5 @@ int parseCredentials(char* path, database* db){
             ;
     if (cheksum!=0) return READ_FAILURE;
     else return READ_OK;
+
 }

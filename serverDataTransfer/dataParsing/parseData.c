@@ -52,13 +52,21 @@ transactions:
 int generateReport(char* credentials){
     database db;
 
-    if(parseCredentials(credentials, &db) == READ_FAILURE) return READ_FAILURE;
-
     db.connection = mysql_init(NULL);
 
+    int credentialsStatus = parseCredentials(credentials, &db);
+    switch (credentialsStatus) {
+        case READ_FAILURE:
+            return READ_FAILURE;
+        case READ_OVERSIZE:
+            return READ_OVERSIZE;
+        default:
+            break;
+    }
+
     if (!mysql_real_connect(db.connection, db.server, db.user, db.password, db.database, 0, NULL, 0)) {
-        fprintf(stderr, "%s\n", mysql_error(db.connection));
-        return READ_FAILURE;
+        fprintf(stderr, "\n%s\n", mysql_error(db.connection));
+        return DATABASE_FAILURE;
     }
 
     printf("\nDatabase Connection successful\n");
