@@ -46,11 +46,10 @@ int parseCredentials(char* path, database* db){
     FILE* credentialFile = fopen(path, "rb");
     if(credentialFile == NULL) return READ_FAILURE;
 
-    char* line;
+    char line[2000];
     char value[2000];
     char name[2000];
 
-    line = malloc(2000);
     while(fgets(line,2000, credentialFile)!= NULL){
         strcpy(name, "");
         strcpy(value, "");
@@ -71,7 +70,8 @@ int parseCredentials(char* path, database* db){
 
             strcpy(value, line + breakPoint + 1);
 
-            if (strlen(name)>50) return READ_OVERSIZE;
+            if (strlen(value)>50) return READ_OVERSIZE;
+            if (value[strlen(value)-1] == '\n') value[strlen(value)-1] = '\0';
 
             if (strcmp(name, "server")==0) strcpy(db->server, value);
             if (strcmp(name, "user")==0) strcpy(db->user, value);
@@ -80,7 +80,6 @@ int parseCredentials(char* path, database* db){
         }
     }
 
-    free (line);
     fclose(credentialFile);
 
     int cheksum =
