@@ -37,7 +37,7 @@ int parseArgs(int argc, char **argv){
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
                 printf("h\t\t\t\t:\tHelp"
-                "\ns [Reporting File]\t\t:\tStart the program in sender mode"
+                "\ns [Info]\t\t:\tStart the program in sender mode"
                 "\nr [Central Excel Sheet]\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);

@@ -51,21 +51,6 @@ transactions:
 
 int generateReport(char* reportPath){
     int stamp = generateTimestamp();
-    int fileSize = getFilesize(reportPath);
-
-    if (fileSize == READ_FAILURE) return READ_FAILURE;
-
-    FILE *reportFile = fopen(reportPath, "r");
-    yaml_parser_t parser;
-
-    if(!yaml_parser_initialize(&parser)){
-        fputs("Failed to initialize parser!\n", stderr);
-        return READ_FAILURE;
-    }
-    if(reportFile == NULL) {
-        fputs("Failed to open file!\n", stderr);
-        return READ_FAILURE;
-    }
 
 
 
