@@ -71,9 +71,9 @@ int parseArgs(int argc, char **argv){
 
 
 int main(int argc, char **argv) {
-    int mode = parseArgs(argc, argv);
-
     loggedData data;
+    data.timestamp = generateTimestamp();
+    int mode = parseArgs(argc, argv);
 
     switch (mode) {
         case SEND_MODE:

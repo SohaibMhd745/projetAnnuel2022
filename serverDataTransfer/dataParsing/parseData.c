@@ -62,13 +62,12 @@ Communication History:
 
 int generateReport(char* credentials, loggedData* data){
     database db;
-
-    data->timestamp = generateTimestamp();
     data->previousStamp = getLastStamp();
 
     db.connection = mysql_init(NULL);
 
     int credentialsStatus = parseCredentials(credentials, &db);
+    ///Return error status if credential read failed
     switch (credentialsStatus) {
         case READ_FAILURE:
             return READ_FAILURE;
@@ -78,16 +77,29 @@ int generateReport(char* credentials, loggedData* data){
             break;
     }
 
+    ///attempt connection
     if (!mysql_real_connect(db.connection, db.server, db.user, db.password, db.database, 0, NULL, 0)) {
         fprintf(stderr, "\n%s\n", mysql_error(db.connection));
         return DATABASE_FAILURE;
     }
 
-    printf("\nDatabase Connection successful\n");
+    ///select transactions history since the previous report
+    sprintf(db.query, "SELECT * FROM transactions WHERE stamp > %d", data->previousStamp);
+    if (mysql_query(db.connection, db.query)) {
+        fprintf(stderr, "%s\n", mysql_error(db.connection));
+        exit(1);
+    }
+    db.res = mysql_use_result(db.connection);
 
-    //mysql_free_result(db.res);
+    /**
+     * Do stuff here
+     */
+
+    ///Free results
+    mysql_free_result(db.res);
     mysql_close(db.connection);
 
+    ///Notify that the creation was a success
     return READ_OK;
 }
 
