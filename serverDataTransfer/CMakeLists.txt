@@ -19,9 +19,6 @@ link_directories(${CURL_LIBRARY_DIRS})
 add_definitions(${CURL_CFLAGS_OTHER})
 target_link_libraries(serverDataTransfer ${CURL_LIBRARIES})
 
-#Add winsock2 to project
-target_link_libraries(serverDataTransfer wsock32 ws2_32)
-
 # Add libYaml to project
 pkg_check_modules(LibYaml REQUIRED yaml-0.1)
 include_directories(${LibYaml_INCLUDE_DIRS})
