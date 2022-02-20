@@ -71,13 +71,14 @@ int parseArgs(int argc, char **argv){
 
 
 int main(int argc, char **argv) {
-    int stamp = generateTimestamp();
     int mode = parseArgs(argc, argv);
+
+    loggedData data;
 
     switch (mode) {
         case SEND_MODE:
             printf("Starting report...\n");
-            int repStatus = generateReport(argv[2]);
+            int repStatus = generateReport(argv[2], &data);
             switch (repStatus) {
                 case READ_OVERSIZE:
                     printf("\nOne of the parameter values exceeds 50 characters in length.");
@@ -88,6 +89,11 @@ int main(int argc, char **argv) {
                 case DATABASE_FAILURE:
                     printf("\nCould not establish connection to database.");
                     exit(-1);
+                case READ_OK:
+                    printf("\nSuccessfully generated YAML report");
+                    break;
+                default:
+                    break;
             }
             break;
 

@@ -6,6 +6,8 @@
 #define READ_OVERSIZE -2
 #define DATABASE_FAILURE -3
 
+#define NO_HISTORY 0
+
 #define SEND_MODE 1
 #define RECEIVE_MODE 2
 

@@ -14,7 +14,6 @@ Devs:
 <li>-s [Info]<br><p>Sends the data from the local database to the specified server<br>
 argument is the path to a text file with the following format:</p>
 <br>
-target:target IP<br>
 server:IP of server with local stock db<br>
 user:db user<br>
 password:password of db user<br>
