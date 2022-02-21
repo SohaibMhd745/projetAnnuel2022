@@ -43,12 +43,14 @@ transactions:
 - article: 'char* : code article'
   change: 'int: quantité (neg/pos) de la transaction'
   timestamp: int, timestamp unix en secondes
-- article: '08A85'
+  dateTime: 'string de date, sql fais la conversion pour nous'
+- article: 'AABBCCDDEE'
   change: -2
-  timestamp: 1644586270
+  timestamp: 1645436734
+  dateTime: '2022-02-21 01:45:34'
 
 **/
-
+///TODO: shorten article code to char 5 or 4 instead of 10, which is overkill
 /**
 Communication History:
  @file: ./logs/history
@@ -60,13 +62,105 @@ Communication History:
  @important: must write from the start of the file when adding to the history
  **/
 
+
+/**
+ * @usage deletes the first ellement of the chained list from data structure and uses recFreeList to free the rest
+ * @param data -- data strcuture
+ */
+void freeList(loggedData* data){
+     reccFreeList(data->firstLog);
+     data->firstLog = NULL;
+}
+
+/**
+ * @usage recursively free chained list
+ * @param node -- first node from loggedData
+ */
+void reccFreeList(loggedOrder * node){
+    if (node->next != NULL) reccFreeList(node->next);
+    node->next = NULL;
+    free(node);
+}
+
+/**
+ * @usage debug function: print chained list contents
+ * @param node -- first node from loggedData
+ */
+void printList(loggedOrder * firstNode){
+    loggedOrder * currentNode = firstNode;
+    while(currentNode != NULL){
+        fprintf(stdout, "\nId: %d| Stamp: %d| Date: %s| Delta: %d| Code: %s\n",
+                currentNode->id, currentNode->timestamp, currentNode->dateTime, currentNode->change, currentNode->article);
+        currentNode = currentNode->next;
+    }
+}
+
+/**
+ * @usage Generates chained list from database
+ * @param db -- database handler structure
+ * @param data -- data handler structure, will be filed
+ * @return DATABASE_FAILURE or READ_OK
+ */
+int generateList(database* db, loggedData* data){
+    db->connection = mysql_init(NULL);
+    ///attempt connection
+    if (!mysql_real_connect(db->connection, db->server, db->user, db->password, db->database, 0, NULL, 0)) {
+        fprintf(stderr, "\n%s\n", mysql_error(db->connection));
+        return DATABASE_FAILURE;
+    }
+
+    ///select transactions history since the previous report
+    sprintf(db->query,
+            "SELECT transactions.id, UNIX_TIMESTAMP(transactions.stamp), transactions.stamp,transactions.quantity, stock.code"
+            " FROM transactions INNER JOIN stock on transactions.item = stock.id WHERE transactions.stamp > %d", data->previousStamp);
+    if (mysql_query(db->connection, db->query)) {
+        fprintf(stderr, "%s\n", mysql_error(db->connection));
+        exit(1);
+    }
+    db->res = mysql_use_result(db->connection);
+
+    int i = 0;
+    loggedOrder * currentLog;
+    while ((db->row = mysql_fetch_row(db->res)) != NULL){
+        if(i == 0){
+            data->firstLog = malloc(sizeof (loggedOrder));
+
+            data->firstLog->id = atoi(db->row[0]);
+            data->firstLog->timestamp = atoi(db->row[1]);
+            strcpy(data->firstLog->dateTime, db->row[2]);
+            data->firstLog->change = atoi(db->row[3]);
+            strcpy(data->firstLog->article, db->row[4]);
+
+            currentLog = data->firstLog;
+        }else{
+            currentLog->next = malloc(sizeof (loggedOrder));
+            currentLog = currentLog->next;
+
+            currentLog->id = atoi(db->row[0]);
+            currentLog->timestamp = atoi(db->row[1]);
+            strcpy(currentLog->dateTime, db->row[2]);
+            currentLog->change = atoi(db->row[3]);
+            strcpy(currentLog->article, db->row[4]);
+        }
+        i++;
+    }
+    currentLog->next = NULL;
+    data->listLength = i;
+
+
+    ///Free results
+    mysql_free_result(db->res);
+    mysql_close(db->connection);
+
+    return READ_OK;
+}
+
+
 int generateReport(char* credentials, loggedData* data){
-    database db;
     data->previousStamp = getLastStamp();
-
-    db.connection = mysql_init(NULL);
-
+    database db;
     int credentialsStatus = parseCredentials(credentials, &db);
+
     ///Return error status if credential read failed
     switch (credentialsStatus) {
         case READ_FAILURE:
@@ -77,28 +171,14 @@ int generateReport(char* credentials, loggedData* data){
             break;
     }
 
-    ///attempt connection
-    if (!mysql_real_connect(db.connection, db.server, db.user, db.password, db.database, 0, NULL, 0)) {
-        fprintf(stderr, "\n%s\n", mysql_error(db.connection));
-        return DATABASE_FAILURE;
-    }
-
-    ///select transactions history since the previous report
-    sprintf(db.query, "SELECT * FROM transactions WHERE stamp > %d", data->previousStamp);
-    if (mysql_query(db.connection, db.query)) {
-        fprintf(stderr, "%s\n", mysql_error(db.connection));
-        exit(1);
-    }
-    db.res = mysql_use_result(db.connection);
+    int dbStatus = generateList(&db, data);
+    if (dbStatus == DATABASE_FAILURE) return DATABASE_FAILURE;
 
     /**
-     * Do stuff here
+     * Generate YAML
      */
 
-    ///Free results
-    mysql_free_result(db.res);
-    mysql_close(db.connection);
-
+    freeList(data);
     ///Notify that the creation was a success
     return READ_OK;
 }

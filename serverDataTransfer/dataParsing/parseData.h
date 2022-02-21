@@ -18,11 +18,11 @@ typedef struct database{
 }database;
 
 typedef struct loggedOrder{
-    char* article;
-    int change;
     int id;
-    int timestamp;
-    //TODO: Unix smallest unit: seconds, milliseconds precision cannot be stored in an int, might need change later on
+    int timestamp;//TODO: Unix smallest unit: seconds, milliseconds precision cannot be stored in an int, might need change later on
+    char dateTime[20];
+    int change;
+    char article[11];
 
     struct loggedOrder * next;
     ///linked list
@@ -31,7 +31,9 @@ typedef struct loggedOrder{
 typedef struct loggedData{
     int timestamp;
     int previousStamp;
-    int result;
+    int result; ///1 --> success or 0 --> failure, used when logging the communication at the end of execution
+
+    int listLength;
 
     loggedOrder * firstLog;
 }loggedData;
@@ -41,5 +43,11 @@ int generateReport(char* credentials, loggedData* data);
 int getLastStamp();
 
 int parseCredentials(char* path, database* db);
+
+void freeList(loggedData* data);
+
+void printList(loggedOrder * firstNode);
+
+void reccFreeList(loggedOrder * node);
 
 #endif //SERVERDATATRANSFER_PARSEDATA_H
