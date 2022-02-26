@@ -78,10 +78,11 @@ int main(int argc, char **argv) {
     switch (mode) {
         case SEND_MODE:
             printf("Starting report...\n");
-            int repStatus = generateReport(argv[2], &data);
+            char report[MAX_BUFFER];
+            int repStatus = generateReport(argv[2], &data, report);
             switch (repStatus) {
                 case READ_OVERSIZE:
-                    printf("\nOne of the parameter values exceeds 50 characters in length.");
+                    printf("\nOne of the parameter values exceeds their expected length.");
                     exit(-1);
                 case READ_FAILURE:
                     printf("\nCould not verify the integrity of all parameter values.");
@@ -89,12 +90,16 @@ int main(int argc, char **argv) {
                 case DATABASE_FAILURE:
                     printf("\nCould not establish connection to database.");
                     exit(-1);
+                case YAML_FAILURE:
+                    printf("\nError while generating file.");
+                    exit(-1);
                 case READ_OK:
                     printf("\nSuccessfully generated YAML report");
                     break;
                 default:
                     break;
             }
+            fprintf(stdout, "\n\n%s", report);
             break;
 
         case RECEIVE_MODE:

@@ -15,8 +15,9 @@
 ///json format example:
 /**
  {
-  "site": 3
+  "site": 3,
   "timestamp":"1644589270",
+   "count": 4,
 
   "transactions":[
     {
@@ -39,6 +40,7 @@
  ---
 site: 3
 timestamp: 1644589270
+count: 4
 transactions:
 - article: 'char* : code article'
   change: 'int: quantité (neg/pos) de la transaction'
@@ -51,6 +53,261 @@ transactions:
 
 **/
 ///TODO: shorten article code to char 5 or 4 instead of 10, which is overkill
+
+
+/**
+ * @usage Generate YAML report and stores it in output
+ * @param data -- data
+ * @param output -- output string
+ * @return READ_OK|YAML_FAILURE|READ_OVERSIZE
+ * TODO: Simplify this function's syntax using macros
+ */
+int outputYaml(loggedData* data, char* output){
+    yaml_emitter_t emitter;
+    yaml_event_t event;
+
+    char buffer[20];
+    ///Start Sequence
+    {
+        ///Init Emitter
+        yaml_emitter_initialize(&emitter);
+        unsigned long writtenSize;
+        yaml_emitter_set_output_string(&emitter, output, MAX_BUFFER, &writtenSize);
+
+        ///Set Start Stream
+        yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        ///Start Document
+        yaml_document_start_event_initialize(&event, NULL, NULL, NULL, 0);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        ///Start Mapping
+        yaml_mapping_start_event_initialize(&event, NULL, (yaml_char_t *)YAML_MAP_TAG,
+                                            1, YAML_ANY_MAPPING_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+    };
+
+    ///Map timestamp
+    {
+
+        yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                     (yaml_char_t *)"timestamp", strlen("timestamp"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        if (snprintf(buffer, sizeof(buffer), "%d", data->timestamp) >= sizeof(buffer)) return READ_OVERSIZE;
+
+        yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_INT_TAG,
+                                     (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)){
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+    };
+
+    ///Map transactions count
+    {
+
+        yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                     (yaml_char_t *)"count", strlen("count"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        if (snprintf(buffer, sizeof(buffer), "%d", data->listLength) >= sizeof(buffer)) return READ_OVERSIZE;
+
+        yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_INT_TAG,
+                                     (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)){
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+    };
+
+    ///Map transactions List
+    if (data->listLength>0){
+        ///Start Sequence
+        yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                     (yaml_char_t *)"transactions", strlen("transactions"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        yaml_sequence_start_event_initialize(&event, NULL, (yaml_char_t *)YAML_SEQ_TAG,
+                                             1, YAML_ANY_SEQUENCE_STYLE);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        loggedOrder* node = data->firstLog;
+
+        while(node != NULL){
+            ///Start Mapping
+            yaml_mapping_start_event_initialize(&event, NULL, (yaml_char_t *)YAML_MAP_TAG,
+                                                1, YAML_ANY_MAPPING_STYLE);
+            if (!yaml_emitter_emit(&emitter, &event)) {
+                printYamlError(&emitter, &event);
+                return YAML_FAILURE;
+            }
+
+            ///Map article code
+            {
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)"article", strlen("article"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)node->article, strlen(node->article), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+            };
+
+            ///Map article change
+            {
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)"change", strlen("change"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+                if (snprintf(buffer, sizeof(buffer), "%d", node->change) >= sizeof(buffer)) return READ_OVERSIZE;
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_INT_TAG,
+                                             (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)){
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+            };
+
+            ///Map article timestamp
+            {
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)"timestamp", strlen("timestamp"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+                if (snprintf(buffer, sizeof(buffer), "%d", node->timestamp) >= sizeof(buffer)) return READ_OVERSIZE;
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_INT_TAG,
+                                             (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)){
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+            };
+
+            ///Map article datetime
+            {
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)"datetime", strlen("datetime"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+                yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_STR_TAG,
+                                             (yaml_char_t *)node->dateTime, strlen(node->dateTime), 1, 0, YAML_PLAIN_SCALAR_STYLE);
+                if (!yaml_emitter_emit(&emitter, &event)) {
+                    printYamlError(&emitter, &event);
+                    return YAML_FAILURE;
+                }
+
+            };
+
+            ///End Mapping
+            yaml_mapping_end_event_initialize(&event);
+            if (!yaml_emitter_emit(&emitter, &event)) {
+                printYamlError(&emitter, &event);
+                return YAML_FAILURE;
+            }
+
+            ///Go to next node
+            node = node->next;
+        }
+
+
+        ///End Sequence
+        yaml_sequence_end_event_initialize(&event);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+    }
+
+    ///End Sequence
+    {
+        ///End mapping
+        yaml_mapping_end_event_initialize(&event);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        ///Kill Document
+        yaml_document_end_event_initialize(&event, 0);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+        ///Kill Stream
+        yaml_stream_end_event_initialize(&event);
+        if (!yaml_emitter_emit(&emitter, &event)) {
+            printYamlError(&emitter, &event);
+            return YAML_FAILURE;
+        }
+
+
+        ///Kill Emitter
+        yaml_emitter_delete(&emitter);
+    };
+
+    return READ_OK;
+}
+
+/**
+ * @usage prints YAML emitting/parsing errors
+ * @param emitter -- event emitter
+ * @param event -- event handler
+ */
+void printYamlError(yaml_emitter_t* emitter, yaml_event_t* event){
+    fprintf(stderr, "Failed to emit event %d: %s\n", event->type, emitter->problem);
+    yaml_emitter_delete(emitter);
+}
+
 /**
 Communication History:
  @file: ./logs/history
@@ -155,8 +412,20 @@ int generateList(database* db, loggedData* data){
     return READ_OK;
 }
 
-
-int generateReport(char* credentials, loggedData* data){
+/**
+ * @usage Generate yaml report into reportBuffer
+ * @param credentials -- path to credentials file
+ * @param data -- data structure where data will be outputed
+ * @param reportBuffer -- string that will contain YAML report
+ * @return Int depending on several internal conditions and exceptions.
+ * Normal run will return READ_OK
+ * Exceptions:
+ * READ_FAILURE
+ * READ_OVERSIZE
+ * DATABASE_FAILURE
+ * YAML_FAILURE
+ */
+int generateReport(char* credentials, loggedData* data, char* reportBuffer){
     data->previousStamp = getLastStamp();
     database db;
     int credentialsStatus = parseCredentials(credentials, &db);
@@ -174,9 +443,17 @@ int generateReport(char* credentials, loggedData* data){
     int dbStatus = generateList(&db, data);
     if (dbStatus == DATABASE_FAILURE) return DATABASE_FAILURE;
 
-    /**
-     * Generate YAML
-     */
+
+    int reportStatus = outputYaml(data, reportBuffer);
+    switch (reportStatus) {
+        case READ_OVERSIZE:
+            freeList(data);
+            return READ_OVERSIZE;
+        case YAML_FAILURE:
+            freeList(data);
+            return YAML_FAILURE;
+        default: break;
+    }
 
     freeList(data);
     ///Notify that the creation was a success
