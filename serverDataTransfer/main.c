@@ -100,6 +100,9 @@ int main(int argc, char **argv) {
                     break;
             }
             fprintf(stdout, "\n\n%s", report);
+
+
+            freeList(&data);
             break;
 
         case RECEIVE_MODE:

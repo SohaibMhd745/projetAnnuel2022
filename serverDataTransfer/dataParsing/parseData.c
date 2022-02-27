@@ -12,29 +12,6 @@
 
 #include "../communications/commsSafety.h"
 
-///json format example:
-/**
- {
-  "site": 3,
-  "timestamp":"1644589270",
-   "count": 4,
-
-  "transactions":[
-    {
-      "article":"char* : code article",
-      "change":"int: quantité (neg/pos) de la transaction",
-      "timestamp":"int, timestamp unix en secondes"
-  	},
-		{
-      "article":"08A85",
-      "change":-2,
-      "timestamp":1644586270
-		}
-  ]
-}
-
- **/
-
 ///yaml format example:
 /**
  ---
@@ -54,6 +31,14 @@ transactions:
 **/
 ///TODO: shorten article code to char 5 or 4 instead of 10, which is overkill
 
+
+///YAML Parsing/Outputting Event Hierarchy:
+/**
+>YAML_START
+    >>YAML_STREAM
+        >>>YAML_DOCUMENT
+            >>>>>YAML_MAP
+ */
 
 /**
  * @usage Generate YAML report and stores it in output
@@ -298,14 +283,214 @@ int outputYaml(loggedData* data, char* output){
     return READ_OK;
 }
 
+int parseYaml(char* yaml, loggedData* outputData){
+    yaml_parser_t parser;
+    yaml_event_t event;
+    char value[50];
+    int status = YAML_START;
+    loggedOrder * currentNode = NULL;
+
+    outputData->firstLog = NULL;
+    outputData->listLength = -1;
+    outputData->timestamp = 0;
+
+    ///Start Sequence
+    {
+        ///Init Parser
+        yaml_parser_initialize(&parser);
+        yaml_parser_set_input_string(&parser, yaml, strlen(yaml));
+    }
+
+    do{
+        ///Parse Event
+        if(!yaml_parser_parse(&parser, &event)){
+            printParserError(&parser, &event);
+            freeList(outputData);
+            return YAML_FAILURE;
+        }
+
+        ///Switch according to last event status and event type
+        switch (status) {
+            case YAML_START:
+                if(event.type== YAML_STREAM_START_EVENT)
+                    status = YAML_STREAM;
+                else {
+                    printParserError(&parser, &event);
+                    freeList(outputData);
+                    return YAML_FAILURE;
+                }
+                break;
+            case YAML_STREAM:
+                switch (event.type) {
+                    case YAML_DOCUMENT_START_EVENT:
+                        status = YAML_DOCUMENT;
+                        break;
+                    case YAML_STREAM_END_EVENT:
+                        status = YAML_EOF;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+            case YAML_DOCUMENT:
+                switch (event.type) {
+                    case YAML_MAPPING_START_EVENT:
+                        status = YAML_MAP;
+                        break;
+
+                    case YAML_DOCUMENT_END_EVENT:
+                        status = YAML_STREAM;
+                        break;
+
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_MAP:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        if (strlen((char*)event.data.scalar.value)>50) return READ_OVERSIZE;
+                        strcpy(value, (char*)event.data.scalar.value);
+
+                        if (strcmp(value, "timestamp")==0) {
+                            if(outputData->timestamp == 0) status = YAML_VALUE_TIMESTAMP;
+                            else return DUPLICATE_ERROR;
+                        }
+                        else if (strcmp(value, "count")==0) {
+                            if(outputData->timestamp == -1) status = YAML_VALUE_COUNT;
+                            else return DUPLICATE_ERROR;
+                        }
+                        else if (strcmp(value, "transactions")==0) {
+                            if (outputData->listLength>0){
+                                if (outputData->firstLog != NULL) status = YAML_LIST;
+                                else return DUPLICATE_ERROR;
+                            }
+                            else status = YAML_EOF;
+                        }
+                        break;
+
+                    case YAML_DOCUMENT_END_EVENT:
+                        status = YAML_STREAM;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST:
+                switch (event.type) {
+                    case YAML_SEQUENCE_START_EVENT:
+                        status = YAML_LIST_OBJECT;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_OBJECT:
+                switch (event.type) {
+                    case YAML_MAPPING_START_EVENT:
+                        status = YAML_LIST_VALUES;
+                        if (currentNode == NULL){
+                            outputData->firstLog = malloc(sizeof (loggedOrder));
+                            currentNode = outputData->firstLog;
+                        }else{
+                            currentNode->next = malloc(sizeof (loggedOrder));
+                            currentNode = currentNode->next;
+                        }
+                        currentNode->next = NULL;
+                        strcpy(currentNode->dateTime, "");
+                        strcpy(currentNode->article, "");
+                        currentNode->timestamp = 0;
+                        currentNode->change = 0;
+                        break;
+                    case YAML_SEQUENCE_END_EVENT:
+                        status = YAML_EOF;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_VALUES:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        if (strlen((char*)event.data.scalar.value)>50) return READ_OVERSIZE;
+                        strcpy(value, (char*)event.data.scalar.value);
+
+                        if (strcmp(value, "article")==0) {
+                            if(strlen(currentNode->article) > 0) status = YAML_LIST_VALUE_ARTICLE;
+                            else return DUPLICATE_ERROR;
+                        }
+                        else if (strcmp(value, "change")==0) {
+                            if(currentNode->change == 0) status = YAML_LIST_VALUE_CHANGE;
+                            else return DUPLICATE_ERROR;
+                        }
+                        else if (strcmp(value, "timestamp")==0) {
+                            if(currentNode->timestamp == 0) status = YAML_LIST_VALUE_TIMESTAMP;
+                            else return DUPLICATE_ERROR;
+                        }
+                        else if (strcmp(value, "datetime")==0) {
+                            if(strlen(currentNode->dateTime) > 0) status = YAML_LIST_VALUE_DATETIME;
+                            else return DUPLICATE_ERROR;
+                        }
+                        break;
+                    case YAML_MAPPING_END_EVENT:
+                        status = YAML_LIST_OBJECT;
+                        break;
+                    
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        yaml_event_delete(&event);
+    } while (status != YAML_EOF);
+
+    ///End Sequence
+    {
+        ///Kill Parser
+        yaml_parser_delete(&parser);
+    }
+
+    return READ_OK;
+}
+
 /**
- * @usage prints YAML emitting/parsing errors
+ * @usage prints YAML emitting errors
  * @param emitter -- event emitter
  * @param event -- event handler
  */
 void printYamlError(yaml_emitter_t* emitter, yaml_event_t* event){
     fprintf(stderr, "Failed to emit event %d: %s\n", event->type, emitter->problem);
     yaml_emitter_delete(emitter);
+}
+
+/**
+ * @usage prints YAML parsing errors
+ * @param parser -- event parser
+ * @param event -- event handler
+ */
+void printParserError(yaml_parser_t* parser, yaml_event_t* event){
+    fprintf(stderr, "Failed to parse event %d: %s\n", event->type, parser->problem);
+    yaml_parser_delete(parser);
 }
 
 /**
@@ -325,8 +510,10 @@ Communication History:
  * @param data -- data strcuture
  */
 void freeList(loggedData* data){
-     reccFreeList(data->firstLog);
-     data->firstLog = NULL;
+    if (data->firstLog != NULL) {
+        reccFreeList(data->firstLog);
+        data->firstLog = NULL;
+    }
 }
 
 /**

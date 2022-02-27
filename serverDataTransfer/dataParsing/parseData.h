@@ -19,8 +19,8 @@ typedef struct database{
 }database;
 
 typedef struct loggedOrder{
-    int id;
-    int timestamp;//TODO: Unix smallest unit: seconds, milliseconds precision cannot be stored in an int, might need change later on
+    unsigned int id;
+    unsigned int timestamp;//TODO: Unix smallest unit: seconds, milliseconds precision cannot be stored in an int, might need change later on
     char dateTime[20];
     int change;
     char article[11];
@@ -30,8 +30,8 @@ typedef struct loggedOrder{
 }loggedOrder;
 
 typedef struct loggedData{
-    int timestamp;
-    int previousStamp;
+    unsigned int timestamp;
+    unsigned int previousStamp;
     int result; ///1 --> success or 0 --> failure, used when logging the communication at the end of execution
 
     int listLength;
@@ -56,5 +56,9 @@ void reccFreeList(loggedOrder * node);
 int generateReport(char* credentials, loggedData* data, char* reportBuffer);
 
 int generateList(database* db, loggedData* data);
+
+int parseYaml(char* yaml, loggedData* outputData);
+
+void printParserError(yaml_parser_t* parser, yaml_event_t* event);
 
 #endif //SERVERDATATRANSFER_PARSEDATA_H
