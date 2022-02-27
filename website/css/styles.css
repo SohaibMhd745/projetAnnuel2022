@@ -1,0 +1,244 @@
+/* FALLING SKY */
+@font-face {
+  font-family: "FallingSky";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSky.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSky.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSkyObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Light";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLight.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLight.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_LightObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Medium";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyMed.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyMed.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_MediumObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightMedObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightMedObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Bold";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyBd.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyBd.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_BoldObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightBdObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightBdObl.woff") format("woff");
+}
+
+
+
+/* LOUIS GEORGE CAFE */
+@font-face {
+  font-family: "LGC";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Obl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Obl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Obl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Light";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Light.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Light.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_LightObl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_LightObl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_LightObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Bold";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Bold.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_BoldObl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_BoldObl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_BoldObl.woff") format("woff");
+}
+
+
+
+/* LEAGUE GOTHIC */
+@font-face {
+  font-family: "LeagueGothic";
+  src: url("../assets/fonts/league_gothic/woff2/LeagueGothic.woff2") format("woff2"),
+         url("../assets/fonts/league_gothic/woff/LeagueGothic.woff") format("woff");
+}
+
+
+
+/* HTML ELEMENTS */
+body {
+  margin: 0;
+  background-color: #E6E6EA;
+  font-family: FallingSky;
+}
+
+
+
+/* GLOBAL ELEMENTS */
+.global-separator {
+  height: 28px;
+}
+
+
+
+/* HEADER */
+.header-fluid {
+  background-color: #0B0500;
+  color: #E6E6EA;
+}
+
+.header-row {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.header-col {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.header-col1 {
+  justify-content: flex-start;
+}
+
+.header-col2 {
+  justify-content: flex-end;
+}
+
+.header-ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-li {
+  display: inline;
+  padding: 12px;
+}
+
+.header-a {
+  color: #E6E6EA;
+  font-family: FallingSky_Light;
+
+  text-decoration: none;
+  text-transform: uppercase;
+
+  padding-bottom: 8px;
+  transition: 0.3s;
+}
+
+.header-a:hover {
+  color: #FED766;
+  transition: 0.3s;
+}
+
+.header-active {
+  border-bottom: 2px solid #E6E6EA;
+}
+
+
+
+/* FOOTER */
+.footer-fluid {
+  background-color: #0B0500;
+  color: #E6E6EA;
+}
+
+.footer-row {
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+
+.footer-sitename {
+  font-size: 42px;
+  font-family: LeagueGothic;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  margin-bottom: 16px;
+}
+
+.footer-text {
+  font-family: LGC;
+  margin-bottom: 8px;
+}
+
+.footer-subtext {
+  font-family: LGC;
+  color: #999999;
+
+  margin-bottom: 8px;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: #999999;
+  transition: 0.3s;
+}
+
+.footer-link:hover {
+  color: #E6E6EA;
+  transition: 0.3s;
+}
+
+.footer-row2 {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  background-color: #0B0500;
+}
+
+.footer-hr {
+  color: #E6E6EA;
+  margin: 0;
+}
+
+
+
+/* PAGE ELEMENTS */
+.page-title-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 150px;
+}
+
+.page-title {
+  font-size: 48px;
+  font-family: LGC_Bold;
+  text-align: center;
+}

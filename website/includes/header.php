@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <div class="container-fluid header-fluid">
     <div class="container">
         <div class="row header-row">
@@ -8,8 +10,8 @@
             </div>
             <div class="col header-col header-col2">
                 <ul class="header-ul">
-                    <a class="header-a" href="/src"><li class="header-li">Accueil</li></a>
-                    <a class="header-a" href="/shop.php"><li class="header-li">Boutique</li></a>
+                    <a class="header-a <?php if($script_name=="/index.php") { ?>header-active<?php } ?>" href="/"><li class="header-li">Accueil</li></a>
+                    <a class="header-a <?php if($script_name=="/shop.php") { ?>header-active<?php } ?>" href="/shop.php"><li class="header-li">Boutique</li></a>
                 </ul>
             </div>
         </div>
