@@ -308,6 +308,66 @@ int parseYaml(char* yaml, loggedData* outputData){
             freeList(outputData);
             return YAML_FAILURE;
         }
+        ///Debug Block
+        /*
+        printf("Pre: ");
+        switch (status) {
+            case YAML_START:
+                printf("Parsing Start");
+                break;
+            case YAML_STREAM:
+                printf("Stream Start");
+                break;
+
+            case YAML_DOCUMENT:
+                printf("Document Start");
+                break;
+
+            case YAML_MAP:
+                printf("Mapping");
+                break;
+
+            case YAML_LIST:
+                printf("List Start");
+                break;
+
+            case YAML_LIST_OBJECT:
+                printf("Object Start");
+                break;
+
+            case YAML_LIST_VALUES:
+                printf("Mapping Object Values");
+                break;
+
+            case YAML_VALUE_TIMESTAMP:
+                printf("Reading Timestamp");
+                break;
+
+            case YAML_VALUE_COUNT:
+                printf("Reading Count");
+                break;
+
+            case YAML_LIST_VALUE_ARTICLE:
+                printf("Reading Object Code");
+                break;
+
+            case YAML_LIST_VALUE_CHANGE:
+                printf("Reading Object Change");
+                break;
+
+            case YAML_LIST_VALUE_TIMESTAMP:
+                printf("Reading Object Timestamp");
+                break;
+
+            case YAML_LIST_VALUE_DATETIME:
+                printf("Reading Object DateTime");
+                break;
+
+            default:
+                break;
+        }
+         */
+        ///Debug Block
 
         ///Switch according to last event status and event type
         switch (status) {
@@ -334,6 +394,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                         return YAML_FAILURE;
                 }
                 break;
+            
             case YAML_DOCUMENT:
                 switch (event.type) {
                     case YAML_MAPPING_START_EVENT:
@@ -362,12 +423,12 @@ int parseYaml(char* yaml, loggedData* outputData){
                             else return DUPLICATE_ERROR;
                         }
                         else if (strcmp(value, "count")==0) {
-                            if(outputData->timestamp == -1) status = YAML_VALUE_COUNT;
+                            if(outputData->listLength == -1) status = YAML_VALUE_COUNT;
                             else return DUPLICATE_ERROR;
                         }
                         else if (strcmp(value, "transactions")==0) {
                             if (outputData->listLength>0){
-                                if (outputData->firstLog != NULL) status = YAML_LIST;
+                                if (outputData->firstLog == NULL) status = YAML_LIST;
                                 else return DUPLICATE_ERROR;
                             }
                             else status = YAML_EOF;
@@ -412,6 +473,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                         strcpy(currentNode->article, "");
                         currentNode->timestamp = 0;
                         currentNode->change = 0;
+                        currentNode->id = 0;
                         break;
                     case YAML_SEQUENCE_END_EVENT:
                         status = YAML_EOF;
@@ -430,7 +492,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                         strcpy(value, (char*)event.data.scalar.value);
 
                         if (strcmp(value, "article")==0) {
-                            if(strlen(currentNode->article) > 0) status = YAML_LIST_VALUE_ARTICLE;
+                            if(strlen(currentNode->article) == 0) status = YAML_LIST_VALUE_ARTICLE;
                             else return DUPLICATE_ERROR;
                         }
                         else if (strcmp(value, "change")==0) {
@@ -442,7 +504,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                             else return DUPLICATE_ERROR;
                         }
                         else if (strcmp(value, "datetime")==0) {
-                            if(strlen(currentNode->dateTime) > 0) status = YAML_LIST_VALUE_DATETIME;
+                            if(strlen(currentNode->dateTime) == 0) status = YAML_LIST_VALUE_DATETIME;
                             else return DUPLICATE_ERROR;
                         }
                         break;
@@ -457,11 +519,183 @@ int parseYaml(char* yaml, loggedData* outputData){
                 }
                 break;
 
+            case YAML_VALUE_TIMESTAMP:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_MAP;
+
+                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+
+                        outputData->timestamp = atoi((char*)event.data.scalar.value);
+
+                        if (outputData->timestamp == 0) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_VALUE_COUNT:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_MAP;
+
+                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+
+                        outputData->listLength = atoi((char*)event.data.scalar.value);
+
+                        if (outputData->listLength == -1) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_VALUE_ARTICLE:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_LIST_VALUES;
+
+                        if (strlen((char*)event.data.scalar.value)>11) return READ_OVERSIZE;
+
+                        strcpy(currentNode->article, (char*)event.data.scalar.value);
+
+                        if (strcmp(currentNode->article, "") == 0) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_VALUE_CHANGE:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_LIST_VALUES;
+
+                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+
+                        currentNode->change = atoi((char*)event.data.scalar.value);
+
+                        if (currentNode->change == 0) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_VALUE_TIMESTAMP:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_LIST_VALUES;
+
+                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+
+                        currentNode->timestamp = atoi((char*)event.data.scalar.value);
+
+                        if (currentNode->timestamp == 0) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
+            case YAML_LIST_VALUE_DATETIME:
+                switch (event.type) {
+                    case YAML_SCALAR_EVENT:
+                        status = YAML_LIST_VALUES;
+
+                        if (strlen((char*)event.data.scalar.value)>20) return READ_OVERSIZE;
+
+                        strcpy(currentNode->dateTime, (char*)event.data.scalar.value);
+
+                        if (strcmp(currentNode->dateTime, "") == 0) return READ_FAILURE;
+                        break;
+                    default:
+                        printParserError(&parser, &event);
+                        freeList(outputData);
+                        return YAML_FAILURE;
+                }
+                break;
+
             default:
                 break;
         }
 
+
         yaml_event_delete(&event);
+
+        ///Debug Block
+        /*
+        printf(" \nPost: ");
+        switch (status) {
+            case YAML_START:
+                printf("Parsing Start");
+                break;
+            case YAML_STREAM:
+                printf("Stream Start");
+                break;
+
+            case YAML_DOCUMENT:
+                printf("Document Start");
+                break;
+
+            case YAML_MAP:
+                printf("Mapping");
+                break;
+
+            case YAML_LIST:
+                printf("List Start");
+                break;
+
+            case YAML_LIST_OBJECT:
+                printf("Object Start");
+                break;
+
+            case YAML_LIST_VALUES:
+                printf("Mapping Object Values");
+                break;
+
+            case YAML_VALUE_TIMESTAMP:
+                printf("Reading Timestamp");
+                break;
+
+            case YAML_VALUE_COUNT:
+                printf("Reading Count");
+                break;
+
+            case YAML_LIST_VALUE_ARTICLE:
+                printf("Reading Object Code");
+                break;
+
+            case YAML_LIST_VALUE_CHANGE:
+                printf("Reading Object Change");
+                break;
+
+            case YAML_LIST_VALUE_TIMESTAMP:
+                printf("Reading Object Timestamp");
+                break;
+
+            case YAML_LIST_VALUE_DATETIME:
+                printf("Reading Object DateTime");
+                break;
+
+            default:
+                break;
+        }
+        printf("\n\n");
+         */
+        ///Debug Block
+
     } while (status != YAML_EOF);
 
     ///End Sequence

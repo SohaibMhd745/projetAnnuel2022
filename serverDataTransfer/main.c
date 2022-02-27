@@ -101,6 +101,14 @@ int main(int argc, char **argv) {
             }
             fprintf(stdout, "\n\n%s", report);
 
+            ///Debug Block
+            /*
+            loggedData rdata;
+            parseYaml(report, &rdata);
+            printList(rdata.firstLog);
+            freeList(&rdata);
+             */
+            ///Debug Block
 
             freeList(&data);
             break;
