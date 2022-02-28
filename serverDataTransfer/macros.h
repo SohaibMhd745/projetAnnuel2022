@@ -7,7 +7,9 @@
 #define DATABASE_FAILURE -3
 #define YAML_FAILURE -4
 #define DUPLICATE_ERROR -5
-#define MISSING_DATA -6
+#define MISSING_CRITICAL_DATA -6
+#define DATA_CRITICAL_ERROR -7
+#define DATA_ERROR -8
 
 #define YAML_EOF 0
 

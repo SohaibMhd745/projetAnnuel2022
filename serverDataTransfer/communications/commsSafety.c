@@ -7,8 +7,9 @@
 #include <mysql.h>
 
 #include "../macros.h"
-
+#include "../output/output.h"
 #include "commsSafety.h"
+#include "../dataParsing/parseData.h"
 
 /**
  * @usage takes a filepath and returns the size of that file
@@ -95,8 +96,6 @@ int getLastCommunication(int serverId){
                 strncpy(val2, line+breakPoint+1, breakPoint2-breakPoint-1);
                 *(val2+breakPoint2-breakPoint) = '\0';
 
-                printf("%s %s\n", val, val2);
-
                 number = atoi(val2);
 
                 if (number == serverId) stamp = atoi(val);
@@ -108,4 +107,74 @@ int getLastCommunication(int serverId){
 
     fclose(history);
     return stamp;
+}
+
+/**
+ * @usage checks parsed data structure from received YAML report, prunes incomplete information or stops process if the missing data is serious
+ * @param data -- parsed data structure to verify
+ * @param serverId -- id of the server
+ * @return
+ */
+int checkData(loggedData * data, int serverId){
+    int status = READ_OK;
+
+    if (data->listLength == -1) {
+        outputError("Missing critical 'count' value from received reporting file");
+        return MISSING_CRITICAL_DATA;
+    }
+    if (data->timestamp == 0){
+        outputError("Missing critical 'timestamp' value from received reporting file");
+        return MISSING_CRITICAL_DATA;
+    }
+
+    data->previousStamp = getLastCommunication(serverId);
+
+    if (data->previousStamp>data->timestamp){
+        outputError("Critical 'timestamp' value from received reporting file is incorrect");
+        return DATA_CRITICAL_ERROR;
+    }
+
+    if (data->firstLog != NULL){
+        loggedOrder * node = data->firstLog;
+        loggedOrder * previousNode = NULL;
+        int error = 0;
+        do{
+            error = 0;
+            if(node->timestamp < data->previousStamp||node->timestamp > data->timestamp||node->timestamp == 0){
+                outputError("Value 'timestamp' incorrect. Data node Pruned.");
+                error = DATA_ERROR;
+                status = DATA_ERROR;
+            }else if (strcmp(node->article, "")==0|| strlen(node->article)<10){
+                outputError("Value 'article' incorrect. Data node Pruned.");
+                error = DATA_ERROR;
+                status = DATA_ERROR;
+            }else if (strcmp(node->dateTime, "")==0|| strlen(node->dateTime)<19){
+                outputError("Value 'datetime' incorrect. Data node Pruned.");
+                error = DATA_ERROR;
+                status = DATA_ERROR;
+            }else if(node->change == 0){
+                outputError("Value 'change' incorrect. Data node Pruned.");
+                error = DATA_ERROR;
+                status = DATA_ERROR;
+            }
+
+            if (error == DATA_ERROR){
+                if (previousNode == NULL){
+                    data->firstLog = node->next;
+                    free(node);
+                    node = data->firstLog;
+                }else{
+                    previousNode->next = node->next;
+                    free(node);
+                    node = previousNode->next;
+                }
+            }else {
+                previousNode = node;
+                node = node->next;
+            }
+
+        }while (node != NULL);
+    }
+
+    return status;
 }

@@ -9,4 +9,6 @@ int generateTimestamp();
 
 int getLastCommunication(int serverId);
 
+int checkData(loggedData * data, int serverId);
+
 #endif //SERVERDATATRANSFER_COMMSSAFETY_H

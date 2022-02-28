@@ -107,10 +107,12 @@ int main(int argc, char **argv) {
             loggedData rdata;
             parseYaml(report, &rdata);
             printList(rdata.firstLog);
+            printf("%d", checkData(&rdata, 1));
+            printList(rdata.firstLog);
             freeList(&rdata);
-             */
+            */
             ///Debug Block
-            
+
             freeList(&data);
             break;
 
