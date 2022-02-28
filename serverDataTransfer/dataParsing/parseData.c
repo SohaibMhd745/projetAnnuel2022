@@ -64,6 +64,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -71,6 +72,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_document_start_event_initialize(&event, NULL, NULL, NULL, 0);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -79,6 +81,7 @@ int outputYaml(loggedData* data, char* output){
                                             1, YAML_ANY_MAPPING_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
     };
@@ -90,15 +93,20 @@ int outputYaml(loggedData* data, char* output){
                                      (yaml_char_t *)"timestamp", strlen("timestamp"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
-        if (snprintf(buffer, sizeof(buffer), "%d", data->timestamp) >= sizeof(buffer)) return READ_OVERSIZE;
+        if (snprintf(buffer, sizeof(buffer), "%d", data->timestamp) >= sizeof(buffer)) {
+            outputError("Unexpected error while generating report file: Timestamp larger than authorized");
+            return READ_OVERSIZE;
+        }
 
         yaml_scalar_event_initialize(&event, NULL, (yaml_char_t *)YAML_INT_TAG,
                                      (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)){
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -111,6 +119,7 @@ int outputYaml(loggedData* data, char* output){
                                      (yaml_char_t *)"count", strlen("count"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -120,6 +129,7 @@ int outputYaml(loggedData* data, char* output){
                                      (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)){
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file: Count larger than authorized");
             return YAML_FAILURE;
         }
 
@@ -132,6 +142,7 @@ int outputYaml(loggedData* data, char* output){
                                      (yaml_char_t *)"transactions", strlen("transactions"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -139,6 +150,7 @@ int outputYaml(loggedData* data, char* output){
                                              1, YAML_ANY_SEQUENCE_STYLE);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -150,6 +162,7 @@ int outputYaml(loggedData* data, char* output){
                                                 1, YAML_ANY_MAPPING_STYLE);
             if (!yaml_emitter_emit(&emitter, &event)) {
                 printYamlError(&emitter, &event);
+                outputError("Unexpected error while generating report file");
                 return YAML_FAILURE;
             }
 
@@ -160,6 +173,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)"article", strlen("article"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -167,6 +181,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)node->article, strlen(node->article), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -179,6 +194,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)"change", strlen("change"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -188,6 +204,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)){
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -200,6 +217,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)"timestamp", strlen("timestamp"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -209,6 +227,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)buffer, strlen(buffer), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)){
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -221,6 +240,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)"datetime", strlen("datetime"), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -228,6 +248,7 @@ int outputYaml(loggedData* data, char* output){
                                              (yaml_char_t *)node->dateTime, strlen(node->dateTime), 1, 0, YAML_PLAIN_SCALAR_STYLE);
                 if (!yaml_emitter_emit(&emitter, &event)) {
                     printYamlError(&emitter, &event);
+                    outputError("Unexpected error while generating report file");
                     return YAML_FAILURE;
                 }
 
@@ -237,6 +258,7 @@ int outputYaml(loggedData* data, char* output){
             yaml_mapping_end_event_initialize(&event);
             if (!yaml_emitter_emit(&emitter, &event)) {
                 printYamlError(&emitter, &event);
+                outputError("Unexpected error while generating report file");
                 return YAML_FAILURE;
             }
 
@@ -249,6 +271,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_sequence_end_event_initialize(&event);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
     }
@@ -259,6 +282,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_mapping_end_event_initialize(&event);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -266,6 +290,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_document_end_event_initialize(&event, 0);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -273,6 +298,7 @@ int outputYaml(loggedData* data, char* output){
         yaml_stream_end_event_initialize(&event);
         if (!yaml_emitter_emit(&emitter, &event)) {
             printYamlError(&emitter, &event);
+            outputError("Unexpected error while generating report file");
             return YAML_FAILURE;
         }
 
@@ -313,6 +339,7 @@ int parseYaml(char* yaml, loggedData* outputData){
         if(!yaml_parser_parse(&parser, &event)){
             printParserError(&parser, &event);
             freeList(outputData);
+            outputError("Unexpected error while reading report file");
             return YAML_FAILURE;
         }
         ///Debug Block
@@ -384,6 +411,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                 else {
                     printParserError(&parser, &event);
                     freeList(outputData);
+                    outputError("Unexpected event encountered while reading report file");
                     return YAML_FAILURE;
                 }
                 break;
@@ -398,6 +426,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -415,6 +444,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -427,16 +457,25 @@ int parseYaml(char* yaml, loggedData* outputData){
 
                         if (strcmp(value, "timestamp")==0) {
                             if(outputData->timestamp == 0) status = YAML_VALUE_TIMESTAMP;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'timestamp' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         else if (strcmp(value, "count")==0) {
                             if(outputData->listLength == -1) status = YAML_VALUE_COUNT;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'count' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         else if (strcmp(value, "transactions")==0) {
                             if (outputData->listLength>0){
                                 if (outputData->firstLog == NULL) status = YAML_LIST;
-                                else return DUPLICATE_ERROR;
+                                else {
+                                    outputError("Encountered Duplicate Value 'transactions' during YAML Parsing");
+                                    return DUPLICATE_ERROR;
+                                }
                             }
                             else status = YAML_EOF;
                         }
@@ -448,6 +487,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -460,6 +500,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -488,6 +529,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -495,24 +537,39 @@ int parseYaml(char* yaml, loggedData* outputData){
             case YAML_LIST_VALUES:
                 switch (event.type) {
                     case YAML_SCALAR_EVENT:
-                        if (strlen((char*)event.data.scalar.value)>50) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>50) {
+                            outputError("Encountered scalar over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
                         strcpy(value, (char*)event.data.scalar.value);
 
                         if (strcmp(value, "article")==0) {
                             if(strlen(currentNode->article) == 0) status = YAML_LIST_VALUE_ARTICLE;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'article' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         else if (strcmp(value, "change")==0) {
                             if(currentNode->change == 0) status = YAML_LIST_VALUE_CHANGE;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'change' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         else if (strcmp(value, "timestamp")==0) {
                             if(currentNode->timestamp == 0) status = YAML_LIST_VALUE_TIMESTAMP;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'timestamp' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         else if (strcmp(value, "datetime")==0) {
                             if(strlen(currentNode->dateTime) == 0) status = YAML_LIST_VALUE_DATETIME;
-                            else return DUPLICATE_ERROR;
+                            else {
+                                outputError("Encountered Duplicate Value 'datetime' during YAML Parsing");
+                                return DUPLICATE_ERROR;
+                            }
                         }
                         break;
                     case YAML_MAPPING_END_EVENT:
@@ -522,6 +579,7 @@ int parseYaml(char* yaml, loggedData* outputData){
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -531,15 +589,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_MAP;
 
-                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>10) {
+                            outputError("Encountered 'timestamp' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         outputData->timestamp = atoi((char*)event.data.scalar.value);
 
-                        if (outputData->timestamp == 0) return READ_FAILURE;
+                        if (outputData->timestamp == 0) {
+                            outputError("Missing Value for scalar 'timestamp' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -549,15 +614,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_MAP;
 
-                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>10) {
+                            outputError("Encountered 'count' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         outputData->listLength = atoi((char*)event.data.scalar.value);
 
-                        if (outputData->listLength == -1) return READ_FAILURE;
+                        if (outputData->listLength == -1) {
+                            outputError("Missing Value for scalar 'count' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -567,15 +639,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_LIST_VALUES;
 
-                        if (strlen((char*)event.data.scalar.value)>11) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>11) {
+                            outputError("Encountered 'article' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         strcpy(currentNode->article, (char*)event.data.scalar.value);
 
-                        if (strcmp(currentNode->article, "") == 0) return READ_FAILURE;
+                        if (strcmp(currentNode->article, "") == 0) {
+                            outputError("Missing Value for scalar 'article' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -585,15 +664,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_LIST_VALUES;
 
-                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>10) {
+                            outputError("Encountered 'change' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         currentNode->change = atoi((char*)event.data.scalar.value);
 
-                        if (currentNode->change == 0) return READ_FAILURE;
+                        if (currentNode->change == 0) {
+                            outputError("Missing Value for scalar 'change' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -603,15 +689,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_LIST_VALUES;
 
-                        if (strlen((char*)event.data.scalar.value)>10) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>10) {
+                            outputError("Encountered 'timestamp' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         currentNode->timestamp = atoi((char*)event.data.scalar.value);
 
-                        if (currentNode->timestamp == 0) return READ_FAILURE;
+                        if (currentNode->timestamp == 0) {
+                            outputError("Missing Value for scalar 'timestamp' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -621,15 +714,22 @@ int parseYaml(char* yaml, loggedData* outputData){
                     case YAML_SCALAR_EVENT:
                         status = YAML_LIST_VALUES;
 
-                        if (strlen((char*)event.data.scalar.value)>20) return READ_OVERSIZE;
+                        if (strlen((char*)event.data.scalar.value)>20) {
+                            outputError("Encountered 'datetime' value over authorized size during YAML parsing");
+                            return READ_OVERSIZE;
+                        }
 
                         strcpy(currentNode->dateTime, (char*)event.data.scalar.value);
 
-                        if (strcmp(currentNode->dateTime, "") == 0) return READ_FAILURE;
+                        if (strcmp(currentNode->dateTime, "") == 0) {
+                            outputError("Missing Value for scalar 'datetime' encountered during YAML parsing");
+                            return READ_FAILURE;
+                        }
                         break;
                     default:
                         printParserError(&parser, &event);
                         freeList(outputData);
+                        outputError("Unexpected event encountered while reading report file");
                         return YAML_FAILURE;
                 }
                 break;
@@ -791,6 +891,7 @@ int generateList(database* db, loggedData* data){
     ///attempt connection
     if (!mysql_real_connect(db->connection, db->server, db->user, db->password, db->database, 0, NULL, 0)) {
         fprintf(stderr, "\n%s\n", mysql_error(db->connection));
+        outputError("Could not establish connection to database");
         return DATABASE_FAILURE;
     }
 
@@ -896,7 +997,10 @@ int generateReport(char* credentials, loggedData* data, char* reportBuffer){
  */
 int parseCredentials(char* path, database* db){
     FILE* credentialFile = fopen(path, "rb");
-    if(credentialFile == NULL) return READ_FAILURE;
+    if(credentialFile == NULL) {
+        outputError("Could not find 'credentials' file. Please check program readme");
+        return READ_FAILURE;
+    }
 
     char line[2000];
     char value[2000];
@@ -922,7 +1026,10 @@ int parseCredentials(char* path, database* db){
 
             strcpy(value, line + breakPoint + 1);
 
-            if (strlen(value)>50) return READ_OVERSIZE;
+            if (strlen(value)>50) {
+                outputError("Encountered scalar over authorized size during credentials parsing");
+                return READ_OVERSIZE;
+            }
             if (value[strlen(value)-1] == '\n') value[strlen(value)-1] = '\0';
 
             if (strcmp(name, "server")==0) strcpy(db->server, value);
@@ -940,7 +1047,10 @@ int parseCredentials(char* path, database* db){
             (strcmp(db->password, "")==0?1:0)+
             (strcmp(db->database, "")==0?1:0)
     ;
-    if (cheksum!=0) return READ_FAILURE;
+    if (cheksum!=0) {
+        outputError("Missing values in credentials file. Please check readme");
+        return READ_FAILURE;
+    }
     else return READ_OK;
 
 }
