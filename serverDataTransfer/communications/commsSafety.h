@@ -7,4 +7,6 @@ int getFilesize(char* path);
 
 int generateTimestamp();
 
+int getLastCommunication(int serverId);
+
 #endif //SERVERDATATRANSFER_COMMSSAFETY_H

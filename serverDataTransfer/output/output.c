@@ -29,6 +29,7 @@ Communication History:
 
 int logCommunication(loggedData* data){
     ///TODO: Déterminer le n° à partir de l'ip -- Ranger dans un .txt ?
+    ///TODO: Copier output error pour avoir les envois les + récents en premier
 }
 
 /**

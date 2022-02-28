@@ -1085,16 +1085,16 @@ int getLastStamp(){
     while(stamp==NO_HISTORY && fgets(line,10000, history)!= NULL){
         strcpy(val, "");
 
-        int breakPoint = 0;
+        int breakPoint = -1;
 
         int j = 0;
 
-        while(line[j]!='\0') {
-            if (line[j] == '|') breakPoint = j;
+        while(line[j+1]!='\0' && breakPoint != j) {
             j++;
+            if (line[j] == '|') breakPoint = j;
         }
 
-        if(line[0] != '#' && breakPoint!=0){
+        if(line[0] != '#' && line[0] != '\n' && breakPoint!=0){
 
             strncpy(val, line, breakPoint);
             *(val+breakPoint) = '\0';
