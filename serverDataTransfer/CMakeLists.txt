@@ -8,7 +8,8 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(serverDataTransfer main.c macros.h
         dataParsing/parseData.c dataParsing/parseData.h
-        communications/commsSafety.c communications/commsSafety.h)
+        communications/commsSafety.c communications/commsSafety.h
+        output/output.c output/output.h)
 
 find_package(PkgConfig REQUIRED)
 

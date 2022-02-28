@@ -7,6 +7,7 @@
 #include <mysql.h>
 
 #include "../macros.h"
+#include "../output/output.h"
 
 #include "parseData.h"
 
@@ -739,7 +740,7 @@ Communication History:
 
  @format:
 
- timestamp|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent|database id of first transaction|database id of last transaction
+ timestamp|store n° (only on receiver)|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent|database id of first transaction|database id of last transaction
 
  @important: must write from the start of the file when adding to the history
  **/

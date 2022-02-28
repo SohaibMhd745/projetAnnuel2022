@@ -10,6 +10,7 @@
 #include "macros.h"
 
 #include "dataParsing/parseData.h"
+#include "output/output.h"
 #include "communications/commsSafety.h"
 
 /**

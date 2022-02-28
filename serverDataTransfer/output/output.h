@@ -1,0 +1,6 @@
+#ifndef SERVERDATATRANSFER_OUTPUT_H
+#define SERVERDATATRANSFER_OUTPUT_H
+
+void outputError(char* error);
+
+#endif //SERVERDATATRANSFER_OUTPUT_H
