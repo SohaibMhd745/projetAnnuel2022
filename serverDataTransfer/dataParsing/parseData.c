@@ -283,6 +283,12 @@ int outputYaml(loggedData* data, char* output){
     return READ_OK;
 }
 
+/**
+ * @usage Parses yaml into loggedData chained list
+ * @param yaml -- input yaml string
+ * @param outputData -- output chained list data
+ * @return READ_OK|READ_FAILURE|YAML_FAILURE
+ */
 int parseYaml(char* yaml, loggedData* outputData){
     yaml_parser_t parser;
     yaml_event_t event;
@@ -729,7 +735,7 @@ void printParserError(yaml_parser_t* parser, yaml_event_t* event){
 
 /**
 Communication History:
- @file: ./logs/history
+ @file: ./history
 
  @format:
 
