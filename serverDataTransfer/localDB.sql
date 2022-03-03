@@ -1,0 +1,13 @@
+CREATE TABLE stock(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    quantity INTEGER NOT NULL,
+    code CHAR(10)
+);
+
+CREATE TABLE transactions(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    item INTEGER NOT NULL,
+    stamp TIMESTAMP NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (item) REFERENCES  stock(id)
+);
