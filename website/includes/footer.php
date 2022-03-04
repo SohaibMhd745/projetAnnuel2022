@@ -10,24 +10,24 @@
             </div>
 
             <div class="col">
-                <p class="footer-text">Title</p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
+                <p class="footer-text">Titre</p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
             </div>
 
             <div class="col">
-                <p class="footer-text">Title</p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
+                <p class="footer-text">Titre</p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
             </div>
 
             <div class="col">
-                <p class="footer-text">Title</p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
-                <p class="footer-subtext"><a class="footer-link" href="#">Link to a page/section</a></p>
+                <p class="footer-text">Titre</p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
+                <p class="footer-subtext"><a class="footer-link" href="#">Lien vers une page/section</a></p>
             </div>
         </div>
     </div>

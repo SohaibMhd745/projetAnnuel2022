@@ -15,21 +15,24 @@
         <link href="css/styles.css" rel="stylesheet" />
     </head>
     <body>
-        <!-- Header -->
-        <?php
-        function includeFileWithVariables($fileName, $variables) {
-            extract($variables);
-            include($fileName);
-        }
-        includeFileWithVariables("includes/header.php", array(
-            'script_name'=> $_SERVER['SCRIPT_NAME']
-        ));
-        ?>
+        <header>
+            <?php
+            function includeFileWithVariables($fileName, $variables) {
+                extract($variables);
+                include($fileName);
+            }
+            includeFileWithVariables("includes/header.php", array(
+                'script_name'=> $_SERVER['SCRIPT_NAME']
+            ));
+            ?>
+        </header>
 
-        <!-- Séparateur -->
-        <div class="global-separator"></div>
+        <main>
+            <div class="global-separator"></div>
+        </main>
 
-        <!-- Footer -->
-        <?php include("includes/footer.php"); ?>
+        <footer>
+            <?php include("includes/footer.php"); ?>
+        </footer>
     </body>
 </html>

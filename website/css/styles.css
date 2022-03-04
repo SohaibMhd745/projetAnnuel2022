@@ -100,8 +100,12 @@
 /* HTML ELEMENTS */
 body {
   margin: 0;
-  background-color: #E6E6EA;
+  background-color: #0B0500;
   font-family: FallingSky;
+}
+
+main {
+  background-color: #E6E6EA;
 }
 
 
@@ -109,6 +113,11 @@ body {
 /* GLOBAL ELEMENTS */
 .global-separator {
   height: 28px;
+}
+
+.global-vl {
+  border-left: 1px solid #0B0500;
+  height: 100%;
 }
 
 
@@ -167,6 +176,12 @@ body {
 
 .header-active {
   border-bottom: 2px solid #E6E6EA;
+  transition: 0.3s;
+}
+
+.header-active:hover {
+  border-bottom: 2px solid #FED766;
+  transition: 0.3s;
 }
 
 
@@ -238,7 +253,102 @@ body {
 }
 
 .page-title {
-  font-size: 48px;
+  font-size: 36px;
   font-family: LGC_Bold;
   text-align: center;
+}
+
+
+
+/* ACCOUNT */
+.account-container {
+  padding-top: 96px;
+  padding-bottom: 96px;
+}
+
+.account-title {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.account-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+}
+
+.account-button {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 8px;
+
+  text-transform: uppercase;
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+}
+
+.account-btnclient {
+  width: 50%;
+  background-color: #FE4A49;
+  transition: 0.3s;
+}
+
+.account-btnclient:hover {
+  background-color: #c43838;
+  transition: 0.3s;
+}
+
+.account-btnentreprise {
+  width: 50%;
+  background-color: #009FB7;
+  transition: 0.3s;
+}
+
+.account-btnentreprise:hover {
+  background-color: #007385;
+  transition: 0.3s;
+}
+
+.account-form {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-input {
+  width: 100%;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  
+  border: none;
+  border-bottom: 1px solid #0B0500;
+  background: none;
+  transition: 0.2s;
+}
+
+.account-input:focus {
+  outline: none !important;
+  border: none;
+  border-bottom: 1px solid #FE4A49;
+  background: none;
+  transition: 0.2s;
+}
+
+.account-btnform {
+  width: 100%;
+  background-color: #FE4A49;
+  transition: 0.3s;
+}
+
+.account-btnform:hover {
+  background-color: #c43838;
+  transition: 0.3s;
 }
