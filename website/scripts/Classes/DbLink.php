@@ -24,6 +24,13 @@ class DbLink{
      *
      */
 
+    /**
+     * @param array $columns : String[] : Columns to be selected
+     * @param string $table : Table to select from
+     * @param array $simpleConditions : Formatted conditions
+     * @param array $args : Arguments
+     * @return mixed : -1 if sql exception, false if empty, array of selected if found
+     */
     public function simpleSelectWhere(array $columns, string $table, array $simpleConditions, array $args){
         foreach ($columns as $key=>$column) {
             $columns[$key] = $this->sanitizeSqlQueryWord($column);
@@ -124,8 +131,12 @@ class DbLink{
         }
         $query .= " FROM ".$table." WHERE".$fullCondition;
 
-        $req = $this->pdo->prepare($query);
-        $req->execute($args);
+        try {
+            $req = $this->pdo->prepare($query);
+            $req->execute($args);
+        }catch (mysqli_sql_exception $err){
+            return -1;
+        }
 
         return $req->fetch();
 
