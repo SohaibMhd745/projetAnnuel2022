@@ -19,7 +19,6 @@ class User{
 		throw new NotFoundException();
 	}
 
-
 }
 
 ?>
