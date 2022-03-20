@@ -35,7 +35,7 @@ class DbLink{
             $req->execute($args);
             return $req->fetch();
         }catch (mysqli_sql_exception $err){
-            return -1;
+            return MYSQL_EXCEPTION;
         }
     }
 
