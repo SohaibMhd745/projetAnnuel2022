@@ -25,121 +25,18 @@ class DbLink{
      */
 
     /**
-     * @param array $columns : String[] : Columns to be selected
-     * @param string $table : Table to select from
-     * @param array $simpleConditions : Formatted conditions
-     * @param array $args : Arguments
-     * @return mixed : -1 if sql exception, false if empty, array of selected if found
+     * @param string $query : Query to execute
+     * @param array $args : Arguments for the query
+     * @return mixed : -1 if sql exception, false if empty, array of selected if select, true if insert/update
      */
-    public function simpleSelectWhere(array $columns, string $table, array $simpleConditions, array $args){
-        foreach ($columns as $key=>$column) {
-            $columns[$key] = $this->sanitizeSqlQueryWord($column);
-        }
-        $table = $this->sanitizeSqlQueryWord($table);
-
-        $fullCondition = "";
-        $nbArg = 0;
-
-        foreach ($simpleConditions as $key=>$condition){
-            switch (gettype($condition)){
-                case "string":
-                    switch ($condition){
-                        case "||":
-                        case "or":
-                        case "OR":
-                            $fullCondition .= " OR";
-                            break;
-
-                        case "&&":
-                        case "and":
-                        case "AND":
-                            $fullCondition .= " AND";
-                            break;
-
-                        case "BETWEEN":
-                        case "between":
-                            $fullCondition .= " BETWEEN";
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-                case "array":
-                    if (count($condition)==3){
-                        $fullCondition .= "(";
-
-                        $fullCondition .= $this->sanitizeSqlQueryWord($condition[0]);
-
-                        switch ($condition[1]){
-                            case "=":
-                            case "==":
-                            case "equal":
-                            case "eq":
-                                $fullCondition .= " =";
-                                break;
-
-                            case ">":
-                            case "g":
-                                $fullCondition .= " >";
-                                break;
-
-                            case "<":
-                            case "l":
-                                $fullCondition .= " <";
-                                break;
-
-                            case ">=":
-                            case "ge":
-                                $fullCondition .= " >=";
-                                break;
-
-                            case "<=":
-                            case "le":
-                                $fullCondition .= " <=";
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                        if (gettype($condition[2]) == "integer") $fullCondition .= $condition[2];
-                        else {
-                            if ($condition[2] === "?") {
-                                $nbArg++;
-                                $fullCondition .= " :".$nbArg;
-                            }else{
-                                $arg2 = $this->sanitizeStringQuotes($condition[2]);
-                                $fullCondition .= " '".$arg2."'";
-                            }
-                        }
-
-                        $fullCondition .= ")";
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        $query = "SELECT ";
-        for ($i = 0; $i < count($columns); $i++){
-            if ($i == (count($columns)-1)) $query .= " ".$columns[$i];
-            else $query .= " ".$columns[$i].",";
-        }
-        $query .= " FROM ".$table." WHERE".$fullCondition;
-
+    public function query(string $query, array $args){
         try {
             $req = $this->pdo->prepare($query);
             $req->execute($args);
+            return $req->fetch();
         }catch (mysqli_sql_exception $err){
             return -1;
         }
-
-        return $req->fetch();
-
     }
 
     /**
