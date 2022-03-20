@@ -37,8 +37,11 @@
                     
                     <div class="col account-col">
                         <p class="account-title">Ouvrir un compte</p>
-                        <button class="account-button account-btnclient" onclick="location.href='signup.php?type=1'">Compte client</button>
-                        <button class="account-button account-btnentreprise" onclick="location.href='signup.php?type=2'">Compte entreprise</button>
+                        <form class="account-form" action="verif_signin.php" method="post">
+                            <input class="account-input" name="id" type="text" placeholder="Nom d'utilisateur / e-mail">
+                            <input class="account-input" name="password" type="password" placeholder="Mot de passe">
+                            <input class="account-button account-btnform" type="submit" value="Valider">
+                        </form>
                     </div>
                     
                     <div class="col-1 account-col">
