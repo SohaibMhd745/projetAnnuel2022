@@ -321,6 +321,11 @@ main {
   justify-content: center;
 }
 
+.account-label {
+  width: 100%;
+  margin-top: 16px;
+}
+
 .account-input {
   width: 100%;
   padding-top: 6px;

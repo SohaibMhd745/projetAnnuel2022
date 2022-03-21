@@ -10,6 +10,8 @@ class User{
 	private $phone;
 	private $id_partner;
 
+    public __construct(){}
+
     /**
      * Construct user class from email and password
      * @param string $email : input email to attempt connection
@@ -17,7 +19,7 @@ class User{
      * @param DbLink $link : database link object
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
-    function constructFromEmailAndPassword(string $email, string $password, DbLink $link){
+    public static function constructFromEmailAndPassword(string $email, string $password, DbLink $link){
         if (!$this->checkMailValidity($email)) throw new Exception("Invalid Email Provided",INVALID_PARAMETER);
         if (!$this->checkPassValidity($password)) throw new Exception("Invalid Password Provided",INVALID_PARAMETER);
 
@@ -45,7 +47,7 @@ class User{
      * @param DbLink $link : database link object
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
-    function constructFromId(int $id, DbLink $link){
+    public static function constructFromId(int $id, DbLink $link){
         $q = "SELECT email, firstname, lastname, inscription, birth, phone, id_partner FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 

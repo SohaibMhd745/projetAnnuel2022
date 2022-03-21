@@ -11,10 +11,10 @@ class DbLink{
         $pass = $this->sanitizeStringQuotes($pass);
 
         try{
-            $pdo = new PDO('mysql:host='.$host.';charset='.$charset.';dbname='.$dbname,
+            $this->pdo = new PDO('mysql:host='.$host.';charset='.$charset.';dbname='.$dbname,
                 $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         }catch(Exception $e){
-            die('Fatal PDO creation error : ' . $e->getMessage());
+            throw new Exception('Fatal PDO creation error : ' . $e->getMessage(), MYSQL_EXCEPTION);
         }
     }
 
