@@ -342,66 +342,6 @@ int parseYaml(char* yaml, loggedData* outputData){
             outputError("Unexpected error while reading report file");
             return YAML_FAILURE;
         }
-        ///Debug Block
-        /*
-        printf("Pre: ");
-        switch (status) {
-            case YAML_START:
-                printf("Parsing Start");
-                break;
-            case YAML_STREAM:
-                printf("Stream Start");
-                break;
-
-            case YAML_DOCUMENT:
-                printf("Document Start");
-                break;
-
-            case YAML_MAP:
-                printf("Mapping");
-                break;
-
-            case YAML_LIST:
-                printf("List Start");
-                break;
-
-            case YAML_LIST_OBJECT:
-                printf("Object Start");
-                break;
-
-            case YAML_LIST_VALUES:
-                printf("Mapping Object Values");
-                break;
-
-            case YAML_VALUE_TIMESTAMP:
-                printf("Reading Timestamp");
-                break;
-
-            case YAML_VALUE_COUNT:
-                printf("Reading Count");
-                break;
-
-            case YAML_LIST_VALUE_ARTICLE:
-                printf("Reading Object Code");
-                break;
-
-            case YAML_LIST_VALUE_CHANGE:
-                printf("Reading Object Change");
-                break;
-
-            case YAML_LIST_VALUE_TIMESTAMP:
-                printf("Reading Object Timestamp");
-                break;
-
-            case YAML_LIST_VALUE_DATETIME:
-                printf("Reading Object DateTime");
-                break;
-
-            default:
-                break;
-        }
-         */
-        ///Debug Block
 
         ///Switch according to last event status and event type
         switch (status) {
@@ -741,67 +681,6 @@ int parseYaml(char* yaml, loggedData* outputData){
 
         yaml_event_delete(&event);
 
-        ///Debug Block
-        /*
-        printf(" \nPost: ");
-        switch (status) {
-            case YAML_START:
-                printf("Parsing Start");
-                break;
-            case YAML_STREAM:
-                printf("Stream Start");
-                break;
-
-            case YAML_DOCUMENT:
-                printf("Document Start");
-                break;
-
-            case YAML_MAP:
-                printf("Mapping");
-                break;
-
-            case YAML_LIST:
-                printf("List Start");
-                break;
-
-            case YAML_LIST_OBJECT:
-                printf("Object Start");
-                break;
-
-            case YAML_LIST_VALUES:
-                printf("Mapping Object Values");
-                break;
-
-            case YAML_VALUE_TIMESTAMP:
-                printf("Reading Timestamp");
-                break;
-
-            case YAML_VALUE_COUNT:
-                printf("Reading Count");
-                break;
-
-            case YAML_LIST_VALUE_ARTICLE:
-                printf("Reading Object Code");
-                break;
-
-            case YAML_LIST_VALUE_CHANGE:
-                printf("Reading Object Change");
-                break;
-
-            case YAML_LIST_VALUE_TIMESTAMP:
-                printf("Reading Object Timestamp");
-                break;
-
-            case YAML_LIST_VALUE_DATETIME:
-                printf("Reading Object DateTime");
-                break;
-
-            default:
-                break;
-        }
-        printf("\n\n");
-         */
-        ///Debug Block
 
     } while (status != YAML_EOF);
 
