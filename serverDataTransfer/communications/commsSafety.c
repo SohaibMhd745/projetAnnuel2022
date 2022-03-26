@@ -5,6 +5,7 @@
 
 #include <yaml.h>
 #include <mysql.h>
+#include <curl/curl.h>
 
 #include "../macros.h"
 #include "../output/output.h"
@@ -177,4 +178,24 @@ int checkData(loggedData * data, int serverId){
     }
 
     return status;
+}
+
+int sendReport(char* yaml, char* target){
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+
+        CURL *curl = curl_easy_init();  //handle
+        if(!curl) return 1;
+        CURLcode res;
+
+        curl_easy_setopt(curl, CURLOPT_URL, target);
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "data=Ici on met la donnée");
+        res = curl_easy_perform(curl);
+        printf("\nCode HTTP : %d\n", res);
+
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+
+        return 0;
+
 }

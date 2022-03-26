@@ -22,24 +22,21 @@
  *
  * TODO: Making the function return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
  */
-int parseArgs(int argc, char **argv){
+int parseArgs(int argc, char **argv, char* target){
     FILE* useTest;
 
-    if (argc > 3){//There is technically always 1 argument: the program's name
-        printf("Error: Too many arguments.\nUse -h for help");
-        exit(-1);
-    }
+    //Program name is always the first argument
     if (argc < 3 && argv[1][1]!='h'){
-        printf("Error: Not enough arguments.\nUse -h for help");
+        printf("Error: missing argument.\nUse -h for help");
         exit(-1);
     }
 
     if (argv[1][0] == '-'){//If the argument starts with - (parameter)
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
-                printf("h\t\t\t\t:\tHelp"
-                "\ns [Info]\t\t:\tStart the program in sender mode"
-                "\nr [Central Excel Sheet]\t\t:\tStart the program in receiver mode"
+                printf("h\t\t\t\t\t\t\t:\tHelp"
+                "\ns [DB Credentials Filepath] [target IP address]\t\t:\tStart the program in sender mode"
+                "\nr [Central Excel Sheet]\t\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
             case 's'://Send
@@ -50,6 +47,13 @@ int parseArgs(int argc, char **argv){
                     exit(-1);
                 }
                 fclose(useTest);
+
+                //prg_name -s[DB Credentials Filepath] [target IP address]
+                if (argc < 4){
+                    printf("Error: Missing argument.\nUse -h for help");
+                    exit(-1);
+                }
+                strcpy(target, argv[4]);
                 return SEND_MODE;
             case 'r'://Receive
                 useTest = fopen(argv[2],"rb");
@@ -74,7 +78,9 @@ int parseArgs(int argc, char **argv){
 int main(int argc, char **argv) {
     loggedData data;
     data.timestamp = generateTimestamp();
-    int mode = parseArgs(argc, argv);
+
+    char target[255];
+    int mode = parseArgs(argc, argv, target);
 
     switch (mode) {
         case SEND_MODE:
@@ -102,16 +108,11 @@ int main(int argc, char **argv) {
             }
             fprintf(stdout, "\n\n%s", report);
 
-            ///Debug Block
-            /*
-            loggedData rdata;
-            parseYaml(report, &rdata);
-            printList(rdata.firstLog);
-            printf("%d", checkData(&rdata, 1));
-            printList(rdata.firstLog);
-            freeList(&rdata);
-            */
-            ///Debug Block
+            int result = sendReport(report, target);
+
+            switch (result) {
+                
+            }
 
             freeList(&data);
             break;
