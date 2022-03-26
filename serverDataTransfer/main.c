@@ -7,6 +7,10 @@
 #include <xlsxwriter.h>
 #include <mysql.h>
 
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 #include "macros.h"
 
 #include "dataParsing/parseData.h"
@@ -26,7 +30,7 @@ int parseArgs(int argc, char **argv){
     FILE* useTest;
 
     //Program name is always the first argument
-    if (argc < 3 && argv[1][1]!='h'){
+    if (argc < 4 && argv[1][1]!='h'){
         printf("Error: missing argument.\nUse -h for help");
         exit(-1);
     }
@@ -36,7 +40,7 @@ int parseArgs(int argc, char **argv){
             case 'h'://help
                 printf("h\t\t\t\t\t\t\t:\tHelp"
                 "\ns [DB Credentials Filepath] [target IP address]\t\t:\tStart the program in sender mode"
-                "\nr [Central Excel Sheet]\t\t\t\t\t:\tStart the program in receiver mode"
+                "\nr [Central Excel Sheet] [port]\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
             case 's'://Send
@@ -47,12 +51,6 @@ int parseArgs(int argc, char **argv){
                     exit(-1);
                 }
                 fclose(useTest);
-
-                //prg_name -s [DB Credentials Filepath] [target IP address]
-                if (argc < 4){
-                    printf("Error: Missing argument.\nUse -h for help");
-                    exit(-1);
-                }
                 return SEND_MODE;
             case 'r'://Receive
                 useTest = fopen(argv[2],"rb");
@@ -117,6 +115,58 @@ int main(int argc, char **argv) {
 
         case RECEIVE_MODE:
             printf("Initializing sockets...");
+            int sockFile = socket(AF_INET, SOCK_STREAM, 0);
+
+            if(sockFile == -1) {
+                outputError("Could not open socket");
+                printf("\nFatal Error: Could not open socket.");
+                exit(-1);
+            }
+
+            int opt = 1;
+            if (setsockopt(sockFile, SOCK_STREAM, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof opt)!=0){
+                char errBuff[255];
+                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
+                strcat(errBuff, strerror(errno));
+
+                printf("\n%s\n", errBuff);
+                outputError(errBuff);
+
+                exit(-1);
+            }
+
+            struct sockaddr_in address;
+
+            address.sin_family = AF_INET;
+
+            address.sin_addr.s_addr = INADDR_ANY;
+
+            address.sin_port = htons(atoi(argv[4]));
+
+            if (bind(sockFile, (struct sockaddr *) &address, sizeof(address)) != 0) {
+                char errBuff[255];
+                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
+                strcat(errBuff, strerror(errno));
+
+                printf("\n%s\n", errBuff);
+                outputError(errBuff);
+                exit(-1);
+            }
+
+            listen(sockFile, 0);
+
+            int s = 0;
+            int size = sizeof(address);
+            printf("3\n");
+            s = accept(sockFile, (struct sockaddr *) &address, &size);
+            printf("4\n");
+            if (s != INVALID_SOCKET) {
+                printf("5\n");
+                recv(s , reply , 2000 , 0);
+                send(s, "Wesh", 5, 0);
+
+            }
+
             break;
 
         default:
