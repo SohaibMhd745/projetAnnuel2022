@@ -3,4 +3,6 @@
 
 void outputError(char* error);
 
+void logCommunication(loggedData* data, int mode);
+
 #endif //SERVERDATATRANSFER_OUTPUT_H

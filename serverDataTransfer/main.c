@@ -22,7 +22,7 @@
  *
  * TODO: Making the function return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
  */
-int parseArgs(int argc, char **argv, char* target){
+int parseArgs(int argc, char **argv){
     FILE* useTest;
 
     //Program name is always the first argument
@@ -48,12 +48,11 @@ int parseArgs(int argc, char **argv, char* target){
                 }
                 fclose(useTest);
 
-                //prg_name -s[DB Credentials Filepath] [target IP address]
+                //prg_name -s [DB Credentials Filepath] [target IP address]
                 if (argc < 4){
                     printf("Error: Missing argument.\nUse -h for help");
                     exit(-1);
                 }
-                strcpy(target, argv[4]);
                 return SEND_MODE;
             case 'r'://Receive
                 useTest = fopen(argv[2],"rb");
@@ -79,8 +78,7 @@ int main(int argc, char **argv) {
     loggedData data;
     data.timestamp = generateTimestamp();
 
-    char target[255];
-    int mode = parseArgs(argc, argv, target);
+    int mode = parseArgs(argc, argv);
 
     switch (mode) {
         case SEND_MODE:
@@ -106,13 +104,13 @@ int main(int argc, char **argv) {
                 default:
                     break;
             }
-            fprintf(stdout, "\n\n%s", report);
+            fprintf(stdout, "\n\n%s\n", report);
 
-            int result = sendReport(report, target);
+            fprintf(stdout, "Sending to: %s\n", argv[3]);
 
-            switch (result) {
-                
-            }
+            data.result = sendReport(report, argv[3]);
+
+            logCommunication(&data, SEND_MODE);
 
             freeList(&data);
             break;

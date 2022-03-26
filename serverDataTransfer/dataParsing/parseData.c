@@ -6,10 +6,11 @@
 #include <yaml.h>
 #include <mysql.h>
 
+
+#include "parseData.h"
 #include "../macros.h"
 #include "../output/output.h"
 
-#include "parseData.h"
 
 #include "../communications/commsSafety.h"
 
@@ -777,7 +778,10 @@ int generateList(database* db, loggedData* data){
     ///select transactions history since the previous report
     sprintf(db->query,
             "SELECT transactions.id, UNIX_TIMESTAMP(transactions.stamp), transactions.stamp,transactions.quantity, stock.code"
-            " FROM transactions INNER JOIN stock on transactions.item = stock.id WHERE transactions.stamp > %d", data->previousStamp);
+            " FROM transactions INNER JOIN stock on transactions.item = stock.id"
+            " WHERE UNIX_TIMESTAMP(transactions.stamp) > %d ",
+            data->previousStamp);
+
     if (mysql_query(db->connection, db->query)) {
         fprintf(stderr, "%s\n", mysql_error(db->connection));
         exit(1);
@@ -937,9 +941,9 @@ int parseCredentials(char* path, database* db){
 /**
  * @return returns last known timestamp from communications history log
  */
-int getLastStamp(){
+unsigned int getLastStamp(){
     FILE* history;
-    int stamp = NO_HISTORY;
+    unsigned int stamp = NO_HISTORY;
 
     history = fopen("history", "rb");
     if (history == NULL){

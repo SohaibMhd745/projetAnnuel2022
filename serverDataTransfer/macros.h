@@ -11,6 +11,9 @@
 #define DATA_CRITICAL_ERROR -7
 #define DATA_ERROR -8
 
+#define CURL_FAILURE -100
+#define CURL_SUCCESS 100
+
 #define YAML_EOF 0
 
 #define YAML_START 1

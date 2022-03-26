@@ -7,10 +7,11 @@
 #include <mysql.h>
 #include <curl/curl.h>
 
+#include "../dataParsing/parseData.h"
 #include "../macros.h"
 #include "../output/output.h"
 #include "commsSafety.h"
-#include "../dataParsing/parseData.h"
+
 
 /**
  * @usage takes a filepath and returns the size of that file
@@ -180,22 +181,46 @@ int checkData(loggedData * data, int serverId){
     return status;
 }
 
+/**
+ * @usage send report to target
+ * @param yaml -- formatted yaml string
+ * @param target -- target URL
+ * @return CURL_SUCCESS | CURL_FAILURE
+ */
 int sendReport(char* yaml, char* target){
-        curl_global_init(CURL_GLOBAL_DEFAULT);
+    CURL* curlHandler;
+    CURLcode returnCode;
+    int attempt = 0;
+    char post[MAX_BUFFER+20];
 
-        CURL *curl = curl_easy_init();  //handle
-        if(!curl) return 1;
-        CURLcode res;
+    strcpy(post, "report=");
+    strcat(post, yaml);
 
-        curl_easy_setopt(curl, CURLOPT_URL, target);
-        curl_easy_setopt(curl, CURLOPT_POST, 1L);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "data=Ici on met la donnée");
-        res = curl_easy_perform(curl);
-        printf("\nCode HTTP : %d\n", res);
+    curl_global_init(CURL_GLOBAL_ALL);
+    curlHandler = curl_easy_init();
 
-        curl_easy_cleanup(curl);
-        curl_global_cleanup();
+    if(curlHandler) {
+        curl_easy_setopt(curlHandler, CURLOPT_URL, target);
+        curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, post);
 
-        return 0;
+        do{
+            returnCode = curl_easy_perform(curlHandler);
+            if(returnCode != CURLE_OK){
+                char errStr[500];
+                strcpy(errStr, "Failed to start CURL POST request: ");
+                strcat(errStr, curl_easy_strerror(returnCode));
 
+                fprintf(stderr, "%s\n" ,errStr);
+                outputError(errStr);
+
+                attempt++;
+            }
+        }while(returnCode!=CURLE_OK && attempt != 3);
+
+        curl_easy_cleanup(curlHandler);
+    }
+    curl_global_cleanup();
+
+    if (attempt == 3) return CURL_FAILURE;
+    else return CURL_SUCCESS;
 }
