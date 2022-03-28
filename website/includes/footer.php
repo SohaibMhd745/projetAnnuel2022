@@ -1,5 +1,3 @@
-<?php session_start(); ?>
-
 <div class="container-fluid footer-fluid">
     <div class="container">
         <div class="row footer-row">

@@ -26,7 +26,7 @@ class User{
         if (!$this->checkPassValidity($password)) throw new Exception("Invalid Password Provided",INVALID_PARAMETER);
 
         $q = "SELECT id, firstname, lastname, inscription, birth, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
-        $res = $link->query($q, [$email, $password]);
+        $res = $link->query($q, [$email, hash('sha512', $password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
@@ -83,7 +83,7 @@ class User{
         if (empty($email)) return false;
         if (strlen($email) == 0) return false;
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-        if(strlen($email)>250) return false;
+        if(strlen($email)>50 || strlen($email)<5) return false;
 
         return true;
     }
@@ -96,7 +96,7 @@ class User{
     private function checkPassValidity(string $pass) : bool{
         if (empty($pass)) return false;
         if (strlen($pass) == 0) return false;
-        if(strlen($pass)>250) return false;
+        if(strlen($pass)>30 || strlen($pass)<8) return false;
 
         return true;
     }

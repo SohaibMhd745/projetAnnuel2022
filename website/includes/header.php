@@ -1,6 +1,4 @@
 <?php
-    session_start();
-
     $account_pages = array(
         "/account.php",
         "/signin.php",

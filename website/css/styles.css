@@ -120,6 +120,10 @@ main {
   height: 100%;
 }
 
+.global-error {
+  color: #FE4A49;
+}
+
 
 
 /* HEADER */
@@ -262,8 +266,8 @@ main {
 
 /* ACCOUNT */
 .account-container {
-  padding-top: 96px;
-  padding-bottom: 96px;
+  padding-top: 36px;
+  padding-bottom: 36px;
 }
 
 .account-title {

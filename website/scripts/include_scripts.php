@@ -1,7 +1,7 @@
 <?php
 
-    include("scripts/includes/const.php");
-    include("scripts/includes/classes/DbLink.php");
-    include("scripts/includes/classes/User.php");
+    include("includes/const.php");
+    include("includes/classes/DbLink.php");
+    include("includes/classes/User.php");
 
 ?>
