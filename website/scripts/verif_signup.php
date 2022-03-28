@@ -121,7 +121,7 @@
         'birthdate' => $birthdate,
         'phone' => $phone,
         'email' => $email,
-        'password' => hash('sha512', $password),
+        'password' => preparePassword($password),
         'inscription' => $inscription
     ]
     ) === true){
