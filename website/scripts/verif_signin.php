@@ -3,7 +3,7 @@
     include("include_scripts.php");
 
     try{
-        $dblink = new DbLink("localhost", "utf8", "lc_website", "akmadmin", "akmgestion123");
+        $dblink = new DbLink(HOST, CHARSET, DB, USER, PASS);
     }catch(Exception $e){
         header("Location: /account.php?errorMsg=database&errorType=2");
         exit();

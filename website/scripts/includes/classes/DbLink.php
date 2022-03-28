@@ -40,17 +40,6 @@ class DbLink{
     }
 
     /**
-     * Connect user to session and redirect to homepage
-     * @param string $email : email of user
-     */
-    public function connectUser(string $email){
-        session_start();
-        $_SESSION['email'] = $email;
-        header('Location: /');
-        exit();
-    }
-
-    /**
      *
      * Utility functions
      *
