@@ -25,8 +25,8 @@ class User{
         if (!$this->checkMailValidity($email)) throw new Exception("Invalid Email Provided",INVALID_PARAMETER);
         if (!$this->checkPassValidity($password)) throw new Exception("Invalid Password Provided",INVALID_PARAMETER);
 
-        $q = "SELECT id, firstname, lastname, inscription, birth, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
-        $res = $link->query($q, [$email, hash('sha512', $password)]);
+        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
+        $res = $link->query($q, [$email,  preparePassword($password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
@@ -37,7 +37,7 @@ class User{
             $this->firstName = $res["firstname"];
             $this->lastName = $res["lastname"];
             $this->inscription = $res["inscription"];
-            $this->birth = $res["birth"];
+            $this->birth = $res["birthdate"];
             $this->phone = $res["phone"];
             $this->id_partner = $res["id_partner"];
         }
@@ -50,7 +50,7 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromId(int $id, DbLink $link){
-        $q = "SELECT email, firstname, lastname, inscription, birth, phone, id_partner FROM akm_users WHERE id = ?";
+        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 
         if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
@@ -62,7 +62,7 @@ class User{
             $this->firstName = $res["firstname"];
             $this->lastName = $res["lastname"];
             $this->inscription = $res["inscription"];
-            $this->birth = $res["birth"];
+            $this->birth = $res["birthdate"];
             $this->phone = $res["phone"];
             $this->id_partner = $res["id_partner"];
         }
@@ -96,7 +96,6 @@ class User{
     private function checkPassValidity(string $pass) : bool{
         if (empty($pass)) return false;
         if (strlen($pass) == 0) return false;
-        if(strlen($pass)>30 || strlen($pass)<8) return false;
 
         return true;
     }

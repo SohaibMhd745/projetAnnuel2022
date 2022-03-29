@@ -27,13 +27,27 @@ class DbLink{
     /**
      * @param string $query : Query to execute
      * @param array $args : Arguments for the query
-     * @return mixed : -1 if sql exception, false if empty, array of selected if select, true if insert/update
+     * @return mixed : -1 if sql exception, false if empty, array of selected if select
      */
     public function query(string $query, array $args){
         try {
             $req = $this->pdo->prepare($query);
             $req->execute($args);
             return $req->fetch();
+        }catch (mysqli_sql_exception $err){
+            return MYSQL_EXCEPTION;
+        }
+    }
+
+    /**
+     * @param string $query : Query to execute
+     * @param array $args : Arguments for the query
+     * @return mixed : -1 if sql exception, false if could not insert, true if could insert/update
+     */
+    public function insert(string $query, array $args){
+        try {
+            $req = $this->pdo->prepare($query);
+            return $req->execute($args);
         }catch (mysqli_sql_exception $err){
             return MYSQL_EXCEPTION;
         }
