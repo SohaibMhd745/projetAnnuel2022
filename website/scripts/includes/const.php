@@ -1,5 +1,7 @@
 <?php
 
+define('NO_EXCEPTION','1');
+
 //General Exceptions
 define('MYSQL_EXCEPTION', '-1');
 define('INVALID_PARAMETER', '-2');

@@ -7,6 +7,7 @@ CREATE TABLE akm_partners(
 	revenue INT NOT NULL,
 	website VARCHAR(30),
 	id_sponsor INT NOT NULL,
+	id_user INT,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)
 );
@@ -24,6 +25,8 @@ CREATE TABLE akm_users(
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)
 );
+
+ALTER TABLE akm_partners ADD FOREIGN KEY (id_user) REFERENCES akm_users(id);
 
 CREATE TABLE akm_prestation(
 	id INT AUTO_INCREMENT,

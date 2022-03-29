@@ -25,6 +25,7 @@ class DbLink{
      */
 
     /**
+     * Select Query
      * @param string $query : Query to execute
      * @param array $args : Arguments for the query
      * @return mixed : -1 if sql exception, false if empty, array of selected if select
@@ -40,9 +41,10 @@ class DbLink{
     }
 
     /**
+     * Update/Insert query
      * @param string $query : Query to execute
      * @param array $args : Arguments for the query
-     * @return mixed : -1 if sql exception, false if could not insert, true if could insert/update
+     * @return mixed : -1 if sql exception, false if could not insert/update, true if could insert/update
      */
     public function insert(string $query, array $args){
         try {
