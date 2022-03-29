@@ -8,9 +8,8 @@
         header("Location: /account.php?errorMsg=database&errorType=2");
         exit();
     }
-
+    $user = new User();
     try{
-        $user = new User();
         $user->constructFromEmailAndPassword($_POST['email'], $_POST['password'], $dblink);
     }catch (Exception $e){
         switch($e->getCode()){
