@@ -1,14 +1,14 @@
 <?php
 
 class User{
-    private $id;
-	private $email;
-	private $firstName;
-	private $lastName;
-	private $inscription;
-	private $birth;
-	private $phone;
-	private $id_partner;
+    protected $id;
+    protected $email;
+    protected $firstName;
+    protected $lastName;
+    protected $inscription;
+    protected $birth;
+    protected $phone;
+    protected $id_partner;
 
     public function __construct()
     {
@@ -33,13 +33,7 @@ class User{
         else{
             $this->email = $email;
             $this->id = $res["id"];
-
-            $this->firstName = $res["firstname"];
-            $this->lastName = $res["lastname"];
-            $this->inscription = $res["inscription"];
-            $this->birth = $res["birthdate"];
-            $this->phone = $res["phone"];
-            $this->id_partner = $res["id_partner"];
+            $this->assignValues($res);
         }
 	}
 
@@ -58,14 +52,25 @@ class User{
         else{
             $this->id = $id;
             $this->email = $res["email"];
-
-            $this->firstName = $res["firstname"];
-            $this->lastName = $res["lastname"];
-            $this->inscription = $res["inscription"];
-            $this->birth = $res["birthdate"];
-            $this->phone = $res["phone"];
-            $this->id_partner = $res["id_partner"];
+            $this->assignValues($res);
         }
+    }
+
+    /**
+     * Simplifies both construct from
+     * @param $res : result from SQL query
+     * @return void
+     */
+    protected function assignValues($res){
+        $this->firstName = $res["firstname"];
+        $this->lastName = $res["lastname"];
+        $this->inscription = $res["inscription"];
+        $this->birth = $res["birthdate"];
+        $this->phone = $res["phone"];
+
+        ///Causes crashes if not set to -1 and we check later on, we have to check now or it won't work later
+        if ($res["id_partner"] === null) $this->id_partner = -1;
+        else $this->id_partner = $res["id_partner"];
     }
 
     /**
@@ -79,7 +84,7 @@ class User{
      * @param string $email : email string input
      * @return bool : validity
      */
-    private function checkMailValidity(string $email) : bool{
+    protected function checkMailValidity(string $email) : bool{
         if (empty($email)) return false;
         if (strlen($email) == 0) return false;
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
@@ -93,7 +98,7 @@ class User{
      * @param string $pass : password string input
      * @return bool : validity
      */
-    private function checkPassValidity(string $pass) : bool{
+    protected function checkPassValidity(string $pass) : bool{
         if (empty($pass)) return false;
         if (strlen($pass) == 0) return false;
 

@@ -13,20 +13,17 @@
         $user->constructFromEmailAndPassword($_POST['email'], $_POST['password'], $dblink);
     }catch (Exception $e){
         switch($e->getCode()){
-            case INVALID_PARAMETER : header("Location: /account.php?errorMsg=invalid_param&errorType=2"); exit();
-                break;
-            case INCORRECT_USER_CREDENTIALS : header("Location: /account.php?errorMsg=incorrect_cred&errorType=2"); exit();
-                break;
-            case MYSQL_EXCEPTION : header("Location: /account.php?errorMsg=database&errorType=2"); exit();
-                break;
-            default : header("Location: /account.php?errorMsg=fatal&errorType=2"); exit();
-                break;
+            case INVALID_PARAMETER : redirectFormError("invalid_parameter", "account.php", "Un des paramètres entrés de correspond pas aux contraintes", 2); break;
+            case INCORRECT_USER_CREDENTIALS : redirectFormError("incorrect_credentials", "account.php", "Vérifiez votre mot de passe", 2); break;
+            case MYSQL_EXCEPTION : redirectFormError("database", "account.php", "Impossible d'accéder à la base de donnée, veuillez réessayer plus tard", 2); break;
+            default : redirectFormError("fatal", "account.php", "Veuillez réessayer plus tard", 2); break;
         }
     }
 
-    session_start();
-    $_SESSION['user'] = $user;
-    header("Location: / ");
-    exit();
+    try {
+        connectUser($user, $dblink);
+    } catch (Exception $e) {
+        redirectFormError("fatal", "account.php", "Veuillez réessayer plus tard", 2);
+    }
 
 ?>

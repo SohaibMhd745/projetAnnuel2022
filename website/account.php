@@ -26,7 +26,7 @@
             ?>
         </header>
 
-        <?php if(!isset($_SESSION['email'])) : ?>
+        <?php if(!isset($_SESSION['user'])) : ?>
             <main>
                 <div class="global-separator"></div>
 
@@ -48,21 +48,20 @@
                                 <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
                                 <input class="account-button account-btnform" type="submit" value="Valider">
                                 <?php
-                                    if(isset($_GET['errorMsg']) && !empty($_GET['errorMsg']) && $_GET['errorType'] == 1) {
-                                        if($_GET['errorMsg'] == 'database') {
-                                            echo '<p class="global-error">Échec de la connexion au service.</p>';
-                                        } elseif(isset($_GET['inputName']) && !empty($_GET['inputName'])) {
-                                            switch($_GET['inputName']) {
+                                    if(isset($_GET['errorMsg']) && !empty($_GET['errorMsg'])
+                                        && isset($_GET['errorType']) && !empty($_GET['errorType'])
+                                        && $_GET['errorSlot'] == 1) {
+                                            switch($_GET['errorType']) {
                                                 case 'lastname' : $inputName = 'Nom'; break;
                                                 case 'firstname' : $inputName = 'Prénom'; break;
                                                 case 'birthdate' : $inputName = 'Date de naissance'; break;
                                                 case 'phone' : $inputName = 'Téléphone'; break;
                                                 case 'email' : $inputName = 'E-mail'; break;
                                                 case 'password' : $inputName = 'Mot de passe'; break;
+                                                case 'database' : $inputName = 'Base de donnée'; break;
                                                 default : $inputName = 'Indéfini'; break;
                                             }
                                             echo '<p class="global-error">' . $inputName . ' : ' . $_GET['errorMsg'] . '.</p>';
-                                        }
                                     }
                                 ?>
                             </form>
@@ -80,21 +79,18 @@
                                 <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
                                 <input class="account-button account-btnform" type="submit" value="Valider">
                                 <?php
-                                    if(isset($_GET['errorMsg']) && !empty($_GET['errorMsg']) && $_GET['errorType'] == 2) {
-                                        switch($_GET['errorMsg']) {
-                                            case 'database' : $errorString = "Échec de la connexion au service.";
-                                            break;
-                                            case 'fatal' : $errorString = "Erreur fatale.";
-                                            break;
-                                            case 'invalid_param' : $errorString = "Un paramètre invalide a été fourni.";
-                                            break;
-                                            case 'incorrect_cred' : $errorString = "Identifiants invalides.";
-                                            break;
+                                    if(isset($_GET['errorMsg']) && !empty($_GET['errorMsg'])
+                                        && isset($_GET['errorType']) && !empty($_GET['errorType'])
+                                        && $_GET['errorSlot'] == 2) {
+                                            switch($_GET['inputName']) {
+                                                case 'fatal' : $inputName = 'Erreur Fatale'; break;
+                                                case 'invalid_param' : $inputName = 'Paramètre Invalide'; break;
+                                                case 'incorrect_credentials' : $inputName = 'Connexion refusée'; break;
+                                                case 'database' : $inputName = 'Base de donnée'; break;
+                                                default : $inputName = 'Indéfini'; break;
+                                            }
+                                            echo '<p class="global-error">' . $inputName . ' : ' . $_GET['errorMsg'] . '.</p>';
                                         }
-                                        if(isset($errorString)) {
-                                            echo '<p class="global-error">' . $errorString . '</p>';
-                                        }
-                                    }
                                 ?>
                             </form>
                         </div>

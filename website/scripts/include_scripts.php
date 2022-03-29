@@ -8,6 +8,7 @@
     include("includes/sanitizeStringQuotes.php");
     include("includes/date.php");
     include("includes/formSecurity.php");
-
+    include("includes/classes/Partner.php");
+    include("includes/connectUser.php");
 
 ?>

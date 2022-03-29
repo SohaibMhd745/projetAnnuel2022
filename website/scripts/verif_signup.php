@@ -44,17 +44,17 @@
         try {
             $uAcc->constructFromEmailAndPassword($email, $password, $dblink);
         } catch (Exception $e) {
-            header("Location: /account.php?errorMsg=database&errorType=1");
-            exit();
+            redirectFormError("database", "account.php", "Impossible d'accéder à la base de donnée, veuillez réessayer plus tard", 1);
         }
 
-        session_start();
-        $_SESSION['user'] = $uAcc;
-        header("Location: / ");
-        exit();
+        try {
+            connectUser($uAcc, $dblink);
+        } catch (Exception $e) {
+            redirectFormError("fatal", "account.php", "Veuillez réessayer plus tard", 1);
+        }
 
     } else {
-        header("Location: /account.php?errorMsg=database&errorType=1");
+        redirectFormError("database", "account.php", "Impossible d'accéder à la base de donnée, veuillez réessayer plus tard", 1);
         exit();
     }
 ?>
