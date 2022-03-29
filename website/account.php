@@ -82,7 +82,7 @@
                                     if(isset($_GET['errorMsg']) && !empty($_GET['errorMsg'])
                                         && isset($_GET['errorType']) && !empty($_GET['errorType'])
                                         && $_GET['errorSlot'] == 2) {
-                                            switch($_GET['inputName']) {
+                                            switch($_GET['errorType']) {
                                                 case 'fatal' : $inputName = 'Erreur Fatale'; break;
                                                 case 'invalid_param' : $inputName = 'Paramètre Invalide'; break;
                                                 case 'incorrect_credentials' : $inputName = 'Connexion refusée'; break;
