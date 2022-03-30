@@ -14,6 +14,7 @@ function redirectFormError(string $errorType, string $page, string $errorMsg, $e
 /**
  * Validate form inputs
  * @param string $inputName : name of input to be validated
+ * @param string $page : page of form
  * @param int $minLength : (optional) minimum length of input
  * @param int $maxLength : (optional) maximum length of input
  */
