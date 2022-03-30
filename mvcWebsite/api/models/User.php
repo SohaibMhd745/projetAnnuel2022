@@ -1,7 +1,7 @@
 <?php
 
 class User{
-    protected $id;
+    protected $id = -1;
     protected $email;
     protected $firstName;
     protected $lastName;
@@ -9,6 +9,7 @@ class User{
     protected $birth;
     protected $phone;
     protected $id_partner;
+    protected $token_end;
 
     public function __construct()
     {
@@ -18,14 +19,20 @@ class User{
      * Construct user class from email and password
      * @param string $email : input email to attempt connection
      * @param string $password : input password to attempt connection
-     * @param DbLink $link : database link object
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
-    public function constructFromEmailAndPassword(string $email, string $password, DbLink $link){
+    public function constructFromEmailAndPassword(string $email, string $password){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
         if (!$this->checkMailValidity($email)) throw new Exception("Invalid Email Provided",INVALID_PARAMETER);
         if (!$this->checkPassValidity($password)) throw new Exception("Invalid Password Provided",INVALID_PARAMETER);
 
-        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
+        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email,  preparePassword($password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
@@ -40,17 +47,48 @@ class User{
     /**
      * Construct user class from user id
      * @param int $id : user id
-     * @param DbLink $link : database link object
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
-    public function constructFromId(int $id, DbLink $link){
-        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE id = ?";
+    public function constructFromId(int $id){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 
         if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
         else{
             $this->id = $id;
+            $this->email = $res["email"];
+            $this->assignValues($res);
+        }
+    }
+
+    /**
+     * Construct user class from user id
+     * @param string $token : user connection token
+     * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
+     */
+    public function constructFromToken(string $token){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE token = ?";
+        $res = $link->query($q, [$token]);
+
+        if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else{
+            $this->id = $res["id"];
             $this->email = $res["email"];
             $this->assignValues($res);
         }
@@ -67,10 +105,65 @@ class User{
         $this->inscription = $res["inscription"];
         $this->birth = $res["birthdate"];
         $this->phone = $res["phone"];
+        $this->token_end = $res["token_end"];
 
         ///Causes crashes if not set to -1 and we check later on, we have to check now or it won't work later
         if ($res["id_partner"] === null) $this->id_partner = -1;
         else $this->id_partner = $res["id_partner"];
+    }
+
+    /**
+     *
+     * Update (setter) Functions
+     *
+     */
+
+    /**
+     * Updates user token and token_end
+     * @throws Exception - MYSQL_EXCEPTION if error while trying to access database
+     */
+    public function updateToken(){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $end = date("Y-m-d H:i:s", strtotime(TOKEN_VALIDITY));
+        $new = bin2hex(random_bytes(16));
+
+        if ($this->id != -1){
+            $status = $link->insert("UPDATE akm_users SET token = :newtoken, token_end = :newend WHERE id = :id", [
+                'id' => $this->id,
+                'newtoken' => $new,
+                'newend' => $end
+            ]);
+
+            if ($status !== true) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        }
+    }
+
+    /**
+     * Updates ID partner
+     * @throws :
+     * - NO_EXCEPTION if update happens, COMPANY_NOT_FOUND if the company does not exist (wrong use of the function),
+     * - MYSQL_EXCEPTION if fatal sql error
+     */
+    public function updateIdPartner(){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "UPDATE akm_users SET id_partner = (SELECT id FROM akm_partners WHERE id_user = ?) WHERE id = ?";
+        $success = $link->insert($q, [$this->id, $this->id]);
+        if (!$success){
+            if ($success === false) throw new Exception("Company does not exist", COMPANY_NOT_FOUND);
+            elseif ($success === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        }
     }
 
     /**
@@ -103,28 +196,6 @@ class User{
         if (strlen($pass) == 0) return false;
 
         return true;
-    }
-    /**
-     *
-     * Setter Functions
-     *
-     */
-
-    /**
-     * Updates ID partner
-     * @param DbLink $dbLink : database link object
-     * @return int :
-     * - NO_EXCEPTION if update happens, COMPANY_NOT_FOUND if the company does not exist (wrong use of the function),
-     * - MYSQL_EXCEPTION if fatal sql error
-     */
-    public function updateIdPartner(DbLink $dbLink) : int{
-        $q = "UPDATE akm_users SET id_partner = (SELECT id FROM akm_partners WHERE id_user = ?) WHERE id = ?";
-        $success = $dbLink->insert($q, [$this->id, $this->id]);
-        if (!$success){
-            if ($success === false) return COMPANY_NOT_FOUND;
-            if($success === MYSQL_EXCEPTION) return MYSQL_EXCEPTION;
-        }
-        return NO_EXCEPTION;
     }
 
     /**
@@ -166,7 +237,7 @@ class User{
     }
 
     /**
-     * @return mixed
+     * @return string : first name
      */
     public function getFirstName()
     {
@@ -195,6 +266,14 @@ class User{
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTokenEnd()
+    {
+        return $this->token_end;
     }
 
 }

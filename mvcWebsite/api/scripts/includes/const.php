@@ -15,4 +15,5 @@ define('COMPANY_NOT_FOUND','-15');
 
 //Handle set field values
 define("DEFAULT_DATE_MIN", "1900-01-01");
+define("TOKEN_VALIDITY", "+1 day");
 

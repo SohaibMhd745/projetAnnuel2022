@@ -9,20 +9,34 @@ class Partner extends User {
 
 
     //@Override user constructFromEmailAndPassword
-    public function constructFromEmailAndPassword(string $email, string $password, DbLink $link){
-        parent::constructFromEmailAndPassword($email, $password, $link);
-        $this->constructCompany($link);
+    public function constructFromEmailAndPassword(string $email, string $password){
+        parent::constructFromEmailAndPassword($email, $password);
+        $this->constructCompany();
     }
 
     //@Override user constructFromEmailAndPassword
-    public function constructFromId(int $id, DbLink $link){
-        parent::constructFromId($id, $link);
-        $this->constructCompany($link);
+    public function constructFromId(int $id){
+        parent::constructFromId($id);
+        $this->constructCompany();
+    }
+
+    //@Override user constructFromToken
+    public function constructFromToken(string $token)
+    {
+        parent::constructFromToken($token);
+        $this->constructCompany();
     }
 
     //@Override continuation of both overrides,
     // method to create is the exact same (based on id_partner)
-    private function constructCompany($link){
+    private function constructCompany(){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
         $q = "SELECT name, inscription, revenue, website, id_sponsor FROM akm_partners WHERE id = ?";
         $res = $link->query($q, [$this->id_partner]);
 
