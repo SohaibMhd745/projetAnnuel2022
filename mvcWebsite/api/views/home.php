@@ -8,13 +8,8 @@
     <body>
         <header>
             <?php
-            function includeFileWithVariables($fileName, $variables) {
-                extract($variables);
-                include($fileName);
-            }
-            includeFileWithVariables("includes/header.php", array(
-                'script_name'=> $_SERVER['SCRIPT_NAME']
-            ));
+            $script_name = "/home.php";
+            include("includes/header.php");
             ?>
         </header>
 

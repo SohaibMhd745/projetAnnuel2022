@@ -2,7 +2,7 @@
 
 class Home
 {
-    public static function all()
+    public static function view()
     {
         include __DIR__ . "/../views/home.php";
     }
