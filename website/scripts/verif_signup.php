@@ -2,12 +2,12 @@
 
     include("include_scripts.php");
 
-    validateForm('lastname', "account.php",2, 30);
-    validateForm('firstname', "account.php",2, 30);
-    validateForm('birthdate', "account.php", 9,11);
-    validateForm('phone', "account.php",10, 10);
-    validateForm('email', "account.php",5, 30);
-    validateForm('password', "account.php",8, 30);
+    validateForm('lastname', "account.php", 2, 30);
+    validateForm('firstname', "account.php", 2, 30);
+    validateForm('birthdate', "account.php", 9, 11);
+    validateForm('phone', "account.php", 10, 10);
+    validateForm('email', "account.php", 5, 30);
+    validateForm('password', "account.php", 8, 30);
 
     $lastname = $_POST['lastname'];
     $firstname = $_POST['firstname'];
