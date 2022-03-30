@@ -104,6 +104,28 @@ class User{
 
         return true;
     }
+    /**
+     *
+     * Setter Functions
+     *
+     */
+
+    /**
+     * Updates ID partner
+     * @param DbLink $dbLink : database link object
+     * @return int :
+     * - NO_EXCEPTION if update happens, COMPANY_NOT_FOUND if the company does not exist (wrong use of the function),
+     * - MYSQL_EXCEPTION if fatal sql error
+     */
+    public function updateIdPartner(DbLink $dbLink) : int{
+        $q = "UPDATE akm_users SET id_partner = (SELECT id FROM akm_partners WHERE id_user = ?) WHERE id = ?";
+        $success = $dbLink->insert($q, [$this->id, $this->id]);
+        if (!$success){
+            if ($success === false) return COMPANY_NOT_FOUND;
+            if($success === MYSQL_EXCEPTION) return MYSQL_EXCEPTION;
+        }
+        return NO_EXCEPTION;
+    }
 
     /**
      *
