@@ -1,0 +1,363 @@
+/* FALLING SKY */
+@font-face {
+  font-family: "FallingSky";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSky.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSky.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSkyObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Light";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLight.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLight.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_LightObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Medium";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyMed.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyMed.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_MediumObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightMedObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightMedObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_Bold";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyBd.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyBd.woff") format("woff");
+}
+
+@font-face {
+  font-family: "FallingSky_BoldObl";
+  src: url("../assets/fonts/falling_sky/woff2/FallingSkyLightBdObl.woff2") format("woff2"),
+         url("../assets/fonts/falling_sky/woff/FallingSkyLightBdObl.woff") format("woff");
+}
+
+
+
+/* LOUIS GEORGE CAFE */
+@font-face {
+  font-family: "LGC";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Obl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Obl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Obl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Light";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Light.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Light.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_LightObl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_LightObl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_LightObl.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_Bold";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_Bold.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "LGC_BoldObl";
+  src: url("../assets/fonts/louis_george_café/woff2/LGC_BoldObl.woff2") format("woff2"),
+         url("../assets/fonts/louis_george_café/woff/LGC_BoldObl.woff") format("woff");
+}
+
+
+
+/* LEAGUE GOTHIC */
+@font-face {
+  font-family: "LeagueGothic";
+  src: url("../assets/fonts/league_gothic/woff2/LeagueGothic.woff2") format("woff2"),
+         url("../assets/fonts/league_gothic/woff/LeagueGothic.woff") format("woff");
+}
+
+
+
+/* HTML ELEMENTS */
+body {
+  margin: 0;
+  background-color: #0B0500;
+  font-family: FallingSky;
+}
+
+main {
+  background-color: #E6E6EA;
+}
+
+
+
+/* GLOBAL ELEMENTS */
+.global-separator {
+  height: 28px;
+}
+
+.global-vl {
+  border-left: 1px solid #0B0500;
+  height: 100%;
+}
+
+.global-error {
+  color: #FE4A49;
+}
+
+
+
+/* HEADER */
+.header-fluid {
+  background-color: #0B0500;
+  color: #E6E6EA;
+}
+
+.header-row {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.header-col {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.header-col1 {
+  justify-content: flex-start;
+}
+
+.header-col2 {
+  justify-content: flex-end;
+}
+
+.header-ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-li {
+  display: inline;
+  padding: 12px;
+}
+
+.header-a {
+  color: #E6E6EA;
+  font-family: FallingSky_Light;
+
+  text-decoration: none;
+  text-transform: uppercase;
+
+  padding-bottom: 8px;
+  transition: 0.3s;
+}
+
+.header-a:hover {
+  color: #FED766;
+  transition: 0.3s;
+}
+
+.header-active {
+  border-bottom: 2px solid #E6E6EA;
+  transition: 0.3s;
+}
+
+.header-active:hover {
+  border-bottom: 2px solid #FED766;
+  transition: 0.3s;
+}
+
+
+
+/* FOOTER */
+.footer-fluid {
+  background-color: #0B0500;
+  color: #E6E6EA;
+}
+
+.footer-row {
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+
+.footer-sitename {
+  font-size: 42px;
+  font-family: LeagueGothic;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  margin-bottom: 16px;
+}
+
+.footer-text {
+  font-family: LGC;
+  margin-bottom: 8px;
+}
+
+.footer-subtext {
+  font-family: LGC;
+  color: #999999;
+
+  margin-bottom: 8px;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: #999999;
+  transition: 0.3s;
+}
+
+.footer-link:hover {
+  color: #E6E6EA;
+  transition: 0.3s;
+}
+
+.footer-row2 {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  background-color: #0B0500;
+}
+
+.footer-hr {
+  color: #E6E6EA;
+  margin: 0;
+}
+
+
+
+/* PAGE ELEMENTS */
+.page-title-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 150px;
+}
+
+.page-title {
+  font-size: 36px;
+  font-family: LGC_Bold;
+  text-align: center;
+}
+
+
+
+/* ACCOUNT */
+.account-container {
+  padding-top: 36px;
+  padding-bottom: 36px;
+}
+
+.account-title {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.account-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+}
+
+.account-button {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 8px;
+
+  text-transform: uppercase;
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+}
+
+.account-btnclient {
+  width: 50%;
+  background-color: #FE4A49;
+  transition: 0.3s;
+}
+
+.account-btnclient:hover {
+  background-color: #c43838;
+  transition: 0.3s;
+}
+
+.account-btnentreprise {
+  width: 50%;
+  background-color: #009FB7;
+  transition: 0.3s;
+}
+
+.account-btnentreprise:hover {
+  background-color: #007385;
+  transition: 0.3s;
+}
+
+.account-form {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-label {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.account-input {
+  width: 100%;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  
+  border: none;
+  border-bottom: 1px solid #0B0500;
+  background: none;
+  transition: 0.2s;
+}
+
+.account-input:focus {
+  outline: none !important;
+  border: none;
+  border-bottom: 1px solid #FE4A49;
+  background: none;
+  transition: 0.2s;
+}
+
+.account-btnform {
+  width: 100%;
+  background-color: #FE4A49;
+  transition: 0.3s;
+}
+
+.account-btnform:hover {
+  background-color: #c43838;
+  transition: 0.3s;
+}
