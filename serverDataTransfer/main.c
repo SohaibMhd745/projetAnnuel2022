@@ -7,6 +7,10 @@
 #include <xlsxwriter.h>
 #include <mysql.h>
 
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 #include "macros.h"
 
 #include "dataParsing/parseData.h"
@@ -25,21 +29,18 @@
 int parseArgs(int argc, char **argv){
     FILE* useTest;
 
-    if (argc > 3){//There is technically always 1 argument: the program's name
-        printf("Error: Too many arguments.\nUse -h for help");
-        exit(-1);
-    }
-    if (argc < 3 && argv[1][1]!='h'){
-        printf("Error: Not enough arguments.\nUse -h for help");
+    //Program name is always the first argument
+    if (argc < 4 && argv[1][1]!='h'){
+        printf("Error: missing argument.\nUse -h for help");
         exit(-1);
     }
 
     if (argv[1][0] == '-'){//If the argument starts with - (parameter)
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
-                printf("h\t\t\t\t:\tHelp"
-                "\ns [Info]\t\t:\tStart the program in sender mode"
-                "\nr [Central Excel Sheet]\t\t:\tStart the program in receiver mode"
+                printf("h\t\t\t\t\t\t\t:\tHelp"
+                "\ns [DB Credentials Filepath] [target IP address]\t\t:\tStart the program in sender mode"
+                "\nr [Central Excel Sheet] [port]\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
             case 's'://Send
@@ -74,6 +75,7 @@ int parseArgs(int argc, char **argv){
 int main(int argc, char **argv) {
     loggedData data;
     data.timestamp = generateTimestamp();
+
     int mode = parseArgs(argc, argv);
 
     switch (mode) {
@@ -100,24 +102,71 @@ int main(int argc, char **argv) {
                 default:
                     break;
             }
-            fprintf(stdout, "\n\n%s", report);
+            fprintf(stdout, "\n\n%s\n", report);
 
-            ///Debug Block
-            /*
-            loggedData rdata;
-            parseYaml(report, &rdata);
-            printList(rdata.firstLog);
-            printf("%d", checkData(&rdata, 1));
-            printList(rdata.firstLog);
-            freeList(&rdata);
-            */
-            ///Debug Block
+            fprintf(stdout, "Sending to: %s\n", argv[3]);
+
+            data.result = sendReport(report, argv[3]);
+
+            logCommunication(&data, SEND_MODE);
 
             freeList(&data);
             break;
 
         case RECEIVE_MODE:
             printf("Initializing sockets...");
+            int sockFile = socket(AF_INET, SOCK_STREAM, 0);
+
+            if(sockFile == -1) {
+                outputError("Could not open socket");
+                printf("\nFatal Error: Could not open socket.");
+                exit(-1);
+            }
+
+            int opt = 1;
+            if (setsockopt(sockFile, SOCK_STREAM, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof opt)!=0){
+                char errBuff[255];
+                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
+                strcat(errBuff, strerror(errno));
+
+                printf("\n%s\n", errBuff);
+                outputError(errBuff);
+
+                exit(-1);
+            }
+
+            struct sockaddr_in address;
+
+            address.sin_family = AF_INET;
+
+            address.sin_addr.s_addr = INADDR_ANY;
+
+            address.sin_port = htons(atoi(argv[4]));
+
+            if (bind(sockFile, (struct sockaddr *) &address, sizeof(address)) != 0) {
+                char errBuff[255];
+                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
+                strcat(errBuff, strerror(errno));
+
+                printf("\n%s\n", errBuff);
+                outputError(errBuff);
+                exit(-1);
+            }
+
+            listen(sockFile, 0);
+
+            int s = 0;
+            int size = sizeof(address);
+            printf("3\n");
+            s = accept(sockFile, (struct sockaddr *) &address, &size);
+            printf("4\n");
+            if (s != INVALID_SOCKET) {
+                printf("5\n");
+                recv(s , reply , 2000 , 0);
+                send(s, "Wesh", 5, 0);
+
+            }
+
             break;
 
         default:

@@ -22,14 +22,56 @@ Communication History:
 
  @format:
 
- timestamp|store n° (only on receiver)|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent|database id of first transaction|database id of last transaction
+ timestamp|store n° (only on receiver)|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent
 
  @important: must write from the start of the file when adding to the history
  **/
 
-int logCommunication(loggedData* data){
-    ///TODO: Déterminer le n° à partir de l'ip -- Ranger dans un .txt ?
-    ///TODO: Copier output error pour avoir les envois les + récents en premier
+void logCommunication(loggedData* data, int mode){
+    FILE* logFile = fopen("history","ab+");
+
+    if(logFile != NULL) {
+        int currentSize = getFilesize("history");
+
+        if (currentSize != READ_FAILURE) {
+
+            char fileBuffer[currentSize+1];
+            fileBuffer[currentSize] = '\0';
+
+            if (currentSize > 0) fread(fileBuffer, 1, currentSize, logFile);
+
+
+            fclose(logFile);
+
+            logFile = fopen("history", "wb+");
+            if (logFile != NULL) {
+                char buffer[200];
+                char timeBuffer[30];
+                char resBuffer[20];
+
+                {
+                    time_t now;
+                    struct tm ts;
+                    time(&now);
+                    ts = *localtime(&now);
+                    strftime(timeBuffer, 500, "%Y/%m/%d %H:%M:%S", &ts);
+                }
+                fputs(buffer, logFile);
+
+                if (data->result == CURL_SUCCESS) strcpy(resBuffer, "Success");
+                else strcpy(resBuffer, "Failure");
+
+                ///timestamp|store n° (only on receiver)|result(success/failure)|
+                /// datetime(YYYY/MM/DD h:m:s)|#of transactions sent
+                if (mode == SEND_MODE) sprintf(buffer, "%d|%s|%s|%d\n", data->timestamp, resBuffer, timeBuffer, data->listLength);
+                else sprintf(buffer, "%d|%d|%s|%s|%d\n", data->timestamp, data->serverId,resBuffer, timeBuffer, data->listLength);
+
+                fputs(buffer, logFile);
+                if(currentSize > 0) fputs(fileBuffer, logFile);
+            }
+        }
+        fclose(logFile);
+    }
 }
 
 /**

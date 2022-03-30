@@ -9,7 +9,7 @@ typedef struct database{
     MYSQL_RES* res;
     MYSQL_ROW row;
 
-    char query[200];
+    char query[500];
 
     char server[50];
     char user[50];
@@ -36,6 +36,8 @@ typedef struct loggedData{
 
     int listLength;
 
+    int serverId;
+
     loggedOrder * firstLog;
 }loggedData;
 
@@ -43,7 +45,7 @@ void printYamlError(yaml_emitter_t* emitter, yaml_event_t* event);
 
 int outputYaml(loggedData* data, char* output);
 
-int getLastStamp();
+unsigned int getLastStamp();
 
 int parseCredentials(char* path, database* db);
 

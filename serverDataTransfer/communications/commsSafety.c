@@ -5,11 +5,13 @@
 
 #include <yaml.h>
 #include <mysql.h>
+#include <curl/curl.h>
 
+#include "../dataParsing/parseData.h"
 #include "../macros.h"
 #include "../output/output.h"
 #include "commsSafety.h"
-#include "../dataParsing/parseData.h"
+
 
 /**
  * @usage takes a filepath and returns the size of that file
@@ -177,4 +179,48 @@ int checkData(loggedData * data, int serverId){
     }
 
     return status;
+}
+
+/**
+ * @usage send report to target
+ * @param yaml -- formatted yaml string
+ * @param target -- target URL
+ * @return CURL_SUCCESS | CURL_FAILURE
+ */
+int sendReport(char* yaml, char* target){
+    CURL* curlHandler;
+    CURLcode returnCode;
+    int attempt = 0;
+    char post[MAX_BUFFER+20];
+
+    strcpy(post, "report=");
+    strcat(post, yaml);
+
+    curl_global_init(CURL_GLOBAL_ALL);
+    curlHandler = curl_easy_init();
+
+    if(curlHandler) {
+        curl_easy_setopt(curlHandler, CURLOPT_URL, target);
+        curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, post);
+
+        do{
+            returnCode = curl_easy_perform(curlHandler);
+            if(returnCode != CURLE_OK){
+                char errStr[500];
+                strcpy(errStr, "Failed to start CURL POST request: ");
+                strcat(errStr, curl_easy_strerror(returnCode));
+
+                fprintf(stderr, "%s\n" ,errStr);
+                outputError(errStr);
+
+                attempt++;
+            }
+        }while(returnCode!=CURLE_OK && attempt != 3);
+
+        curl_easy_cleanup(curlHandler);
+    }
+    curl_global_cleanup();
+
+    if (attempt == 3) return CURL_FAILURE;
+    else return CURL_SUCCESS;
 }

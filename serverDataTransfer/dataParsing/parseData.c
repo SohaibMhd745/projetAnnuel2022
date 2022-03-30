@@ -6,10 +6,11 @@
 #include <yaml.h>
 #include <mysql.h>
 
+
+#include "parseData.h"
 #include "../macros.h"
 #include "../output/output.h"
 
-#include "parseData.h"
 
 #include "../communications/commsSafety.h"
 
@@ -342,66 +343,6 @@ int parseYaml(char* yaml, loggedData* outputData){
             outputError("Unexpected error while reading report file");
             return YAML_FAILURE;
         }
-        ///Debug Block
-        /*
-        printf("Pre: ");
-        switch (status) {
-            case YAML_START:
-                printf("Parsing Start");
-                break;
-            case YAML_STREAM:
-                printf("Stream Start");
-                break;
-
-            case YAML_DOCUMENT:
-                printf("Document Start");
-                break;
-
-            case YAML_MAP:
-                printf("Mapping");
-                break;
-
-            case YAML_LIST:
-                printf("List Start");
-                break;
-
-            case YAML_LIST_OBJECT:
-                printf("Object Start");
-                break;
-
-            case YAML_LIST_VALUES:
-                printf("Mapping Object Values");
-                break;
-
-            case YAML_VALUE_TIMESTAMP:
-                printf("Reading Timestamp");
-                break;
-
-            case YAML_VALUE_COUNT:
-                printf("Reading Count");
-                break;
-
-            case YAML_LIST_VALUE_ARTICLE:
-                printf("Reading Object Code");
-                break;
-
-            case YAML_LIST_VALUE_CHANGE:
-                printf("Reading Object Change");
-                break;
-
-            case YAML_LIST_VALUE_TIMESTAMP:
-                printf("Reading Object Timestamp");
-                break;
-
-            case YAML_LIST_VALUE_DATETIME:
-                printf("Reading Object DateTime");
-                break;
-
-            default:
-                break;
-        }
-         */
-        ///Debug Block
 
         ///Switch according to last event status and event type
         switch (status) {
@@ -741,67 +682,6 @@ int parseYaml(char* yaml, loggedData* outputData){
 
         yaml_event_delete(&event);
 
-        ///Debug Block
-        /*
-        printf(" \nPost: ");
-        switch (status) {
-            case YAML_START:
-                printf("Parsing Start");
-                break;
-            case YAML_STREAM:
-                printf("Stream Start");
-                break;
-
-            case YAML_DOCUMENT:
-                printf("Document Start");
-                break;
-
-            case YAML_MAP:
-                printf("Mapping");
-                break;
-
-            case YAML_LIST:
-                printf("List Start");
-                break;
-
-            case YAML_LIST_OBJECT:
-                printf("Object Start");
-                break;
-
-            case YAML_LIST_VALUES:
-                printf("Mapping Object Values");
-                break;
-
-            case YAML_VALUE_TIMESTAMP:
-                printf("Reading Timestamp");
-                break;
-
-            case YAML_VALUE_COUNT:
-                printf("Reading Count");
-                break;
-
-            case YAML_LIST_VALUE_ARTICLE:
-                printf("Reading Object Code");
-                break;
-
-            case YAML_LIST_VALUE_CHANGE:
-                printf("Reading Object Change");
-                break;
-
-            case YAML_LIST_VALUE_TIMESTAMP:
-                printf("Reading Object Timestamp");
-                break;
-
-            case YAML_LIST_VALUE_DATETIME:
-                printf("Reading Object DateTime");
-                break;
-
-            default:
-                break;
-        }
-        printf("\n\n");
-         */
-        ///Debug Block
 
     } while (status != YAML_EOF);
 
@@ -898,7 +778,10 @@ int generateList(database* db, loggedData* data){
     ///select transactions history since the previous report
     sprintf(db->query,
             "SELECT transactions.id, UNIX_TIMESTAMP(transactions.stamp), transactions.stamp,transactions.quantity, stock.code"
-            " FROM transactions INNER JOIN stock on transactions.item = stock.id WHERE transactions.stamp > %d", data->previousStamp);
+            " FROM transactions INNER JOIN stock on transactions.item = stock.id"
+            " WHERE UNIX_TIMESTAMP(transactions.stamp) > %d ",
+            data->previousStamp);
+
     if (mysql_query(db->connection, db->query)) {
         fprintf(stderr, "%s\n", mysql_error(db->connection));
         exit(1);
@@ -1058,9 +941,9 @@ int parseCredentials(char* path, database* db){
 /**
  * @return returns last known timestamp from communications history log
  */
-int getLastStamp(){
+unsigned int getLastStamp(){
     FILE* history;
-    int stamp = NO_HISTORY;
+    unsigned int stamp = NO_HISTORY;
 
     history = fopen("history", "rb");
     if (history == NULL){
