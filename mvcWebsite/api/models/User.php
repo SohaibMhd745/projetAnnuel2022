@@ -120,9 +120,10 @@ class User{
 
     /**
      * Updates user token and token_end
+     * @return string : -1 if user not set, new token if token refreshed successfully
      * @throws Exception - MYSQL_EXCEPTION if error while trying to access database
      */
-    public function updateToken(){
+    public function updateToken():string{
         include __DIR__."../scripts/include_scripts.php";
 
         include __DIR__."../database/CREDENTIALS.php";
@@ -141,7 +142,11 @@ class User{
             ]);
 
             if ($status !== true) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+            return $new;
         }
+
+        return -1;
     }
 
     /**
