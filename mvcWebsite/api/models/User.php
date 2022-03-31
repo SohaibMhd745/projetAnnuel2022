@@ -1,15 +1,15 @@
 <?php
 
 class User{
-    protected $id = -1;
-    protected $email;
-    protected $firstName;
-    protected $lastName;
-    protected $inscription;
-    protected $birth;
-    protected $phone;
-    protected $id_partner;
-    protected $token_end;
+    protected int $id = -1;
+    protected string $email;
+    protected string $firstName;
+    protected string $lastName;
+    protected string $inscription;
+    protected string $birth;
+    protected string $phone;
+    protected int $id_partner;
+    protected string $token_end;
 
     public function __construct()
     {
@@ -28,9 +28,6 @@ class User{
         include __DIR__."../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
-
-        if (!$this->checkMailValidity($email)) throw new Exception("Invalid Email Provided",INVALID_PARAMETER);
-        if (!$this->checkPassValidity($password)) throw new Exception("Invalid Password Provided",INVALID_PARAMETER);
 
         $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email,  preparePassword($password)]);
@@ -99,7 +96,7 @@ class User{
      * @param $res : result from SQL query
      * @return void
      */
-    protected function assignValues($res){
+    protected function assignValues(array $res){
         $this->firstName = $res["firstname"];
         $this->lastName = $res["lastname"];
         $this->inscription = $res["inscription"];
@@ -110,6 +107,48 @@ class User{
         ///Causes crashes if not set to -1 and we check later on, we have to check now or it won't work later
         if ($res["id_partner"] === null) $this->id_partner = -1;
         else $this->id_partner = $res["id_partner"];
+    }
+
+    /**
+     * @param string $lastname
+     * @param string $firstname
+     * @param string $birthdate
+     * @param string $phone
+     * @param string $email
+     * @param string $password
+     * @throws Exception :
+     * - MYSQL_EXCEPTION (database failure)
+     * - EMAIL_USED (Email already in use)
+     */
+    public static function create(string $lastname, string $firstname, string $birthdate, string $phone, string $email, string $password){
+        include __DIR__."../scripts/include_scripts.php";
+
+        include __DIR__."../database/CREDENTIALS.php";
+        include __DIR__."../database/DbLink.php";
+
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        if($link->query('SELECT id FROM akm_users WHERE email = :email', ['email' => $email]) !== false)
+            throw new Exception("User already exists", EMAIL_USED);
+
+        try {
+            $status = $link->insert(
+                'INSERT INTO akm_users (lastname, firstname, birthdate, phone, email, password, inscription)
+                   VALUES (:lastname, :firstname, :birthdate, :phone, :email, :password, :inscription)',
+                [
+                    'lastname' => $lastname,
+                    'firstname' => $firstname,
+                    'birthdate' => $birthdate,
+                    'phone' => $phone,
+                    'email' => $email,
+                    'password' => preparePassword($password),
+                    'inscription' => getYearsAgo(0)
+                ]);
+        } catch (Exception $e){
+            throw new Exception("Critical Database Failure", MYSQL_EXCEPTION);
+        }
+        if($status !== true)
+            throw new Exception("Critical Database Failure", MYSQL_EXCEPTION);
     }
 
     /**
@@ -169,38 +208,6 @@ class User{
             if ($success === false) throw new Exception("Company does not exist", COMPANY_NOT_FOUND);
             elseif ($success === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
         }
-    }
-
-    /**
-     *
-     * Utility functions
-     *
-     */
-
-    /**
-     * Checks validity of email string
-     * @param string $email : email string input
-     * @return bool : validity
-     */
-    protected function checkMailValidity(string $email) : bool{
-        if (empty($email)) return false;
-        if (strlen($email) == 0) return false;
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-        if(strlen($email)>50 || strlen($email)<5) return false;
-
-        return true;
-    }
-
-    /**
-     * Checks validity of password string
-     * @param string $pass : password string input
-     * @return bool : validity
-     */
-    protected function checkPassValidity(string $pass) : bool{
-        if (empty($pass)) return false;
-        if (strlen($pass) == 0) return false;
-
-        return true;
     }
 
     /**

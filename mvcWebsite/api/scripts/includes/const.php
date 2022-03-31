@@ -9,6 +9,7 @@ define('INVALID_PARAMETER', '-2');
 //User Related Exceptions
 define('USER_NOT_FOUND', '-10');
 define('INCORRECT_USER_CREDENTIALS', '-11');
+define('EMAIL_USED', '-12');
 
 //Partner Related Exceptions
 define('COMPANY_NOT_FOUND','-15');

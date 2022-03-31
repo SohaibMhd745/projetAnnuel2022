@@ -1,11 +1,11 @@
 <?php
 
 class Partner extends User {
-    private $partnerName;
-    private $partnerInscription;
-    private $revenue;
-    private $website;
-    private $id_sponsor;
+    private string $partnerName;
+    private string $partnerInscription;
+    private int $revenue;
+    private string $website;
+    private int $id_sponsor;
 
 
     //@Override user constructFromEmailAndPassword
