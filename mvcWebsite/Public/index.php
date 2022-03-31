@@ -19,7 +19,7 @@ $method = $_SERVER["REQUEST_METHOD"];
 
 if ($route !== ""){
     $controller = explode('/', $route)[0];
-    $action = explode('/', $route)[1];
+    $action = explode('/', $route)[1] ?? "index";
 
     //Switch based on controller
     switch ($controller){
