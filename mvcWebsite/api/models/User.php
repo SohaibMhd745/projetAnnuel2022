@@ -79,10 +79,11 @@ class User{
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE token = ?";
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM 
+                akm_users WHERE token = ? AND DATE.NOW() > token_end";
         $res = $link->query($q, [$token]);
 
-        if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
+        if($res === false) throw new Exception("Auth token invalid", INVALID_AUTH_TOKEN);
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
         else{
             $this->id = $res["id"];
@@ -191,7 +192,7 @@ class User{
     /**
      * Updates ID partner
      * @throws :
-     * - NO_EXCEPTION if update happens, COMPANY_NOT_FOUND if the company does not exist (wrong use of the function),
+     * - COMPANY_NOT_FOUND if the company does not exist (wrong use of the function),
      * - MYSQL_EXCEPTION if fatal sql error
      */
     public function updateIdPartner(){

@@ -18,16 +18,45 @@ $method = $_SERVER["REQUEST_METHOD"];
  */
 
 if ($route !== ""){
-    $params = explode('/', $route);
-    $controller = $params[0];
-
-    $action = $params[1] ?? "index";
+    $controller = explode('/', $route)[0];
+    $action = explode('/', $route)[1];
 
     //Switch based on controller
     switch ($controller){
         case "account":
             include __DIR__ . "/../api/controllers/Account.php";
             Account::view();
+            break;
+        case "login":
+            switch ($method){
+                case "post":
+                    switch ($action){
+                        case "signup":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::signup();
+                            break;
+                        case "registercompany":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::registercompany();
+                            break;
+                        default:
+                            include __DIR__."/../api/scripts/include_scripts.php";
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                case "get":
+                    include __DIR__ . "/../api/controllers/Login.php";
+                    Login::signin();
+                    break;
+                default:
+                    include __DIR__."/../api/scripts/include_scripts.php";
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "", "errorCode" => WRONG_METHOD]);
+                    die();
+            }
+
             break;
 
         case "shop":

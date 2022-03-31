@@ -14,6 +14,7 @@ define('PARAMETER_WRONG_LENGTH', '-4');
 define('USER_NOT_FOUND', '-10');
 define('INCORRECT_USER_CREDENTIALS', '-11');
 define('EMAIL_USED', '-12');
+define('INVALID_AUTH_TOKEN', '-13');
 
 //Partner Related Exceptions
 define('COMPANY_NOT_FOUND','-15');
@@ -22,3 +23,5 @@ define('COMPANY_NOT_FOUND','-15');
 define("DEFAULT_DATE_MIN", "1900-01-01");
 define("TOKEN_VALIDITY", "+1 day");
 
+define('WRONG_METHOD', '-100');
+define('WRONG_ACTION', '-101');
