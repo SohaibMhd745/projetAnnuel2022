@@ -3,8 +3,12 @@
 define('NO_EXCEPTION','1');
 
 //General Exceptions
+define('FATAL_EXCEPTION', '0');
 define('MYSQL_EXCEPTION', '-1');
 define('INVALID_PARAMETER', '-2');
+define('MISSING_PARAMETER', '-3');
+define('PARAMETER_WRONG_LENGTH', '-4');
+
 
 //User Related Exceptions
 define('USER_NOT_FOUND', '-10');
