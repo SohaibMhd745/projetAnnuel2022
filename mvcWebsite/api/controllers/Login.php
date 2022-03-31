@@ -31,37 +31,25 @@ class Login
         ];
 
         foreach ($params as $paramName => $param){
+            $min = 0;
+            $max = 0;
             switch ($paramName){
-                case "lastname":
-                case "firstname":
-                    $min = 2;
-                    $max = 30;
-                    break;
-                case "birthdate":
-                    $min = 9;
-                    $max = 11;
-                    break;
-
-                case "phone":
-                    $min = 10;
-                    $max = 10;
-                    break;
-
-                case "email":
-                    $min = 5;
-                    $max = 30;
-                    break;
-
-                case "password":
-                    $min = 8;
-                    $max = 30;
-                    break;
+                case "lastname": case "firstname": $min = 2; $max = 30; break;
+                case "birthdate": $min = 9; $max = 11; break;
+                case "phone": $min = 10; $max = 10; break;
+                case "email":$min = 5; $max = 30; break;
+                case "password":$min = 8; $max = 30; break;
             }
             try {
                 self::validateParam($param, $paramName, $min, $max);
             }catch (Exception $e){
                 switch ($e->getCode()){
-
+                    case INVALID_PARAMETER:
+                        self::reportInvalidParam($paramName);
+                        break;
+                    case PARAMETER_WRONG_LENGTH:
+                        self::reportParamLength($paramName);
+                        break;
                     default:
                         echo formatResponse(500, ["Content-Type" => "application/json"],
                             ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
