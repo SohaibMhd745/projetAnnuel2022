@@ -29,7 +29,7 @@ if ($route !== ""){
             break;
         case "login":
             switch ($method){
-                case "post":
+                case "POST":
                     switch ($action){
                         case "signup":
                             include __DIR__ . "/../api/controllers/Login.php";
@@ -46,7 +46,7 @@ if ($route !== ""){
                             die();
                     }
                     break;
-                case "get":
+                case "GET":
                     include __DIR__ . "/../api/controllers/Login.php";
                     Login::signin();
                     break;

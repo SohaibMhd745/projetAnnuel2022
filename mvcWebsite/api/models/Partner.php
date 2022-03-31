@@ -30,10 +30,10 @@ class Partner extends User {
     //@Override continuation of both overrides,
     // method to create is the exact same (based on id_partner)
     private function constructCompany(){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -64,11 +64,11 @@ class Partner extends User {
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
     public static function register(User $user, string $name, int $revenue, string $website, int $id_sponsor){
-        include __DIR__."../scripts/include_scripts.php";
-        include __DIR__."../models/User.php";
+        include __DIR__."/../scripts/include_scripts.php";
+        include __DIR__."/../models/User.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 

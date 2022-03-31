@@ -22,10 +22,10 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromEmailAndPassword(string $email, string $password){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -47,10 +47,10 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromId(int $id){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -72,10 +72,10 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromToken(string $token){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -122,10 +122,10 @@ class User{
      * - EMAIL_USED (Email already in use)
      */
     public static function create(string $lastname, string $firstname, string $birthdate, string $phone, string $email, string $password){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -164,10 +164,10 @@ class User{
      * @throws Exception - MYSQL_EXCEPTION if error while trying to access database
      */
     public function updateToken():string{
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
@@ -196,10 +196,10 @@ class User{
      * - MYSQL_EXCEPTION if fatal sql error
      */
     public function updateIdPartner(){
-        include __DIR__."../scripts/include_scripts.php";
+        include __DIR__."/../scripts/include_scripts.php";
 
-        include __DIR__."../database/CREDENTIALS.php";
-        include __DIR__."../database/DbLink.php";
+        include __DIR__."/../database/CREDENTIALS.php";
+        include __DIR__."/../database/DbLink.php";
 
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
