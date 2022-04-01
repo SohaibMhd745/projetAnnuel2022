@@ -1,27 +1,27 @@
 <?php
 
-define('NO_EXCEPTION','1');
+const NO_EXCEPTION = 1;
 
 //General Exceptions
-define('FATAL_EXCEPTION', '0');
-define('MYSQL_EXCEPTION', '-1');
-define('INVALID_PARAMETER', '-2');
-define('MISSING_PARAMETER', '-3');
-define('PARAMETER_WRONG_LENGTH', '-4');
+const FATAL_EXCEPTION = 0;
+const MYSQL_EXCEPTION = -1;
+const INVALID_PARAMETER = -2;
+const MISSING_PARAMETER = -3;
+const PARAMETER_WRONG_LENGTH = -4;
 
 
 //User Related Exceptions
-define('USER_NOT_FOUND', '-10');
-define('INCORRECT_USER_CREDENTIALS', '-11');
-define('EMAIL_USED', '-12');
-define('INVALID_AUTH_TOKEN', '-13');
+const USER_NOT_FOUND = -10;
+const INCORRECT_USER_CREDENTIALS = -11;
+const EMAIL_USED = -12;
+const INVALID_AUTH_TOKEN = -13;
 
 //Partner Related Exceptions
-define('COMPANY_NOT_FOUND','-15');
+const COMPANY_NOT_FOUND = -15;
 
 //Handle set field values
-define("DEFAULT_DATE_MIN", "1900-01-01");
-define("TOKEN_VALIDITY", "+1 day");
+const DEFAULT_DATE_MIN = "1900-01-01";
+const TOKEN_VALIDITY = "+1 day";
 
-define('WRONG_METHOD', '-100');
-define('WRONG_ACTION', '-101');
+const WRONG_METHOD = -100;
+const WRONG_ACTION = -101;

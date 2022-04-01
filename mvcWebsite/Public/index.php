@@ -1,5 +1,12 @@
 <?php
 
+include __DIR__."/../api/scripts/includes/const.php";
+include __DIR__."/../api/scripts/includes/preparePassword.php";
+include __DIR__."/../api/scripts/includes/preparePassword.php";
+include __DIR__."/../api/scripts/includes/sanitizeStringQuotes.php";
+include __DIR__."/../api/scripts/includes/date.php";
+include __DIR__."/../api/scripts/includes/formatResponse.php";
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -40,7 +47,6 @@ if ($route !== ""){
                             Login::registercompany();
                             break;
                         default:
-                            include __DIR__."/../api/scripts/include_scripts.php";
                             echo formatResponse(400, ["Content-Type" => "application/json"],
                                 ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
                             die();
@@ -51,7 +57,6 @@ if ($route !== ""){
                     Login::signin();
                     break;
                 default:
-                    include __DIR__."/../api/scripts/include_scripts.php";
                     echo formatResponse(400, ["Content-Type" => "application/json"],
                         ["success" => false, "errorMessage" => "", "errorCode" => WRONG_METHOD]);
                     die();

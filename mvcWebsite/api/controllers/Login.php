@@ -8,7 +8,6 @@ class Login
      * @return void
      */
     public static function signup(){
-        include __DIR__."/../scripts/include_scripts.php";
         include __DIR__."/../models/User.php";
 
         $json = json_decode(file_get_contents("php://input"));
@@ -90,7 +89,6 @@ class Login
      * @return void
      */
     public static function signin(){
-        include __DIR__."/../scripts/include_scripts.php";
         include __DIR__."/../models/User.php";
 
         $json = json_decode(file_get_contents("php://input"));
@@ -147,7 +145,6 @@ class Login
      * @return void
      */
     public static function registercompany(){
-        include __DIR__."/../scripts/include_scripts.php";
         include __DIR__."/../models/User.php";
         include __DIR__."/../models/Partner.php";
 
@@ -233,7 +230,6 @@ class Login
      * @return void
      */
     public static function getdata(){
-        include __DIR__."/../scripts/include_scripts.php";
         include __DIR__."/../models/User.php";
         include __DIR__."/../models/Partner.php";
 
