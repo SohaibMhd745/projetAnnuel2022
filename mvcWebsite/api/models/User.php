@@ -9,7 +9,6 @@ class User{
     protected string $birth;
     protected string $phone;
     protected int $id_partner;
-    protected string $token_end;
 
     public function __construct()
     {
@@ -64,9 +63,10 @@ class User{
     public function constructFromToken(string $token){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner FROM 
-                akm_users WHERE token = ? AND DATE.NOW() > token_end";
-        $res = $link->query($q, [$token]);
+        $token = sanitizeStringQuotes($token);
+
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token FROM akm_users WHERE token = :token AND NOW() < token_end";
+        $res = $link->query($q, ["token" => $token]);
 
         if($res === false) throw new Exception("Auth token invalid", INVALID_AUTH_TOKEN);
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
@@ -145,12 +145,15 @@ class User{
     public function updateToken():string{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $new = bin2hex(random_bytes(16));
+        $new = generateRandomString(16);
+
+        $end = date('Y-m-d H:i:s', strtotime(TOKEN_VALIDITY));
 
         if ($this->id != -1){
-            $status = $link->insert("UPDATE akm_users SET token = :newtoken, token_end = NOW()+interval".TOKEN_VALIDITY." WHERE id = :uid", [
+            $status = $link->insert("UPDATE akm_users SET token = :newtoken, token_end = :newend WHERE id = :uid", [
                 'uid' => $this->id,
                 'newtoken' => $new,
+                "newend" => $end
             ]);
 
             if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
@@ -246,14 +249,6 @@ class User{
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTokenEnd()
-    {
-        return $this->token_end;
     }
 
 }

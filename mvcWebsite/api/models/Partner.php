@@ -59,7 +59,6 @@ class Partner extends User {
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
     public static function register(User $user, string $name, int $revenue, string $website, int $id_sponsor){
-        include __DIR__."/../models/User.php";
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $status = $link->insert(

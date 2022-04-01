@@ -13,17 +13,17 @@ class Login
         $json = json_decode(file_get_contents("php://input"));
 
         if(!isset($json->lastname)||empty($json->lastname))
-            self::reportMissingParam("lastname");
+            reportMissingParam("lastname");
         if(!isset($json->firstname)||empty($json->firstname))
-            self::reportMissingParam("firstname");
+            reportMissingParam("firstname");
         if(!isset($json->birthdate)||empty($json->birthdate))
-            self::reportMissingParam("birthdate");
+            reportMissingParam("birthdate");
         if(!isset($json->phone)||empty($json->phone))
-            self::reportMissingParam("phone");
+            reportMissingParam("phone");
         if(!isset($json->email)||empty($json->email))
-            self::reportMissingParam("email");
+            reportMissingParam("email");
         if(!isset($json->password)||empty($json->password))
-            self::reportMissingParam("password");
+            reportMissingParam("password");
 
         $params = [
             "lastname" => $json->lastname,
@@ -94,9 +94,9 @@ class Login
         $json = json_decode(file_get_contents("php://input"));
 
         if(!isset($json->email)||empty($json->email))
-            self::reportMissingParam("email");
+            reportMissingParam("email");
         if(!isset($json->password)||empty($json->password))
-            self::reportMissingParam("password");
+            reportMissingParam("password");
 
         $params = [
             "email" => $json->email,
@@ -151,20 +151,20 @@ class Login
         $json = json_decode(file_get_contents("php://input"));
 
         if(!isset($json->partnername)||empty($json->partnername))
-            self::reportMissingParam("partnername");
+            reportMissingParam("partnername");
         if(!isset($json->revenue)||empty($json->revenue))
-            self::reportMissingParam("revenue");
+            reportMissingParam("revenue");
         if(!isset($json->website)||empty($json->website))
-            self::reportMissingParam("website");
+            reportMissingParam("website");
 
         //TODO: header ?
         if(!isset($json->token)||empty($json->token))
-            self::reportMissingParam("token");
+            reportMissingParam("token");
 
         //TODO:
         /**
          * if(!isset($json->sponsorid)||empty($json->sponsorid))
-                self::reportMissingParam("sponsorid");
+                reportMissingParam("sponsorid");
          */
 
         $token = $json->token;
@@ -173,7 +173,7 @@ class Login
             "partnername" => $json->partnername,
             "revenue" => $json->revenue,
             "website" => $json->website,
-            "sponsorid" => null
+            "sponsorid" => 1
             //TODO:
             //"sponsorid" => $json->sponsorid
         ];
@@ -236,7 +236,7 @@ class Login
         $json = json_decode(file_get_contents("php://input"));
 
         if(!isset($json->token)||empty($json->token))
-            self::reportMissingParam("token");
+            reportMissingParam("token");
 
         $token = $json->token;
 
@@ -278,8 +278,33 @@ class Login
                 }
                 die();
             }
-            echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "partner", "user" => $partner]);
-        }else echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "user", "user" => $user]);
+            echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "partner",
+                "user" => [
+                    "id"=>$partner->getId(),
+                    "firstname"=>$partner->getFirstName(),
+                    "lastname"=>$partner->getLastName(),
+                    "inscription"=>$partner->getInscription(),
+                    "birthdate"=>$partner->getBirth(),
+                    "phone"=>$partner->getPhone(),
+                    "id_partner"=>$partner->getIdPartner(),
+                    "partner" => [
+                        "name" => $partner->getPartnerName(),
+                        "inscription" => $partner->getPartnerInscription(),
+                        "revenue" => $partner->getRevenue(),
+                        "website" => $partner->getWebsite(),
+                        "id_sponsor" =>$partner->getSponsorId()
+                    ]
+                ]]);
+        }else echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "user",
+            "user" => [
+                "id"=>$user->getId(),
+                "firstname"=>$user->getFirstName(),
+                "lastname"=>$user->getLastName(),
+                "inscription"=>$user->getInscription(),
+                "birthdate"=>$user->getBirth(),
+                "phone"=>$user->getPhone(),
+                "id_partner"=>$user->getIdPartner()
+        ]]);
     }
 
     /**
@@ -381,16 +406,20 @@ class Login
                     $min = 5;
                     $max = 50;
                     break;
+                default:
+                    $min = 1;
+                    $max = 20;
+                    break;
             }
             try {
                 self::validateParam($param, $paramName, $min, $max);
             } catch (Exception $e) {
                 switch ($e->getCode()) {
                     case INVALID_PARAMETER:
-                        self::reportInvalidParam($paramName);
+                        reportInvalidParam($paramName);
                         break;
                     case PARAMETER_WRONG_LENGTH:
-                        self::reportParamLength($paramName);
+                        reportParamLength($paramName);
                         break;
                     default:
                         echo formatResponse(500, ["Content-Type" => "application/json"],
@@ -400,45 +429,6 @@ class Login
                 die();
             }
         }
-    }
-
-    /**
-     *
-     * Error Report Functions
-     *
-     */
-
-    /**
-     * Reports on the missing parameter
-     * @param string $param : param to report missing
-     * @return void
-     */
-    private static function reportMissingParam(string $param){
-        formatResponse(400, ["Content-Type" => "application/json"],
-            ["success" => false, "errorMessage" => "Missing parameter '".$param."'", "errorCode" => MISSING_PARAMETER, "parameter"=>$param]);
-        die();
-    }
-
-    /**
-     * Reports on invalid parameters
-     * @param string $param : param to report as invalid
-     * @return void
-     */
-    private static function reportInvalidParam(string  $param){
-        formatResponse(400, ["Content-Type" => "application/json"],
-            ["success" => false, "errorMessage" => "Invalid parameter '".$param."'", "errorCode" => INVALID_PARAMETER, "parameter"=>$param]);
-        die();
-    }
-
-    /**
-     * Reports on invalid parameter length
-     * @param string $param : param to report as invalid length
-     * @return void
-     */
-    private static function reportParamLength(string  $param){
-        formatResponse(400, ["Content-Type" => "application/json"],
-            ["success" => false, "errorMessage" => "Parameter wrong length '".$param."'", "errorCode" => PARAMETER_WRONG_LENGTH, "parameter"=>$param]);
-        die();
     }
 
 }

@@ -1,12 +1,14 @@
 <?php
 
-include __DIR__."/../api/scripts/includes/const.php";
+include __DIR__ . "/../api/scripts/const.php";
 include __DIR__."/../api/database/CREDENTIALS.php";
 include __DIR__."/../api/database/DbLink.php";
-include __DIR__."/../api/scripts/includes/preparePassword.php";
-include __DIR__."/../api/scripts/includes/sanitizeStringQuotes.php";
-include __DIR__."/../api/scripts/includes/date.php";
-include __DIR__."/../api/scripts/includes/formatResponse.php";
+include __DIR__ . "/../api/scripts/preparePassword.php";
+include __DIR__ . "/../api/scripts/sanitizeStringQuotes.php";
+include __DIR__ . "/../api/scripts/date.php";
+include __DIR__ . "/../api/scripts/formatResponse.php";
+include __DIR__ . "/../api/scripts/generateRandomString.php";
+include __DIR__ . "/../api/scripts/reportErrors.php";
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -54,8 +56,20 @@ if ($route !== ""){
                     }
                     break;
                 case "GET":
-                    include __DIR__ . "/../api/controllers/Login.php";
-                    Login::signin();
+                    switch ($action){
+                        case "signin":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::signin();
+                            break;
+                        case "getdata":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::getdata();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
                     break;
                 default:
                     echo formatResponse(400, ["Content-Type" => "application/json"],

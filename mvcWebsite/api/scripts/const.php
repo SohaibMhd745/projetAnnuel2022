@@ -21,7 +21,7 @@ const COMPANY_NOT_FOUND = -15;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";
-const TOKEN_VALIDITY = "1 day";
+const TOKEN_VALIDITY = "+1 day";
 
 const WRONG_METHOD = -100;
 const WRONG_ACTION = -101;
