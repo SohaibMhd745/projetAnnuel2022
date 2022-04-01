@@ -30,10 +30,6 @@ class Partner extends User {
     //@Override continuation of both overrides,
     // method to create is the exact same (based on id_partner)
     private function constructCompany(){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT name, inscription, revenue, website, id_sponsor FROM akm_partners WHERE id = ?";
@@ -64,10 +60,6 @@ class Partner extends User {
      */
     public static function register(User $user, string $name, int $revenue, string $website, int $id_sponsor){
         include __DIR__."/../models/User.php";
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $status = $link->insert(

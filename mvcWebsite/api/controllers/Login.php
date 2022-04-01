@@ -49,15 +49,15 @@ class Login
             switch ($e->getCode()){
                 case EMAIL_USED:
                     echo formatResponse(400, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Email already in use", "errorCode" => EMAIL_USED]);
+                        ["success" => false, "errorMessage" => "Email already in use", "errorCode" => EMAIL_USED, "step" => "User Creation"]);
                     break;
                 case MYSQL_EXCEPTION:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Creation"]);
                     break;
                 default:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Creation"]);
                     break;
             }
             die();
@@ -68,7 +68,7 @@ class Login
             $user->constructFromEmailAndPassword($params["email"], $params["password"]);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Connection"]);
             die();
         }
 
@@ -76,7 +76,7 @@ class Login
             $token = $user->updateToken();
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Token Refresh"]);
             die();
         }
 
@@ -115,15 +115,15 @@ class Login
             switch ($e->getCode()){
                 case INCORRECT_USER_CREDENTIALS:
                     echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Could not prove user authenticity", "errorCode" => INCORRECT_USER_CREDENTIALS]);
+                        ["success" => false, "errorMessage" => "Could not prove user authenticity", "errorCode" => INCORRECT_USER_CREDENTIALS, "step" => "Structure Creation"]);
                     break;
                 case MYSQL_EXCEPTION:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Structure Creation"]);
                     break;
                 default:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Structure Creation"]);
                     break;
             }
             die();
@@ -132,7 +132,7 @@ class Login
             $token = $user->updateToken();
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Token Generation"]);
             die();
         }
 
@@ -187,15 +187,15 @@ class Login
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
                     echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN]);
+                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
                     break;
                 case MYSQL_EXCEPTION:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
                     break;
                 default:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
                     break;
             }
             die();
@@ -207,15 +207,15 @@ class Login
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Could not link company to user", "errorCode" => COMPANY_NOT_FOUND]);
+                        ["success" => false, "errorMessage" => "Could not link company to user", "errorCode" => COMPANY_NOT_FOUND, "step" => "Company Registration"]);
                     break;
                 case MYSQL_EXCEPTION:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Company Registration"]);
                     break;
                 default:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Company Registration"]);
                     break;
             }
             die();
@@ -247,15 +247,15 @@ class Login
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
                     echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN]);
+                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
                     break;
                 case MYSQL_EXCEPTION:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
                     break;
                 default:
                     echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
                     break;
             }
             die();
@@ -269,11 +269,11 @@ class Login
                 switch ($e->getCode()){
                     case MYSQL_EXCEPTION:
                         echo formatResponse(500, ["Content-Type" => "application/json"],
-                            ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                            ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
                         break;
                     default:
                         echo formatResponse(500, ["Content-Type" => "application/json"],
-                            ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                            ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
                         break;
                 }
                 die();

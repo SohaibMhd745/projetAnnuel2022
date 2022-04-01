@@ -22,13 +22,9 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromEmailAndPassword(string $email, string $password){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE email = ? AND password = ?";
+        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email,  preparePassword($password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
@@ -46,13 +42,9 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromId(int $id){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM akm_users WHERE id = ?";
+        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 
         if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
@@ -70,13 +62,9 @@ class User{
      * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
      */
     public function constructFromToken(string $token){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token_end FROM 
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner FROM 
                 akm_users WHERE token = ? AND DATE.NOW() > token_end";
         $res = $link->query($q, [$token]);
 
@@ -100,7 +88,6 @@ class User{
         $this->inscription = $res["inscription"];
         $this->birth = $res["birthdate"];
         $this->phone = $res["phone"];
-        $this->token_end = $res["token_end"];
 
         ///Causes crashes if not set to -1 and we check later on, we have to check now or it won't work later
         if ($res["id_partner"] === null) $this->id_partner = -1;
@@ -119,10 +106,6 @@ class User{
      * - EMAIL_USED (Email already in use)
      */
     public static function create(string $lastname, string $firstname, string $birthdate, string $phone, string $email, string $password){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         if($link->query('SELECT id FROM akm_users WHERE email = :email', ['email' => $email]) !== false)
@@ -160,10 +143,6 @@ class User{
      * @throws Exception - MYSQL_EXCEPTION if error while trying to access database
      */
     public function updateToken():string{
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $end = date("Y-m-d H:i:s", strtotime(TOKEN_VALIDITY));
@@ -191,10 +170,6 @@ class User{
      * - MYSQL_EXCEPTION if fatal sql error
      */
     public function updateIdPartner(){
-
-        include __DIR__."/../database/CREDENTIALS.php";
-        include __DIR__."/../database/DbLink.php";
-
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "UPDATE akm_users SET id_partner = (SELECT id FROM akm_partners WHERE id_user = ?) WHERE id = ?";

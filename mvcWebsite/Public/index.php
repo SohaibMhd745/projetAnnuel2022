@@ -1,6 +1,8 @@
 <?php
 
 include __DIR__."/../api/scripts/includes/const.php";
+include __DIR__."/../api/database/CREDENTIALS.php";
+include __DIR__."/../api/database/DbLink.php";
 include __DIR__."/../api/scripts/includes/preparePassword.php";
 include __DIR__."/../api/scripts/includes/sanitizeStringQuotes.php";
 include __DIR__."/../api/scripts/includes/date.php";
