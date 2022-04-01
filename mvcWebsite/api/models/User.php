@@ -145,17 +145,15 @@ class User{
     public function updateToken():string{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $end = date("Y-m-d H:i:s", strtotime(TOKEN_VALIDITY));
         $new = bin2hex(random_bytes(16));
 
         if ($this->id != -1){
-            $status = $link->insert("UPDATE akm_users SET token = :newtoken, token_end = :newend WHERE id = :id", [
-                'id' => $this->id,
+            $status = $link->insert("UPDATE akm_users SET token = :newtoken, token_end = NOW()+interval".TOKEN_VALIDITY." WHERE id = :uid", [
+                'uid' => $this->id,
                 'newtoken' => $new,
-                'newend' => $end
             ]);
 
-            if ($status !== true) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+            if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
 
             return $new;
         }

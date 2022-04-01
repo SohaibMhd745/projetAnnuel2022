@@ -1,7 +1,7 @@
 <?php
 
 class DbLink{
-    private $pdo;
+    private PDO $pdo;
 
     function __construct(string $host, string $charset, string $dbname, string $user, string $pass){
         $host = $this->sanitizeStringQuotes($host);
@@ -49,6 +49,7 @@ class DbLink{
     public function insert(string $query, array $args){
         try {
             $req = $this->pdo->prepare($query);
+            print_r($this->pdo->errorCode());
             return $req->execute($args);
         }catch (mysqli_sql_exception $err){
             return MYSQL_EXCEPTION;
