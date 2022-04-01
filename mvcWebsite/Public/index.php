@@ -2,7 +2,6 @@
 
 include __DIR__."/../api/scripts/includes/const.php";
 include __DIR__."/../api/scripts/includes/preparePassword.php";
-include __DIR__."/../api/scripts/includes/preparePassword.php";
 include __DIR__."/../api/scripts/includes/sanitizeStringQuotes.php";
 include __DIR__."/../api/scripts/includes/date.php";
 include __DIR__."/../api/scripts/includes/formatResponse.php";
