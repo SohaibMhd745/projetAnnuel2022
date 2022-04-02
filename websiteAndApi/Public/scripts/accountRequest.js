@@ -21,9 +21,8 @@ form.addEventListener("submit", async (event) => {
             if (this.readyState === 4) {
                 const response = this.responseText;
                 parsedResponse = JSON.parse(response);
-                if(parsedResponse.success === true){
-                    // parsedResponse.token à mettre dans le local storage OU dans le header (pour le passer au php)
-                } else {
+                if(parsedResponse.success === true) window.location.href = "http://localhost/session/"+parsedResponse.token;
+                else {
                     switch(parsedResponse.errorCode){
                         // constantes à traduire en js depuis const.php dans un nouveau script
                         // les erreurs de reportErrors.php à mettre en case:

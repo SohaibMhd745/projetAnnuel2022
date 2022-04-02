@@ -37,6 +37,10 @@ if ($route !== ""){
             include __DIR__ . "/../api/controllers/Account.php";
             Account::view();
             break;
+        case "session":
+            include __DIR__."/../api/controllers/Session.php";
+            Session::createSession($action);
+            break;
         case "login":
             switch ($method){
                 case "POST":
