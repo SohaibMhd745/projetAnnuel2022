@@ -10,7 +10,7 @@
             include("includes/header.php");
             ?>
         </header>
-            <main>
+            <main id="main-unsigned"> <!-- hidden -->
                 <div class="global-separator"></div>
 
                 <div class="container account-container">
@@ -21,7 +21,6 @@
                         
                         <div class="col account-col">
                             <p class="account-title">Ouvrir un compte</p>
-                            <!-- TODO: MVC -->
                             <form id="signup-form" class="account-form">
                                 <input class="account-input" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
                                 <input class="account-input" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>

@@ -49,14 +49,6 @@ if ($route !== ""){
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::registercompany();
                             break;
-                        default:
-                            echo formatResponse(400, ["Content-Type" => "application/json"],
-                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
-                            die();
-                    }
-                    break;
-                case "GET":
-                    switch ($action){
                         case "signin":
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::signin();
@@ -91,14 +83,6 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::addArticle();
                             break;
-                        default:
-                            echo formatResponse(400, ["Content-Type" => "application/json"],
-                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
-                            die();
-                    }
-                    break;
-                case "GET":
-                    switch ($action){
                         case "getallarticles":
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::getAllArticles();

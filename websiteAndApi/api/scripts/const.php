@@ -2,7 +2,7 @@
 
 const NO_EXCEPTION = 1;
 
-//General Exceptions
+//General Exceptions //
 const FATAL_EXCEPTION = 0;
 const MYSQL_EXCEPTION = -1;
 const INVALID_PARAMETER = -2;
@@ -17,7 +17,7 @@ const EMAIL_USED = -12;
 const INVALID_AUTH_TOKEN = -13;
 
 //Partner Related Exceptions
-const COMPANY_NOT_FOUND = -15;
+const COMPANY_NOT_FOUND = -15; //
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";

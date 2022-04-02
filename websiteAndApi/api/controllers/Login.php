@@ -403,10 +403,6 @@ class Login
                     $min = 2;
                     $max = 30;
                     break;
-                case "birthdate":
-                    $min = 9;
-                    $max = 11;
-                    break;
                 case "phone":
                     $min = 10;
                     $max = 10;
