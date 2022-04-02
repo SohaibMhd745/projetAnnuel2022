@@ -1,7 +1,3 @@
-<?php
-    include("../api/scripts/include_scripts.php");
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -26,7 +22,7 @@
                         <div class="col account-col">
                             <p class="account-title">Ouvrir un compte</p>
                             <!-- TODO: MVC -->
-                            <form class="account-form" action="/scripts/verif_signup.php" method="post">
+                            <form id="signup-form" class="account-form">
                                 <input class="account-input" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
                                 <input class="account-input" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>
                                 <label class="account-label">Date de naissance</label>
@@ -46,10 +42,10 @@
                         <?php $loginString = isset($_COOKIE['email']) ? " value=\"" . $_COOKIE['email'] . "\"" : ""; ?>
                         <div class="col account-col">
                             <p class="account-title">Se connecter</p>
-                            <form class="account-form" action="scripts/verif_signin.php" method="post">
-                                <input class="account-input" name="email" type="email" placeholder="E-mail"<?php echo $loginString ?> maxlength="30" required>
-                                <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                                <input class="account-button account-btnform" type="submit" value="Valider">
+                            <form id="signin-form" class="account-form">
+                                <input class="account-input" id="signin-email" name="email" type="email" placeholder="E-mail"<?php echo $loginString ?> maxlength="30" required>
+                                <input class="account-input" id="signin-password" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
+                                <input class="account-button account-btnform" id="signin-submit" type="submit" value="Valider">
                                 <!-- TODO: Div D'erreur -->
                             </form>
                         </div>
