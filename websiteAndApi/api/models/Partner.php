@@ -46,6 +46,19 @@ class Partner extends User {
         }
     }
 
+    /**
+     * Returns a table of all registered companies (id, name and website)
+     * @return array table of all registered companies
+     * @throws Exception MYSQL_EXVEPTION
+     */
+    public static function getIdTable():array{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->queryAll("SELECT id, name, website FROM akm_partners", []);
+
+        if ($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        return $res;
+    }
 
     /**
      * @param User $user : User object to extend

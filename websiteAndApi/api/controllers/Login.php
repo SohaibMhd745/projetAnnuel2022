@@ -229,6 +229,26 @@ class Login
      * @httpmethod get
      * @return void
      */
+    public static function getAllCompanies(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Partner.php";
+
+        try {
+            $info = Partner::getIdTable();
+        }catch (Exception $e){
+            echo formatResponse(500, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "table" => $info]);
+    }
+
+    /**
+     * @httpmethod get
+     * @return void
+     */
     public static function getdata(){
         include __DIR__."/../models/User.php";
         include __DIR__."/../models/Partner.php";
@@ -314,8 +334,8 @@ class Login
      */
 
     /**
-     * Validate form inputs inidivudally
-     * @param string $param : input to be validated
+     * Validate form inputs individually
+     * @param mixed $param : input to be validated
      * @param string $paramName : name of input to be validated
      * @param int $minLength : (optional) minimum length of input
      * @param int $maxLength : (optional) maximum length of input

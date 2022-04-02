@@ -65,6 +65,10 @@ if ($route !== ""){
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::getdata();
                             break;
+                        case "getallcompanies":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::getAllCompanies();
+                            break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
                                 ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
@@ -77,6 +81,39 @@ if ($route !== ""){
                     die();
             }
 
+            break;
+
+        case "catalog":
+            switch ($method){
+                case "POST":
+                    switch ($action){
+                        case "addarticle":
+                            include __DIR__."/../api/controllers/CatalogController.php";
+                            CatalogController::addArticle();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                case "GET":
+                    switch ($action){
+                        case "getallarticles":
+                            include __DIR__."/../api/controllers/CatalogController.php";
+                            CatalogController::getAllArticles();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                default:
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "", "errorCode" => WRONG_METHOD]);
+                    die();
+            }
             break;
 
         case "shop":
