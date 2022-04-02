@@ -39,7 +39,7 @@ class Partner extends User {
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
         else{
             $this->partnerName = $res["name"];
-            $this->partnerInscription = $res["partnerInscription"];
+            $this->partnerInscription = $res["inscription"];
             $this->revenue = $res["revenue"];
             $this->website = $res["website"];
             $this->id_sponsor = $res["id_sponsor"];
