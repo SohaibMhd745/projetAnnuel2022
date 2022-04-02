@@ -35,7 +35,7 @@ CREATE TABLE akm_prestation(
 	id INT AUTO_INCREMENT,
 	name VARCHAR(30) NOT NULL,
 	description VARCHAR(2000) NOT NULL,
-	price INT NOT NULL,
+	price FLOAT NOT NULL,
 	id_partner INT NOT NULL,
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)

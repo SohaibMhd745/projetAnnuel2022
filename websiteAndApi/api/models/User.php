@@ -10,10 +10,6 @@ class User{
     protected string $phone;
     protected int $id_partner;
 
-    public function __construct()
-    {
-    }
-
     /**
      * Construct user class from email and password
      * @param string $email : input email to attempt connection

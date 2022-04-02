@@ -35,7 +35,24 @@ class DbLink{
             $req = $this->pdo->prepare($query);
             $req->execute($args);
             //$req->debugDumpParams();
-            return $req->fetch();
+            return $req->fetch(PDO::FETCH_ASSOC);
+        }catch (mysqli_sql_exception $err){
+            return MYSQL_EXCEPTION;
+        }
+    }
+
+    /**
+     * Select Query that returns an array
+     * @param string $query : Query to execute
+     * @param array $args : Arguments for the query
+     * @return mixed : -1 if sql exception, false if empty, array of selected if select
+     */
+    public function queryAll(string $query, array $args){
+        try {
+            $req = $this->pdo->prepare($query);
+            $req->execute($args);
+            //$req->debugDumpParams();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
         }catch (mysqli_sql_exception $err){
             return MYSQL_EXCEPTION;
         }
