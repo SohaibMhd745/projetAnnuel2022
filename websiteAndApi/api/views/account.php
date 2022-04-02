@@ -51,12 +51,12 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="global-separator"></div>
             </main>
 
         <footer>
             <?php include("includes/footer.php"); ?>
         </footer>
+    <script type="text/javascript" src="/scripts/accountRequest.js"></script>
     </body>
 </html>
