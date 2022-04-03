@@ -13,81 +13,84 @@ import {
     //COMPANY_NOT_FOUND
 } from './const.js';
 
+import {checkTokenValidity} from "./checkTokenValidity.js";
+
 // Unsigned / signed <main>
 const mainUnsigned = document.getElementById("main-unsigned");
 const mainSigned = document.getElementById("main-signed");
 
 // Shows page depending on whether the user is signed or unsigned
-if (localStorage.getItem("token") == "" || localStorage.getItem("token") == null) {
+checkTokenValidity(function (tokenValid) {
+    if (!tokenValid) {
+        mainSigned.style.display = "none";
 
-    mainUnsigned.hidden = false;
+        // Login form
+        const loginButton = document.getElementById("signin-submit");
+        const emailInput = document.getElementById("signin-email");
+        const passwordInput = document.getElementById("signin-password");
 
-    // Login form
-    const loginForm = document.getElementById("signin-form");
-    const emailInput = document.getElementById("signin-email");
-    const passwordInput = document.getElementById("signin-password");
+        // On submit
+        loginButton.addEventListener("click", async (event) => {
+            event.preventDefault();
 
-    // On submit
-    loginForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const serializedInput = JSON.stringify({ "email": email, "password": password });
 
-        const email = emailInput.value;
-        const password = passwordInput.value;
-        const serializedInput = JSON.stringify({ "email": email, "password": password });
-
-        try {
-            var xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "/login/signin", true);
-            xhttp.setRequestHeader("Content-Type", "application/json");
-            xhttp.onreadystatechange = function () {
-                if (this.readyState === 4) {
-                    const response = this.responseText;
-                    const parsedResponse = JSON.parse(response);
-                    if (parsedResponse.success === true) {
-                        localStorage.setItem("token", parsedResponse.token);
-                        window.location.replace("/");
-                    } else {
-                        const errorSignin = document.getElementById("signin-error");
-                        switch (parsedResponse.errorCode) {
-                            case FATAL_EXCEPTION:
-                                errorSignin.innerHTML = "Erreur fatale. Veuillez réessayer.";
-                                break;
-                            case MYSQL_EXCEPTION:
-                                errorSignin.innerHTML = "Erreur base de données. Veuillez réessayer.";
-                                break;
-                            case INVALID_PARAMETER:
-                                errorSignin.innerHTML = "Paramètre invalide.";
-                                break;
-                            case MISSING_PARAMETER:
-                                errorSignin.innerHTML = "Paramètre manquant.";
-                                break;
-                            case PARAMETER_WRONG_LENGTH:
-                                errorSignin.innerHTML = "Paramètre de longueur invalide.";
-                                break;
-                            case USER_NOT_FOUND:
-                                errorSignin.innerHTML = "Utilisateur inexistant.";
-                                break;
-                            case INCORRECT_USER_CREDENTIALS:
-                                errorSignin.innerHTML = "Identifiants invalides.";
-                                break;
-                            case INVALID_AUTH_TOKEN:
-                                errorSignin.innerHTML = "Token invalide.";
-                                break;
-                            default:
-                                errorSignin.innerHTML = "Erreur inconnue.";
-                                break;
+            try {
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/login/signin", false);
+                xhttp.setRequestHeader("Content-Type", "application/json");
+                xhttp.onreadystatechange = function () {
+                    console.log(this.readyState);
+                    if (this.readyState === 4) {
+                        const response = this.responseText;
+                        const parsedResponse = JSON.parse(response);
+                        if (parsedResponse.success === true) {
+                            localStorage.setItem("token", parsedResponse.token);
+                            window.location.replace("/");
+                        } else {
+                            const errorSignin = document.getElementById("signin-error");
+                            switch (parsedResponse.errorCode) {
+                                case FATAL_EXCEPTION:
+                                    errorSignin.innerHTML = "Erreur fatale. Veuillez réessayer.";
+                                    break;
+                                case MYSQL_EXCEPTION:
+                                    errorSignin.innerHTML = "Erreur base de données. Veuillez réessayer.";
+                                    break;
+                                case INVALID_PARAMETER:
+                                    errorSignin.innerHTML = "Paramètre invalide.";
+                                    break;
+                                case MISSING_PARAMETER:
+                                    errorSignin.innerHTML = "Paramètre manquant.";
+                                    break;
+                                case PARAMETER_WRONG_LENGTH:
+                                    errorSignin.innerHTML = "Paramètre de longueur invalide.";
+                                    break;
+                                case USER_NOT_FOUND:
+                                    errorSignin.innerHTML = "Utilisateur inexistant.";
+                                    break;
+                                case INCORRECT_USER_CREDENTIALS:
+                                    errorSignin.innerHTML = "Identifiants invalides.";
+                                    break;
+                                case INVALID_AUTH_TOKEN:
+                                    errorSignin.innerHTML = "Token invalide.";
+                                    break;
+                                default:
+                                    errorSignin.innerHTML = "Erreur inconnue.";
+                                    break;
+                            }
                         }
                     }
-                }
-            };
-            xhttp.send(serializedInput);
-        } catch (error) {
-            console.error(error);
-        }
-    });
-} else {
-    mainSigned.hidden = false;
-}
+                };
+                xhttp.send(serializedInput);
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    } else mainUnsigned.style.display = "none";
+});
+
 
 // Signout button
 const signoutButton = document.getElementById("signout-button");

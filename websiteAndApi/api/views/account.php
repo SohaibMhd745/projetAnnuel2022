@@ -10,7 +10,7 @@
             include("includes/header.php");
             ?>
         </header>
-            <main id="main-unsigned" hidden>
+            <main id="main-unsigned">
                 <div class="global-separator"></div>
 
                 <div class="container account-container">
@@ -21,7 +21,7 @@
                         
                         <div class="col account-col">
                             <p class="account-title">Ouvrir un compte</p>
-                            <form id="signup-form" class="account-form">
+                            <div id="signup-form" class="account-form">
                                 <input class="account-input" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
                                 <input class="account-input" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>
                                 <label class="account-label">Date de naissance</label>
@@ -29,9 +29,9 @@
                                 <input class="account-input" name="phone" type="text" placeholder="Téléphone" minlength="10" maxlength="10" required>
                                 <input class="account-input" name="email" type="email" placeholder="E-mail" maxlength="30" required>
                                 <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                                <input class="account-button account-btnform" type="submit" value="Valider">
+                                <button class="account-button account-btnform" type="submit">Valider</button>
                                 <p id="signup-error" class="global-error"></p>
-                            </form>
+                            </div>
                         </div>
                         
                         <div class="col-1 account-col">
@@ -41,19 +41,19 @@
                         <?php $loginString = isset($_COOKIE['email']) ? " value=\"" . $_COOKIE['email'] . "\"" : ""; ?>
                         <div class="col account-col">
                             <p class="account-title">Se connecter</p>
-                            <form id="signin-form" class="account-form">
+                            <div id="signin-form" class="account-form">
                                 <input class="account-input" id="signin-email" name="email" type="email" placeholder="E-mail"<?php echo $loginString ?> maxlength="30" required>
                                 <input class="account-input" id="signin-password" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                                <input class="account-button account-btnform" id="signin-submit" type="submit" value="Valider">
+                                <button class="account-button account-btnform" id="signin-submit" type="submit">Valider</button>
                                 <p id="signin-error" class="global-error"></p>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="global-separator"></div>
             </main>
 
-            <main id="main-signed" hidden>
+            <main id="main-signed">
                 <div class="global-separator"></div>
 
                 <div class="container account-container">
