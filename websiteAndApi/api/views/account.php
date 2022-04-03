@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/headInfo.php"); ?>
+        <?php include("includes/headInfo.php"); ?> <!-- TODO: Passer le script_name pour afficher le bon <title> -->
     </head>
     <body>
         <header>
@@ -15,7 +15,7 @@
 
                 <div class="container account-container">
                     <div class="row">
-                        <p class="page-title">Espace Compte</p>
+                        <p class="page-title">Accès Espace Compte</p>
                         <img src="/assets/img/ill/account.svg" alt="Espace Compte" height="256px" />
                         <div class="global-separator"></div>
                         
@@ -54,8 +54,28 @@
             </main>
 
             <main id="main-signed" hidden>
-                <p class="page-title">Connecté</p>
-                <button id="signout-button">Déconnection</button>
+                <div class="global-separator"></div>
+
+                <div class="container account-container">
+                    <div class="row">
+                        <p class="page-title">Votre Espace Compte</p>
+                        <img src="/assets/img/ill/account.svg" alt="Espace Compte" height="256px" />
+                        <div class="global-separator"></div>
+                        
+                        <div class="col account-col">
+                            <!-- TODO: Infos du compte (modifiables dans le form) PRIORITE BASSE -->
+                        </div>
+                        
+                        <div class="col-1 account-col">
+                            <div class="global-vl"></div>
+                        </div>
+                        
+                        <div class="col account-col">
+                            <!-- TODO: Devenir partenaire (form) PRIORITE ELEVEE, supprimer le compte PRIORITE BASSE -->
+                        </div>
+                    </div>
+                </div>
+                <div class="global-separator"></div>
             </main>
 
         <footer>
