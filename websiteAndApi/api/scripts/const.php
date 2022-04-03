@@ -17,6 +17,7 @@ const INVALID_AUTH_TOKEN = -13;
 
 //Partner Related Exceptions
 const COMPANY_NOT_FOUND = -15;
+const INVALID_CODE = -16;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";

@@ -67,7 +67,9 @@ class DbLink{
     public function insert(string $query, array $args){
         try {
             $req = $this->pdo->prepare($query);
-            return $req->execute($args);
+            $res = $req->execute($args);
+            //  $req->debugDumpParams();
+            return $res;
         }catch (mysqli_sql_exception $err){
             return MYSQL_EXCEPTION;
         }

@@ -53,6 +53,10 @@ if ($route !== ""){
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::registercompany();
                             break;
+                        case "generatecode":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::generateSponsorCode();
+                            break;
                         case "signin":
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::signin();
