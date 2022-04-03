@@ -10,7 +10,7 @@
             include("includes/header.php");
             ?>
         </header>
-            <main id="main-unsigned"> <!-- hidden -->
+            <main id="main-unsigned" hidden>
                 <div class="global-separator"></div>
 
                 <div class="container account-container">
@@ -30,7 +30,7 @@
                                 <input class="account-input" name="email" type="email" placeholder="E-mail" maxlength="30" required>
                                 <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
                                 <input class="account-button account-btnform" type="submit" value="Valider">
-                                <!-- TODO: Div D'erreur -->
+                                <p id="signup-error" class="global-error"></p>
                             </form>
                         </div>
                         
@@ -45,7 +45,7 @@
                                 <input class="account-input" id="signin-email" name="email" type="email" placeholder="E-mail"<?php echo $loginString ?> maxlength="30" required>
                                 <input class="account-input" id="signin-password" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
                                 <input class="account-button account-btnform" id="signin-submit" type="submit" value="Valider">
-                                <!-- TODO: Div D'erreur -->
+                                <p id="signin-error" class="global-error"></p>
                             </form>
                         </div>
                     </div>
@@ -53,9 +53,14 @@
                 <div class="global-separator"></div>
             </main>
 
+            <main id="main-signed" hidden>
+                <p class="page-title">Connecté</p>
+                <button id="signout-button">Déconnection</button>
+            </main>
+
         <footer>
             <?php include("includes/footer.php"); ?>
         </footer>
-    <script type="text/javascript" src="/scripts/accountRequest.js"></script>
+    <script type="module" src="/scripts/account.js"></script>
     </body>
 </html>

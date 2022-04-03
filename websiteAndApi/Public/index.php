@@ -111,7 +111,7 @@ if ($route !== ""){
             Home::view();
             break;
     }
-}else{
+} else {
     include __DIR__ . "/../api/controllers/Home.php";
     Home::view();
 }

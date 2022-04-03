@@ -1,7 +1,3 @@
-<?php
-
-const NO_EXCEPTION = 1;
-
 //General Exceptions
 const FATAL_EXCEPTION = 0;
 const MYSQL_EXCEPTION = -1;
@@ -12,15 +8,21 @@ const PARAMETER_WRONG_LENGTH = -4;
 //User Related Exceptions
 const USER_NOT_FOUND = -10;
 const INCORRECT_USER_CREDENTIALS = -11;
-const EMAIL_USED = -12;
+//const EMAIL_USED = -12;
 const INVALID_AUTH_TOKEN = -13;
 
 //Partner Related Exceptions
-const COMPANY_NOT_FOUND = -15;
+//const COMPANY_NOT_FOUND = -15;
 
-//Handle set field values
-const DEFAULT_DATE_MIN = "1900-01-01";
-const TOKEN_VALIDITY = "+1 day";
-
-const WRONG_METHOD = -100;
-const WRONG_ACTION = -101;
+export {
+    FATAL_EXCEPTION,
+    MYSQL_EXCEPTION,
+    INVALID_PARAMETER,
+    MISSING_PARAMETER,
+    PARAMETER_WRONG_LENGTH,
+    USER_NOT_FOUND,
+    INCORRECT_USER_CREDENTIALS,
+    //EMAIL_USED,
+    INVALID_AUTH_TOKEN,
+    //COMPANY_NOT_FOUND
+}
