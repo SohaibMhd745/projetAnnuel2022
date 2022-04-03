@@ -18,10 +18,28 @@ class Catalog
     public static function getAllArticles(int $id):array{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, description, description, price FROM akm_prestation WHERE id_partner = :id";
+        $q = "SELECT id, name, description, price FROM akm_prestation WHERE id_partner = :id";
         $res = $link->queryAll($q, ["id"=>$id]);
 
         if($res === false) throw new Exception("Invalid partner id", COMPANY_NOT_FOUND);
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else return $res;
+    }
+
+
+    /**
+     * Returns all articles with names similar to input
+     * @param string $term search term
+     * @return array results of the search
+     * @throws Exception MYSQL_EXCEPTION in case of database failure
+     */
+    public static function searchArticles(string $term):array{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, name, description, price FROM akm_prestation WHERE name LIKE '%".sanitizeStringQuotes($term)."%'";
+        $res = $link->queryAll($q, []);
+
+        if($res === false) return [];
         else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
         else return $res;
     }

@@ -63,6 +63,38 @@ class CatalogController
     }
 
     /**
+     * Searc article based on search term
+     * @return void
+     */
+    public static function searchArticles(){
+        include __DIR__."/../models/Catalog.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if(!isset($json->search)||empty($json->search))
+            reportMissingParam("search");
+
+        try {
+            $res = Catalog::searchArticles($json->search);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                case MYSQL_EXCEPTION:
+                    formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database Error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "articles" => $res]);
+    }
+
+    /**
      * returns all articles of a specific partner
      * @httpmethod get
      * @return void

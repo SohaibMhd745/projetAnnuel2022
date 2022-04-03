@@ -91,6 +91,10 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::addArticle();
                             break;
+                        case "search":
+                            include __DIR__."/../api/controllers/CatalogController.php";
+                            CatalogController::searchArticles();
+                            break;
                         case "getallarticles":
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::getAllArticles();
