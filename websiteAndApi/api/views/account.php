@@ -22,15 +22,15 @@
                         <div class="col account-col">
                             <p class="account-title">Ouvrir un compte</p>
                             <div id="signup-form" class="account-form">
-                                <input class="account-input" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
-                                <input class="account-input" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>
+                                <input class="account-input account-input-red" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
+                                <input class="account-input account-input-red" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>
                                 <label class="account-label">Date de naissance</label>
-                                <input class="account-input" name="birthdate" type="date" min="<?php echo DEFAULT_DATE_MIN; ?>" max="<?php echo getYearsAgo(18); ?>" required>
-                                <input class="account-input" name="phone" type="text" placeholder="Téléphone" minlength="10" maxlength="10" required>
-                                <input class="account-input" name="email" type="email" placeholder="E-mail" maxlength="30" required>
-                                <input class="account-input" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                                <button class="account-button account-btnform" type="submit">Valider</button>
-                                <p id="signup-error" class="global-error"></p>
+                                <input class="account-input account-input-red" name="birthdate" type="date" min="<?php echo DEFAULT_DATE_MIN; ?>" max="<?php echo getYearsAgo(18); ?>" required>
+                                <input class="account-input account-input-red" name="phone" type="text" placeholder="Téléphone" minlength="10" maxlength="10" required>
+                                <input class="account-input account-input-red" name="email" type="email" placeholder="E-mail" maxlength="30" required>
+                                <input class="account-input account-input-red" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
+                                <button class="account-btn account-btn-red" type="submit">Valider</button>
+                                <p class="global-error" id="signup-error"></p>
                             </div>
                         </div>
                         
@@ -38,14 +38,13 @@
                             <div class="global-vl"></div>
                         </div>
                         
-                        <?php $loginString = isset($_COOKIE['email']) ? " value=\"" . $_COOKIE['email'] . "\"" : ""; ?>
                         <div class="col account-col">
                             <p class="account-title">Se connecter</p>
                             <div id="signin-form" class="account-form">
-                                <input class="account-input" id="signin-email" name="email" type="email" placeholder="E-mail"<?php echo $loginString ?> maxlength="30" required>
-                                <input class="account-input" id="signin-password" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                                <button class="account-button account-btnform" id="signin-submit" type="submit">Valider</button>
-                                <p id="signin-error" class="global-error"></p>
+                                <input class="account-input account-input-red" id="signin-email" type="email" placeholder="E-mail" maxlength="30" required>
+                                <input class="account-input account-input-red" id="signin-password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
+                                <button class="account-btn account-btn-red" id="signin-submit" type="submit">Valider</button>
+                                <p class="global-error" id="signin-error"></p>
                             </div>
                         </div>
                     </div>
@@ -64,6 +63,7 @@
                         
                         <div class="col account-col">
                             <!-- TODO: Infos du compte (modifiables dans le form) PRIORITE BASSE -->
+                            <div></div>
                         </div>
                         
                         <div class="col-1 account-col">
@@ -72,6 +72,32 @@
                         
                         <div class="col account-col">
                             <!-- TODO: Devenir partenaire (form) PRIORITE ELEVEE, supprimer le compte PRIORITE BASSE -->
+                            <p class="account-title">Devenir partenaire</p>
+                            <div id="upgrade-form" class="account-form">
+                                <input class="account-input account-input-gold" id="upgrade-partnername" type="text" placeholder="Nom d'entreprise" minlength="2" maxlength="30" required>
+                                <input class="account-input account-input-gold" id="upgrade-revenue" type="text" placeholder="Chiffre d'affaires" minlength="1" maxlength="20" required>
+                                <input class="account-input account-input-gold" id="upgrade-website" type="text" placeholder="Site Internet" minlength="3" maxlength="30" required>
+                                <input class="account-input account-input-gold" id="upgrade-sponsorcode" type="text" placeholder="Code de parrainage (optionnel)" minlength="10" maxlength="10">
+                                <button class="account-btn account-btn-gold" id="upgrade-submit" type="submit">Valider</button>
+                                <p class="global-error" id="upgrade-error"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="global-separator-xl"></div>
+
+                    <div class="row">
+                        <div class="col account-col"></div>
+                        
+                        <div class="col-1 account-col">
+                            <div class="global-vl"></div>
+                        </div>
+                        
+                        <div class="col account-col">
+                            <div class="account-form">
+                                <p class="account-title">Déconnexion</p>
+                                <button class="account-btn account-btn-red" id="signout" type="submit">Déconnexion</button>
+                            </div>
                         </div>
                     </div>
                 </div>

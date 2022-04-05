@@ -115,6 +115,10 @@ main {
   height: 28px;
 }
 
+.global-separator-xl {
+  height: 64px;
+}
+
 .global-vl {
   border-left: 1px solid #0B0500;
   height: 100%;
@@ -283,40 +287,6 @@ main {
   
 }
 
-.account-button {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 8px;
-
-  text-transform: uppercase;
-  color: white;
-
-  border: none;
-  border-radius: 6px;
-}
-
-.account-btnclient {
-  width: 50%;
-  background-color: #FE4A49;
-  transition: 0.3s;
-}
-
-.account-btnclient:hover {
-  background-color: #c43838;
-  transition: 0.3s;
-}
-
-.account-btnentreprise {
-  width: 50%;
-  background-color: #009FB7;
-  transition: 0.3s;
-}
-
-.account-btnentreprise:hover {
-  background-color: #007385;
-  transition: 0.3s;
-}
-
 .account-form {
   width: 50%;
   display: flex;
@@ -346,18 +316,46 @@ main {
 .account-input:focus {
   outline: none !important;
   border: none;
-  border-bottom: 1px solid #FE4A49;
   background: none;
   transition: 0.2s;
 }
 
-.account-btnform {
+.account-input-red:focus {
+  border-bottom: 1px solid #FE4A49;
+}
+
+.account-input-gold:focus {
+  border-bottom: 1px solid #FED766;
+}
+
+.account-btn {
   width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 8px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+}
+
+.account-btn-red {
   background-color: #FE4A49;
+  color: white;
   transition: 0.3s;
 }
 
-.account-btnform:hover {
+.account-btn-red:hover {
   background-color: #c43838;
+  transition: 0.3s;
+}
+
+.account-btn-gold {
+  background-color: #FED766;
+  color: black;
+  transition: 0.3s;
+}
+
+.account-btn-gold:hover {
+  background-color: #caac52;
   transition: 0.3s;
 }

@@ -419,8 +419,8 @@ class Login
                     $min = 1;
                     $max = 20;
                 case "website":
-                    $min = 5;
-                    $max = 50;
+                    $min = 3;
+                    $max = 30;
                     break;
                 default:
                     $min = 1;

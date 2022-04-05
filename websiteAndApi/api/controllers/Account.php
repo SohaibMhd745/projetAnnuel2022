@@ -1,7 +1,5 @@
 <?php
 
-// on peut appeler getdata() ici
-
 class Account
 {
     public static function view()
