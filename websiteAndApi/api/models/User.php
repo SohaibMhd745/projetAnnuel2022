@@ -169,12 +169,17 @@ class User{
     public function updateIdPartner(){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "UPDATE akm_users SET id_partner = (SELECT id FROM akm_partners WHERE id_user = ?) WHERE id = ?";
-        $success = $link->insert($q, [$this->id, $this->id]);
-        if (!$success){
-            if ($success === false) throw new Exception("Company does not exist", COMPANY_NOT_FOUND);
-            elseif ($success === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
-        }
+        $res = $link->query("SELECT id as pid FROM akm_partners WHERE id_user = ?", [$this->id]);
+
+        if ($res === false) throw new Exception("Company does not exist", COMPANY_NOT_FOUND);
+        if ($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        $q = "UPDATE akm_users SET id_partner = :pid WHERE id = :uid";
+        $success = $link->insert($q, ["pid"=>$res["pid"], "uid"=>$this->id]);
+
+        if ($success === false) throw new Exception("Company does not exist", COMPANY_NOT_FOUND);
+        if ($success === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
     }
 
     /**

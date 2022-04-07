@@ -89,10 +89,9 @@ class Partner extends User {
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function register(User $user, string $name, int $revenue, string $website, $id_sponsor){
+    public static function registerWithCode(User $user, string $name, int $revenue, string $website, int $id_sponsor){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        if($id_sponsor === null){
             $status = $link->insert(
                 'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
                     VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
@@ -103,26 +102,42 @@ class Partner extends User {
                     'website' => $website,
                     'id_user' => $user->getId(),
                 ]);
-        }else{
-            $status = $link->insert(
-                'INSERT INTO akm_partners (name, inscription, revenue, website, id_sponsor, id_user)
-                    VALUES (:partnername, :inscription, :revenue, :website, :id_sponsor, :id_user)',
-                [
-                    'partnername' => $name,
-                    'inscription' => getYearsAgo(0),
-                    'revenue' => $revenue,
-                    'website' => $website,
-                    'id_sponsor' => $id_sponsor,
-                    'id_user' => $user->getId(),
-                ]);
-        }
-
 
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
 
         $user->updateIdPartner();
-
     }
+
+    /**
+     * @param User $user : User object to extend
+     * @param string $name
+     * @param int $revenue
+     * @param string $website
+     * @param int|null $id_sponsor
+     * @return void
+     * @throws Exception :
+     * - MYSQL_EXCEPTION : Database Fatal Error
+     * - COMPANY_NOT_FOUND : unauthorized use of the function
+     */
+    public static function registerWithoutCode(User $user, string $name, int $revenue, string $website){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert(
+        'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+        [
+            'partnername' => $name,
+            'inscription' => getYearsAgo(0),
+            'revenue' => $revenue,
+            'website' => $website,
+            'id_user' => $user->getId(),
+        ]);
+
+        if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
+
+        $user->updateIdPartner();
+    }
+
 
     /**
      * Generates, inserts into the database and returns sponsorship code

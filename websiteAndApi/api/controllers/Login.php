@@ -173,7 +173,7 @@ class Login
 
         $user = self::attemptConnection($token);
 
-        if (!isset($json->sponsorcode) || empty($json->sponsorcode)) $sponsor = null;
+        if (!isset($json->sponsorcode) || empty($json->sponsorcode)) $sponsor = false;
         else {
             try {
                 $sponsor = Partner::useSponsorCode($json->sponsorcode);
@@ -197,7 +197,8 @@ class Login
         }
 
         try {
-            Partner::register($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
+            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], $params["revenue"], $params["website"]);
+            else Partner::registerWithCode($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
