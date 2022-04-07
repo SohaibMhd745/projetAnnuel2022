@@ -40,7 +40,7 @@ class Catalog
         $q = "SELECT id, name, description, price FROM akm_prestation";
 
         if($id !== -1) {
-            $q .= " WHERE id = :id";
+            $q .= " WHERE id_partner = :id";
             $param = ["id" => $id];
         }else $param = [];
 
