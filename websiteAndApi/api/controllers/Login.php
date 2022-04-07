@@ -224,12 +224,21 @@ class Login
      * @httpmethod get
      * @return void
      */
-    public static function getAllCompanies(){
+    public static function getCompanies(){
         include __DIR__."/../models/User.php";
         include __DIR__."/../models/Partner.php";
 
+        $json = json_decode(file_get_contents("php://input"));
+
+        if(!isset($json->number)||empty($json->number)) $number = null;
+        else $number = $json->number;
+
+        if(!isset($json->page)||empty($json->page)) $page = null;
+        else $page = $json->page;
+
         try {
-            $info = Partner::getIdTable();
+            if($page === null || $number === null) $info = Partner::getAllPartnerId();
+            else $info = Partner::getPartnerId($number, $page);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
                 ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);

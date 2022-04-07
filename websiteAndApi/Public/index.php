@@ -65,9 +65,9 @@ if ($route !== ""){
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::getdata();
                             break;
-                        case "getallcompanies":
+                        case "getpartners":
                             include __DIR__ . "/../api/controllers/Login.php";
-                            Login::getAllCompanies();
+                            Login::getCompanies();
                             break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
@@ -97,11 +97,11 @@ if ($route !== ""){
                             break;
                         case "orderedsearch":
                             include __DIR__."/../api/controllers/CatalogController.php";
-                            CatalogController::getNArticles();
+                            CatalogController::orderedSearch();
                             break;
-                        case "getallarticles":
+                        case "getarticles":
                             include __DIR__."/../api/controllers/CatalogController.php";
-                            CatalogController::getAllArticles();
+                            CatalogController::getArticles();
                             break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],

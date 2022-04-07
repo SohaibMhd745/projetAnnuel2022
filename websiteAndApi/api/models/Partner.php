@@ -49,12 +49,30 @@ class Partner extends User {
     /**
      * Returns a table of all registered companies (id, name and website)
      * @return array table of all registered companies
-     * @throws Exception MYSQL_EXVEPTION
+     * @throws Exception MYSQL_EXCEPTION
      */
-    public static function getIdTable():array{
+    public static function getAllPartnerId():array{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $res = $link->queryAll("SELECT id, name, website FROM akm_partners", []);
+
+        if ($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        return $res;
+    }
+
+    /**
+     * Returns a table of n registered companies (id, name and website)
+     * @param int $n number of ids to select
+     * @param int $page page of ids to select
+     * @return array table of all registered companies
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public static function getPartnerId(int $n, int $page):array{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, name, website FROM akm_partners LIMIT ".(($page-1)*$n).",".$n;
+
+        $res = $link->queryAll($q, []);
 
         if ($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
         return $res;

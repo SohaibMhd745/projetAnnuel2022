@@ -74,8 +74,16 @@ class CatalogController
         if(!isset($json->search)||empty($json->search))
             reportMissingParam("search");
 
+        if(!isset($json->number)||empty($json->number)) $number = null;
+        else $number = $json->number;
+
+        if(!isset($json->page)||empty($json->page)) $page = null;
+        else $page = $json->page;
+
         try {
-            $res = Catalog::searchArticles($json->search);
+
+            if($page === null || $number === null) $info = Catalog::searchAllArticles($json->search);
+            else $info = Catalog::searchArticles($json->search, $number, $page);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case MYSQL_EXCEPTION:
@@ -91,7 +99,7 @@ class CatalogController
         }
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
-            ["success" => true, "articles" => $res]);
+            ["success" => true, "articles" => $info]);
     }
 
     /**
@@ -99,7 +107,7 @@ class CatalogController
      * @httpmethod get
      * @return void
      */
-    public static function getAllArticles(){
+    public static function getArticles(){
         include __DIR__."/../models/Catalog.php";
 
         $json = json_decode(file_get_contents("php://input"));
@@ -107,8 +115,15 @@ class CatalogController
         if(!isset($json->id_partner)||empty($json->id_partner))
             reportMissingParam("id_partner");
 
+        if(!isset($json->number)||empty($json->number)) $number = null;
+        else $number = $json->number;
+
+        if(!isset($json->page)||empty($json->page)) $page = null;
+        else $page = $json->page;
+
         try {
-            $info = Catalog::getAllArticles($json->id_partner);
+            if($page === null || $number === null) $info = Catalog::getAllArticles($json->id_partner);
+            else $info = Catalog::getArticles($json->id_partner, $number, $page);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case COMPANY_NOT_FOUND:
@@ -143,7 +158,7 @@ class CatalogController
      * @httpmethod get
      * @return void
      */
-    public static function getNArticles(){
+    public static function orderedSearch(){
         include __DIR__."/../models/Catalog.php";
 
         $json = json_decode(file_get_contents("php://input"));
@@ -153,11 +168,11 @@ class CatalogController
         if(!isset($json->mode)||empty($json->mode))
             reportMissingParam("mode");
 
-        if(!isset($json->number)||empty($json->number))
-            reportMissingParam("number");
+        if(!isset($json->number)||empty($json->number)) $number = null;
+        else $number = $json->number;
 
-        if(!isset($json->page)||empty($json->page))
-            reportMissingParam("page");
+        if(!isset($json->page)||empty($json->page)) $page = null;
+        else $page = $json->page;
 
         $reverse = $json->reverse ?? false;
 
@@ -171,7 +186,8 @@ class CatalogController
         }
 
         try {
-            $info = Catalog::getNArticles($id, $mode, $json->number, $reverse, $json->page);
+            if($page === null || $number === null) $info = Catalog::orderedSearchAll($id, $mode, $reverse);
+            else $info = Catalog::orderedSearch($id, $mode, $reverse, $number, $page);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_ORDER:
@@ -196,6 +212,12 @@ class CatalogController
             ["success" => true, "table" => $info]);
 
     }
+
+    /**
+     *
+     * Utility Functions
+     *
+     */
 
     /**
      * Validate form inputs individually

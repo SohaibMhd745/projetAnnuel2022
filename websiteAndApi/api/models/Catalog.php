@@ -27,6 +27,27 @@ class Catalog
     }
 
     /**
+     * Returns n articles articles of the company with the specified id
+     * @param int $id id of the partner
+     * @param int $page page
+     * @param int $n number of searches to be returned
+     * @return array array of found articles
+     * @throws Exception:
+     * - COMPANY_NOT_FOUND if provided id is incorrect
+     * - MYSQL_EXCEPTION in case of database errors
+     */
+    public static function getArticles(int $id, int $n, int $page):array{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, name, description, price FROM akm_prestation WHERE id_partner = :id LIMIT ".(($page-1)*$n).",".$n;
+        $res = $link->queryAll($q, ["id"=>$id]);
+
+        if($res === false) throw new Exception("Invalid partner id", COMPANY_NOT_FOUND);
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else return $res;
+    }
+
+    /**
      * @param int $id -1 for none, id of the company to search for a specific partner's prestations
      * @param int $mode order mode
      * @param int $n n per page
@@ -36,7 +57,7 @@ class Catalog
      * @throws Exception
      * MYSQL_EXCEPTION
      */
-    public static function getNArticles(int $id, int $mode, int $n, bool $reverse, int $page){
+    public static function orderedSearch(int $id, int $mode, bool $reverse, int $n, int $page){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT id, name, description, price FROM akm_prestation";
@@ -66,6 +87,41 @@ class Catalog
         else return $res;
     }
 
+    /**
+     * @param int $id -1 for none, id of the company to search for a specific partner's prestations
+     * @param int $mode order mode
+     * @param bool $reverse reverse the order
+     * @return array|mixed empty array or array
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     */
+    public static function orderedSearchAll(int $id, int $mode, bool $reverse){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, name, description, price FROM akm_prestation";
+
+        if($id !== -1) {
+            $q .= " WHERE id_partner = :id";
+            $param = ["id" => $id];
+        }else $param = [];
+
+        switch ($mode){
+            case ALPHABETICAL_ORDER: $q .= " ORDER BY name"; break;
+
+            case CHRONOLOGICAL_ORDER: $q .= " ORDER BY id"; break;
+
+            default:
+                throw new Exception("Invalid Mode", INVALID_ORDER);
+        }
+
+        $q .= $reverse?" DESC":" ASC";
+
+        $res = $link->queryAll($q, $param);
+
+        if($res === false) return [];
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else return $res;
+    }
 
     /**
      * Returns all articles with names similar to input
@@ -73,10 +129,32 @@ class Catalog
      * @return array results of the search
      * @throws Exception MYSQL_EXCEPTION in case of database failure
      */
-    public static function searchArticles(string $term):array{
+    public static function searchAllArticles(string $term):array{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT id, name, description, price FROM akm_prestation WHERE name LIKE '%".sanitizeStringQuotes($term)."%'";
+        $res = $link->queryAll($q, []);
+
+        if($res === false) return [];
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else return $res;
+    }
+
+    /**
+     * Returns n articles with names similar to input
+     * @param string $term search term
+     * @param int $page page
+     * @param int $n number of searches to be returned
+     * @return array results of the search
+     * @throws Exception MYSQL_EXCEPTION in case of database failure
+     */
+    public static function searchArticles(string $term, int $n, int $page):array{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        echo $page;
+        echo ($page-1)*$n;
+
+        $q = "SELECT id, name, description, price FROM akm_prestation WHERE name LIKE '%".sanitizeStringQuotes($term)."%' LIMIT ".(($page-1)*$n).",".$n;
         $res = $link->queryAll($q, []);
 
         if($res === false) return [];
