@@ -79,7 +79,7 @@ class CatalogController
         }catch (Exception $e){
             switch ($e->getCode()){
                 case MYSQL_EXCEPTION:
-                    formatResponse(500, ["Content-Type" => "application/json"],
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
                         ["success" => false, "errorMessage" => "Database Error", "errorCode" => MYSQL_EXCEPTION]);
                     break;
                 default:
@@ -112,12 +112,72 @@ class CatalogController
         }catch (Exception $e){
             switch ($e->getCode()){
                 case COMPANY_NOT_FOUND:
-                    formatResponse(400, ["Content-Type" => "application/json"],
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
                         ["success" => false, "errorMessage" => "Company does not exist", "errorCode" => COMPANY_NOT_FOUND]);
                     break;
 
                 case MYSQL_EXCEPTION:
-                    formatResponse(500, ["Content-Type" => "application/json"],
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database Error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "table" => $info]);
+
+    }
+
+    /**
+     * returns n articles based on parameter:
+     * optional param: partner id
+     * main param: "mode": "alpha" VS "chrono"
+     * optional param: reverse true|false
+     * reverse mode
+     * @httpmethod get
+     * @return void
+     */
+    public static function getNArticles(){
+        include __DIR__."/../models/Catalog.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        $id = $json->id_partner ?? -1;
+
+        if(!isset($json->mode)||empty($json->mode))
+            reportMissingParam("mode");
+
+        if(!isset($json->number)||empty($json->number))
+            reportMissingParam("number");
+
+        $reverse = $json->reverse ?? false;
+
+        switch ($json->mode){
+            case "alpha": $mode = ALPHABETICAL_ORDER; break;
+            case "chrono": $mode = CHRONOLOGICAL_ORDER; break;
+            default :
+                echo formatResponse(400, ["Content-Type" => "application/json"],
+                    ["success" => false, "errorMessage" => "Not an ordering mode", "errorCode" => INVALID_ORDER]);
+                die();
+        }
+
+        try {
+            $info = Catalog::getNArticles($id, $mode, $json->number, $reverse);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                case INVALID_ORDER:
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Not an ordering mode", "errorCode" => INVALID_ORDER]);
+                    break;
+
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
                         ["success" => false, "errorMessage" => "Database Error", "errorCode" => MYSQL_EXCEPTION]);
                     break;
 

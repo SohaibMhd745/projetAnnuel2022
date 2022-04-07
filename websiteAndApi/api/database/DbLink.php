@@ -68,7 +68,7 @@ class DbLink{
         try {
             $req = $this->pdo->prepare($query);
             $res = $req->execute($args);
-            //  $req->debugDumpParams();
+            //$req->debugDumpParams();
             return $res;
         }catch (mysqli_sql_exception $err){
             return MYSQL_EXCEPTION;

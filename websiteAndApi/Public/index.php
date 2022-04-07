@@ -71,13 +71,13 @@ if ($route !== ""){
                             break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
-                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
                             die();
                     }
                     break;
                 default:
                     echo formatResponse(400, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "", "errorCode" => WRONG_METHOD]);
+                        ["success" => false, "errorMessage" => "This controller does not support this method", "errorCode" => WRONG_METHOD]);
                     die();
             }
 
@@ -95,19 +95,23 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::searchArticles();
                             break;
+                        case "orderedsearch":
+                            include __DIR__."/../api/controllers/CatalogController.php";
+                            CatalogController::getNArticles();
+                            break;
                         case "getallarticles":
                             include __DIR__."/../api/controllers/CatalogController.php";
                             CatalogController::getAllArticles();
                             break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
-                                ["success" => false, "errorMessage" => "", "errorCode" => WRONG_ACTION]);
+                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
                             die();
                     }
                     break;
                 default:
                     echo formatResponse(400, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "", "errorCode" => WRONG_METHOD]);
+                        ["success" => false, "errorMessage" => "This controller does not support this method", "errorCode" => WRONG_METHOD]);
                     die();
             }
             break;
