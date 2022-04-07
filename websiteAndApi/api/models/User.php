@@ -54,7 +54,7 @@ class User{
     /**
      * Construct user class from user id
      * @param string $token : user connection token
-     * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
+     * @throws Exception : INVALID_AUTH_TOKEN | MYSQL_EXCEPTION
      */
     public function constructFromToken(string $token){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
