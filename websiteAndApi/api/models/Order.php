@@ -100,4 +100,26 @@ class Order
             else throw new Exception("Prestation already in cart", ALREADY_IN_CART);
         }
     }
+
+    /**
+     * Returns detailed cart information
+     * @param int $oId order id
+     * @return array|mixed Array of prestation info with cart info
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     */
+    public static function getCartInfo(int $oId){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT akm_prestation.id as id, akm_prestation.name as name, akm_prestation.price as individualprice
+            akm_cart.amount as quantity, (quantity*individualprice) as total 
+            FROM akm_presation LEFT JOIN akm_cart ON akm_prestation.id = akm_cart.id_prestation
+            WHERE id_order = :oid";
+
+        $res = $link->queryAll($q, ["oid" => $oId]);
+
+        if ($res === false) return [];
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        else return $res;
+    }
 }
