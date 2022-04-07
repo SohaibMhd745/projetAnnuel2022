@@ -107,6 +107,9 @@ checkTokenValidity(function (tokenValid) {
             const sponsorcode = sponsorcodeInput.value;
 
             const token = localStorage.getItem("token");
+            console.log('token');
+            console.log(token);
+            console.log('token');
 
             let serializedInput;
 
@@ -125,6 +128,7 @@ checkTokenValidity(function (tokenValid) {
                     if (this.readyState === 4) {
                         const response = this.responseText;
                         const parsedResponse = JSON.parse(response);
+                        console.log(parsedResponse);
                         if (parsedResponse.success === true) {
                             window.location.replace("/account");
                         } else {
