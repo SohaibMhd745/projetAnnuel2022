@@ -79,6 +79,27 @@ class Order
     }
 
     /**
+     *
+     * @param int $pId Prestation id
+     * @param int $oId order id
+     * @param int $new new value after update
+     * @return void
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     * NOT_IN_CART
+     */
+    public static function setAmount(int $pId, int $oId, int $new){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "UPDATE akm_cart SET amount = :new WHERE id_order = :oid AND id_prestation = :pid";
+
+        $status = $link->insert($q, ["oid"=>$oId, "pid"=>$pId, "new"=>$new]);
+
+        if ($status === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        if ($status === false) throw new Exception("Item not in cart", NOT_IN_CART);
+    }
+
+    /**
      * Adds relation between order and prestation
      * @param int $oId order id
      * @param int $pId prestation id
@@ -112,7 +133,7 @@ class Order
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT akm_prestation.id as id, akm_prestation.name as name, akm_prestation.price as individualprice
-            akm_cart.amount as quantity, (quantity*individualprice) as total 
+            akm_cart.amount as quantity, (quantity*individualprice) as subtotal 
             FROM akm_presation LEFT JOIN akm_cart ON akm_prestation.id = akm_cart.id_prestation
             WHERE id_order = :oid";
 
