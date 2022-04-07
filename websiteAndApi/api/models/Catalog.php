@@ -29,18 +29,20 @@ class Catalog
     /**
      * @param int $id -1 for none, id of the company to search for a specific partner's prestations
      * @param int $mode order mode
-     * @param int $n :
-     * @param bool $reverse
-     * @return array|mixed
+     * @param int $n n per page
+     * @param bool $reverse reverse the order
+     * @param int $page page
+     * @return array|mixed empty array or array
      * @throws Exception
+     * MYSQL_EXCEPTION
      */
-    public static function getNArticles(int $id, int $mode, int $n, bool $reverse){
+    public static function getNArticles(int $id, int $mode, int $n, bool $reverse, int $page){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT id, name, description, price FROM akm_prestation";
 
         if($id !== -1) {
-            $q .= " WHERE id = :id";
+            $q .= " WHERE id_partner = :id";
             $param = ["id" => $id];
         }else $param = [];
 
@@ -55,7 +57,7 @@ class Catalog
 
         $q .= $reverse?" DESC":" ASC";
 
-        $q .= " LIMIT ".$n;
+        $q .= " LIMIT ".(($page-1)*$n).",".$n;
 
         $res = $link->queryAll($q, $param);
 

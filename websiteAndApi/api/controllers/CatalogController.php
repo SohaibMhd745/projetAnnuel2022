@@ -156,6 +156,9 @@ class CatalogController
         if(!isset($json->number)||empty($json->number))
             reportMissingParam("number");
 
+        if(!isset($json->page)||empty($json->page))
+            reportMissingParam("page");
+
         $reverse = $json->reverse ?? false;
 
         switch ($json->mode){
@@ -168,7 +171,7 @@ class CatalogController
         }
 
         try {
-            $info = Catalog::getNArticles($id, $mode, $json->number, $reverse);
+            $info = Catalog::getNArticles($id, $mode, $json->number, $reverse, $json->page);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_ORDER:
