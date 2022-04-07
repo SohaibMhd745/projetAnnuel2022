@@ -65,30 +65,86 @@ class Partner extends User {
      * @param string $name
      * @param int $revenue
      * @param string $website
-     * @param int $id_sponsor
+     * @param int|null $id_sponsor
      * @return void
      * @throws Exception :
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function register(User $user, string $name, int $revenue, string $website, int $id_sponsor){
+    public static function register(User $user, string $name, int $revenue, string $website, $id_sponsor){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $status = $link->insert(
-            'INSERT INTO akm_partners (name, inscription, revenue, website, id_sponsor, id_user)
+        if($id_sponsor === null){
+            $status = $link->insert(
+                'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+                [
+                    'partnername' => $name,
+                    'inscription' => getYearsAgo(0),
+                    'revenue' => $revenue,
+                    'website' => $website,
+                    'id_user' => $user->getId(),
+                ]);
+        }else{
+            $status = $link->insert(
+                'INSERT INTO akm_partners (name, inscription, revenue, website, id_sponsor, id_user)
                     VALUES (:partnername, :inscription, :revenue, :website, :id_sponsor, :id_user)',
-            [
-                'partnername' => $name,
-                'inscription' => getYearsAgo(0),
-                'revenue' => $revenue,
-                'website' => $website,
-                'id_sponsor' => $id_sponsor,
-                'id_user' => $user->getId(),
-            ]);
+                [
+                    'partnername' => $name,
+                    'inscription' => getYearsAgo(0),
+                    'revenue' => $revenue,
+                    'website' => $website,
+                    'id_sponsor' => $id_sponsor,
+                    'id_user' => $user->getId(),
+                ]);
+        }
+
+
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
 
         $user->updateIdPartner();
 
+    }
+
+    /**
+     * Generates, inserts into the database and returns sponsorship code
+     * @param int $id id of the company that will be the generator of the code
+     * @return string
+     * @throws Exception
+     */
+    public static function generateSponsorCode(int $id):string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $code = generateRandomString(10);
+
+        $status = $link->insert("INSERT INTO akm_sponsor_code (id_sponsor, used, code) VALUES (:id, false,:code)",
+            ["id" => $id, "code" => $code]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $code;
+    }
+
+
+    /**
+     * Checks sponsor code validity and returns sponsor id and uses it
+     * @param string $code code to be used
+     * @return int id of the sponsor
+     * @throws Exception
+     * - INVALID_CODE in case of code unusability
+     * - MYSQL_EXCEPTIOn in case of database failure
+     */
+    public static function useSponsorCode(string $code):int{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->query('SELECT id_sponsor FROM akm_sponsor_code WHERE code = :code AND used = false', ['code' => $code]);
+        if($res === false)
+            throw new Exception("Code is not valid", INVALID_CODE);
+
+        if (!$link->insert("UPDATE akm_sponsor_code SET used = true WHERE code = :code", ['code'=>$code]))
+            throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $res['id_sponsor'];
     }
 
     /**

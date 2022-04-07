@@ -1,5 +1,12 @@
 <?php
 
+//Order
+const INVALID_ORDER = -102;
+
+const ALPHABETICAL_ORDER = 10;
+const CHRONOLOGICAL_ORDER = 11;
+
+
 const NO_EXCEPTION = 1;
 
 //General Exceptions
@@ -17,6 +24,7 @@ const INVALID_AUTH_TOKEN = -13;
 
 //Partner Related Exceptions
 const COMPANY_NOT_FOUND = -15;
+const INVALID_CODE = -16;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";

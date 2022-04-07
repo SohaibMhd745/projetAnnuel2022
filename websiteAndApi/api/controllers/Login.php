@@ -144,28 +144,22 @@ class Login
      * @httpmethod post
      * @return void
      */
-    public static function registercompany(){
-        include __DIR__."/../models/User.php";
-        include __DIR__."/../models/Partner.php";
+    public static function registercompany()
+    {
+        include __DIR__ . "/../models/User.php";
+        include __DIR__ . "/../models/Partner.php";
 
         $json = json_decode(file_get_contents("php://input"));
 
-        if(!isset($json->partnername)||empty($json->partnername))
+        if (!isset($json->partnername) || empty($json->partnername))
             reportMissingParam("partnername");
-        if(!isset($json->revenue)||empty($json->revenue))
+        if (!isset($json->revenue) || empty($json->revenue))
             reportMissingParam("revenue");
-        if(!isset($json->website)||empty($json->website))
+        if (!isset($json->website) || empty($json->website))
             reportMissingParam("website");
 
-        //TODO: header ?
-        if(!isset($json->token)||empty($json->token))
+        if (!isset($json->token) || empty($json->token))
             reportMissingParam("token");
-
-        //TODO:
-        /**
-         * if(!isset($json->sponsorid)||empty($json->sponsorid))
-                reportMissingParam("sponsorid");
-         */
 
         $token = $json->token;
 
@@ -173,36 +167,37 @@ class Login
             "partnername" => $json->partnername,
             "revenue" => $json->revenue,
             "website" => $json->website,
-            "sponsorid" => 1
-            //TODO:
-            //"sponsorid" => $json->sponsorid
         ];
 
         self::checkParams($params);
 
-        $user = new User();
-        try {
-            $user->constructFromToken($token);
-        }catch (Exception $e){
-            switch ($e->getCode()){
-                case INVALID_AUTH_TOKEN:
-                    echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
-                    break;
-                case MYSQL_EXCEPTION:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-                default:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
+        $user = self::attemptConnection($token);
+
+        if (!isset($json->sponsorcode) || empty($json->sponsorcode)) $sponsor = null;
+        else {
+            try {
+                $sponsor = Partner::useSponsorCode($json->sponsorcode);
+            } catch (Exception $e) {
+                switch ($e->getCode()) {
+                    case INVALID_CODE:
+                        echo formatResponse(400, ["Content-Type" => "application/json"],
+                            ["success" => false, "errorMessage" => "Code is not valid", "errorCode" => INVALID_CODE]);
+                        break;
+                    case MYSQL_EXCEPTION:
+                        echo formatResponse(500, ["Content-Type" => "application/json"],
+                            ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Code check"]);
+                        break;
+                    default:
+                        echo formatResponse(500, ["Content-Type" => "application/json"],
+                            ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Code check"]);
+                        break;
+                }
+                die();
             }
-            die();
         }
 
         try {
-            Partner::register($user, $params["partnername"], $params["revenue"], $params["website"], $params["sponsorid"]);
+            Partner::register($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
@@ -260,44 +255,10 @@ class Login
 
         $token = $json->token;
 
-        $user = new User();
-        try {
-            $user->constructFromToken($token);
-        } catch (Exception $e){
-            switch ($e->getCode()){
-                case INVALID_AUTH_TOKEN:
-                    echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
-                    break;
-                case MYSQL_EXCEPTION:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-                default:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-            }
-            die();
-        }
+        $user = self::attemptConnection($token);
 
         if ($user->getIdPartner()!==-1){
-            $partner = new Partner();
-            try {
-                $partner->constructFromToken($token);
-            }catch (Exception $e){
-                switch ($e->getCode()){
-                    case MYSQL_EXCEPTION:
-                        echo formatResponse(500, ["Content-Type" => "application/json"],
-                            ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
-                        break;
-                    default:
-                        echo formatResponse(500, ["Content-Type" => "application/json"],
-                            ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
-                        break;
-                }
-                die();
-            }
+            $partner = self::attemptPartnerConnection($token);
             echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "partner",
                 "user" => [
                     "id"=>$partner->getId(),
@@ -325,6 +286,46 @@ class Login
                 "phone"=>$user->getPhone(),
                 "id_partner"=>$user->getIdPartner()
         ]]);
+    }
+
+    /**
+     * @httpmethod get
+     * @return void
+     */
+    public static function generateSponsorCode(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Partner.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if(!isset($json->token)||empty($json->token))
+            reportMissingParam("token");
+
+        $token = $json->token;
+
+        $user = self::attemptConnection($token);
+
+        if ($user->getIdPartner() === -1) echo formatResponse(400, ["Content-Type" => "application/json"],
+            ["success" => false, "errorMessage" => "Provided user is not ", "errorCode" => MYSQL_EXCEPTION]);
+
+        try {
+            $code = Partner::generateSponsorCode($user->getIdPartner());
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "code" => $code]);
     }
 
     /**
@@ -445,5 +446,59 @@ class Login
                 die();
             }
         }
+    }
+
+    /**
+     * Attempts user connection, breaks execution in case of error, returns user otherwise
+     * @param string $token token to attempt connection with
+     * @return User built structure from token
+     */
+    private static function attemptConnection(string $token) : User{
+        $user = new User();
+        try {
+            $user->constructFromToken($token);
+        } catch (Exception $e) {
+            switch ($e->getCode()) {
+                case INVALID_AUTH_TOKEN:
+                    echo formatResponse(401, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
+                    break;
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
+                    break;
+            }
+            die();
+        }
+        return $user;
+    }
+
+    /**
+     * Attempts partner connection, breaks execution in case of error, returns user otherwise
+     * @param string $token token to attempt connection with
+     * @return Partner built structure from token
+     */
+    private static function attemptPartnerConnection(string $token):Partner{
+        $partner = new Partner();
+        try {
+            $partner->constructFromToken($token);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
+                    break;
+            }
+            die();
+        }
+        return $partner;
     }
 }

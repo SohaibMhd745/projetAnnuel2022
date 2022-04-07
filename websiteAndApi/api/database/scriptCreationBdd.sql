@@ -6,11 +6,19 @@ CREATE TABLE akm_partners(
 	inscription DATETIME,
 	revenue INT NOT NULL,
 	website VARCHAR(30),
-	id_sponsor INT NOT NULL,
-	id_user INT,
+	id_sponsor INT,
+	id_user INT NOT NULL,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
+);
+
+CREATE TABLE akm_sponsor_code(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_sponsor INT NOT NULL,
+    used BOOL NOT NULL,
+    code CHAR(10) NOT NULL,
+    FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id)
 );
 
 CREATE TABLE akm_users(
