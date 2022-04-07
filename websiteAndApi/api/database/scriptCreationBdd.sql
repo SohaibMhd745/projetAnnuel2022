@@ -52,7 +52,7 @@ CREATE TABLE akm_order(
 	id INT AUTO_INCREMENT,
 	id_user INT NOT NULL,
 	order_time DATETIME,
-	amount INT,
+	cost INT,
 	ordered BOOLEAN NOT NULL,
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
