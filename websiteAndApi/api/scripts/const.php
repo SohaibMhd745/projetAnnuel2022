@@ -28,6 +28,7 @@ const INVALID_CODE = -16;
 
 //Order related exceptions
 const ORDER_ALREADY_EXISTS = -30;
+const ALREADY_IN_CART = -30;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";
