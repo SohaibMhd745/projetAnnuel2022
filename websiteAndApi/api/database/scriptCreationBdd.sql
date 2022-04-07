@@ -56,6 +56,7 @@ CREATE TABLE akm_order(
 	ordered BOOLEAN NOT NULL,
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
+    --TODO: Code confirmation de stripe
 );
 
 CREATE TABLE akm_cart(
