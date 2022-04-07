@@ -5,7 +5,7 @@ class Partner extends User {
     private string $partnerInscription;
     private int $revenue;
     private string $website;
-    private int $id_sponsor;
+    private $id_sponsor;
 
 
     //@Override user constructFromEmailAndPassword

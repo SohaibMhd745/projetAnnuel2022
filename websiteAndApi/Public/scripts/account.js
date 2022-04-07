@@ -41,7 +41,6 @@ checkTokenValidity(function (tokenValid) {
                 xhttp.open("POST", "/login/signin", false);
                 xhttp.setRequestHeader("Content-Type", "application/json");
                 xhttp.onreadystatechange = function () {
-                    console.log(this.readyState);
                     if (this.readyState === 4) {
                         const response = this.responseText;
                         const parsedResponse = JSON.parse(response);
@@ -107,16 +106,13 @@ checkTokenValidity(function (tokenValid) {
             const sponsorcode = sponsorcodeInput.value;
 
             const token = localStorage.getItem("token");
-            console.log('token');
-            console.log(token);
-            console.log('token');
 
             let serializedInput;
 
             if(sponsorcode !== ""){
-                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, token: "token", "sponsorcode": sponsorcode });
+                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token":token, "sponsorcode": sponsorcode });
             } else {
-                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website });
+                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token":token });
             }
 
             try {
@@ -128,7 +124,6 @@ checkTokenValidity(function (tokenValid) {
                     if (this.readyState === 4) {
                         const response = this.responseText;
                         const parsedResponse = JSON.parse(response);
-                        console.log(parsedResponse);
                         if (parsedResponse.success === true) {
                             window.location.replace("/account");
                         } else {
