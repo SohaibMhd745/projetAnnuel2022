@@ -31,6 +31,7 @@ CREATE TABLE akm_users(
 	password VARCHAR(200) NOT NULL,
 	inscription DATE NOT NULL,
 	id_partner INT,
+	points INT NOT NULL,
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id),
 
