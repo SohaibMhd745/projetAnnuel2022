@@ -15,8 +15,6 @@ class Order
     public static function createOrder(string $token){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        include __DIR__.'/User.php';
-
         $user = new User();
         $user->constructFromToken($token);
         //Can throw MYSQL AUTH TOKEN exceptions
@@ -41,12 +39,9 @@ class Order
      * @throws Exception
      * MYSQL_EXCEPTION
      * INVALID_AUTH_TOKEN
-     * ORDER_ALREADY_EXISTS
      */
     public static function getCurrentOrder(string $token):int{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
-
-        include __DIR__.'/User.php';
 
         $user = new User();
         $user->constructFromToken($token);
@@ -132,15 +127,35 @@ class Order
     public static function getCartInfo(int $oId){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT akm_prestation.id as id, akm_prestation.name as name, akm_prestation.price as individualprice
-            akm_cart.amount as quantity, (quantity*individualprice) as subtotal 
-            FROM akm_presation LEFT JOIN akm_cart ON akm_prestation.id = akm_cart.id_prestation
-            WHERE id_order = :oid";
+        $q = "SELECT ak_p.id as id, ak_p.name as name, ak_p.price as individualprice,
+            ak_c.amount as quantity, (ak_c.amount*ak_p.price) as subtotal 
+            FROM akm_prestation as ak_p LEFT JOIN akm_cart as ak_c ON ak_p.id = ak_c.id_prestation
+            WHERE ak_c.id_order = :oid";
 
         $res = $link->queryAll($q, ["oid" => $oId]);
 
         if ($res === false) return [];
         else if($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
         else return $res;
+    }
+
+    /**
+     * Remove item from cart
+     * @param int $oId order id
+     * @param int $pId prestation id
+     * @return void
+     * @throws Exception
+     * MYSQL_EXCETPION
+     * NOT_IN_CART
+     */
+    public static function removeFromCart(int $oId, int $pId){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "DELETE FROM akm_cart WHERE id_order = :oid AND id_prestation = :pid";
+
+        $status = $link->insert($q, ["oid"=>$oId, "pid"=>$pId]);
+
+        if ($status === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        if ($status !== true) throw new Exception("Item not in cart", NOT_IN_CART);
     }
 }

@@ -9,14 +9,13 @@ CREATE TABLE akm_partners(
 	id_sponsor INT,
 	id_user INT NOT NULL,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
-	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE akm_sponsor_code(
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_sponsor INT NOT NULL,
-    used BOOL NOT NULL,
+    used BOOLEAN NOT NULL,
     code CHAR(10) NOT NULL,
     FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id)
 );
@@ -39,6 +38,8 @@ CREATE TABLE akm_users(
 	token_end DATETIME
 );
 
+ALTER TABLE akm_partners ADD FOREIGN KEY (id_user) REFERENCES akm_users(id);
+
 CREATE TABLE akm_prestation(
 	id INT AUTO_INCREMENT,
 	name VARCHAR(30) NOT NULL,
@@ -57,7 +58,7 @@ CREATE TABLE akm_order(
 	ordered BOOLEAN NOT NULL,
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
-    --TODO: Code confirmation de stripe
+    /*TODO: Code confirmation de stripe*/
 );
 
 CREATE TABLE akm_cart(

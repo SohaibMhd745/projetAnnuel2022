@@ -121,6 +121,31 @@ if ($route !== ""){
             Shop::view();
             break;
 
+        case "order":
+            switch ($method){
+                case "POST":
+                    switch ($action){
+                        case "getorder":
+                            include __DIR__."/../api/controllers/OrderController.php";
+                            OrderController::getOrder();
+                            break;
+                        case "change":
+                            include __DIR__."/../api/controllers/OrderController.php";
+                            OrderController::setNewCartAmount();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                default:
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "This controller does not support this method", "errorCode" => WRONG_METHOD]);
+                    die();
+            }
+            break;
+
         default:
             //TODO: Page 404
             include __DIR__ . "/../api/controllers/Home.php";

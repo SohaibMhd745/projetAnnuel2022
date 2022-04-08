@@ -20,7 +20,7 @@ class User{
     public function constructFromEmailAndPassword(string $email, string $password){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
+        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner, points FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email,  preparePassword($password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
