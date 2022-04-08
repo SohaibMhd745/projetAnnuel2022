@@ -9,6 +9,7 @@ class User{
     protected string $birth;
     protected string $phone;
     protected int $id_partner;
+    protected int $points;
 
     /**
      * Construct user class from email and password
@@ -19,7 +20,7 @@ class User{
     public function constructFromEmailAndPassword(string $email, string $password){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE email = ? AND password = ?";
+        $q = "SELECT id, firstname, lastname, inscription, birthdate, phone, id_partner, points FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email,  preparePassword($password)]);
 
         if($res === false) throw new Exception("Invalid user email/password", INCORRECT_USER_CREDENTIALS);
@@ -39,7 +40,7 @@ class User{
     public function constructFromId(int $id){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner FROM akm_users WHERE id = ?";
+        $q = "SELECT email, firstname, lastname, inscription, birthdate, phone, id_partner, points FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 
         if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
@@ -54,14 +55,14 @@ class User{
     /**
      * Construct user class from user id
      * @param string $token : user connection token
-     * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
+     * @throws Exception : INVALID_AUTH_TOKEN | MYSQL_EXCEPTION
      */
     public function constructFromToken(string $token){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $token = sanitizeStringQuotes($token);
 
-        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token FROM akm_users WHERE token = :token AND NOW() < token_end";
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, token, points FROM akm_users WHERE token = :token AND NOW() < token_end";
         $res = $link->query($q, ["token" => $token]);
 
         if($res === false) throw new Exception("Auth token invalid", INVALID_AUTH_TOKEN);
@@ -84,6 +85,7 @@ class User{
         $this->inscription = $res["inscription"];
         $this->birth = $res["birthdate"];
         $this->phone = $res["phone"];
+        $this->points = $res["points"];
 
         ///Causes crashes if not set to -1 and we check later on, we have to check now or it won't work later
         if ($res["id_partner"] === null) $this->id_partner = -1;
@@ -109,8 +111,8 @@ class User{
 
         try {
             $status = $link->insert(
-                'INSERT INTO akm_users (lastname, firstname, birthdate, phone, email, password, inscription)
-                   VALUES (:lastname, :firstname, :birthdate, :phone, :email, :password, :inscription)',
+                'INSERT INTO akm_users (lastname, firstname, birthdate, phone, email, password, inscription, points)
+                   VALUES (:lastname, :firstname, :birthdate, :phone, :email, :password, :inscription, 0)',
                 [
                     'lastname' => $lastname,
                     'firstname' => $firstname,
@@ -210,6 +212,14 @@ class User{
     public function getIdPartner() : int
     {
         return $this->id_partner;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPoints(): int
+    {
+        return $this->points;
     }
 
     /**
