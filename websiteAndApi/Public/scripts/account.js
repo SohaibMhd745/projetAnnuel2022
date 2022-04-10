@@ -8,8 +8,7 @@ import {
     PARAMETER_WRONG_LENGTH,
     USER_NOT_FOUND,
     INCORRECT_USER_CREDENTIALS,
-    INVALID_AUTH_TOKEN,
-    COMPANY_NOT_FOUND
+    INVALID_AUTH_TOKEN
 } from './const.js';
 
 import { checkTokenValidity } from "./checkTokenValidity.js";
@@ -110,9 +109,9 @@ checkTokenValidity(function (tokenValid) {
             let serializedInput;
 
             if(sponsorcode !== ""){
-                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token":token, "sponsorcode": sponsorcode });
+                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token": token, "sponsorcode": sponsorcode });
             } else {
-                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token":token });
+                serializedInput = JSON.stringify({ "partnername": partnername, "revenue": revenue, "website": website, "token": token });
             }
 
             try {
@@ -124,35 +123,23 @@ checkTokenValidity(function (tokenValid) {
                     if (this.readyState === 4) {
                         const response = this.responseText;
                         const parsedResponse = JSON.parse(response);
+                        console.log('parsedResponse');
+                        console.log(parsedResponse);
+                        console.log('parsedResponse');
                         if (parsedResponse.success === true) {
                             window.location.replace("/account");
                         } else {
                             const errorUpgrade = document.getElementById("upgrade-error");
                             switch (parsedResponse.errorCode) {
-                                case FATAL_EXCEPTION:
-                                    errorUpgrade.innerHTML = "Erreur fatale. Veuillez réessayer.";
-                                    break;
-                                case MYSQL_EXCEPTION:
-                                    errorUpgrade.innerHTML = "Erreur base de données. Veuillez réessayer.";
-                                    break;
-                                case INVALID_PARAMETER:
-                                    errorUpgrade.innerHTML = "Paramètre invalide.";
-                                    break;
-                                case MISSING_PARAMETER:
-                                    errorUpgrade.innerHTML = "Paramètre manquant.";
-                                    break;
-                                case PARAMETER_WRONG_LENGTH:
-                                    errorUpgrade.innerHTML = "Paramètre de longueur invalide.";
-                                    break;
-                                case COMPANY_NOT_FOUND:
-                                    errorUpgrade.innerHTML = "Entreprise inexistante.";
-                                    break;
-                                case INVALID_AUTH_TOKEN:
-                                    errorUpgrade.innerHTML = "Token invalide.";
-                                    break;
-                                default:
-                                    errorUpgrade.innerHTML = "Erreur inconnue.";
-                                    break;
+                                case FATAL_EXCEPTION: sortError.innerHTML = "Erreur fatale. Veuillez réessayer."; break;
+                                case MYSQL_EXCEPTION: sortError.innerHTML = "Erreur base de données. Veuillez réessayer."; break;
+                                case INVALID_PARAMETER: sortError.innerHTML = "Paramètre invalide."; break;
+                                case MISSING_PARAMETER: sortError.innerHTML = "Paramètre manquant."; break;
+                                case PARAMETER_WRONG_LENGTH: sortError.innerHTML = "Paramètre de longueur invalide."; break;
+                                case USER_NOT_FOUND: sortError.innerHTML = "Utilisateur inexistant."; break;
+                                case INCORRECT_USER_CREDENTIALS: sortError.innerHTML = "Identifiants invalides."; break;
+                                case INVALID_AUTH_TOKEN: sortError.innerHTML = "Token invalide."; break;
+                                default: sortError.innerHTML = "Erreur inconnue."; break;
                             }
                         }
                     }
@@ -169,6 +156,7 @@ checkTokenValidity(function (tokenValid) {
 // Signout button
 const signoutButton = document.getElementById("signout");
 signoutButton.addEventListener("click", () => {
+    event.preventDefault();
     localStorage.clear();
     window.location.replace("/");
 });

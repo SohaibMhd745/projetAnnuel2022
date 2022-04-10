@@ -97,43 +97,176 @@
 
 
 
+/* CONSTANTS */
+:root {
+  --akm-red: #FE4A49;
+  --akm-blue: #009FB7;
+  --akm-gold: #FED766;
+
+  --akm-red-dark: #C43838;
+  --akm-blue-dark: #006979;
+  --akm-gold-dark: #caac52;
+
+  --akm-black: #0B0500;
+  --akm-white: #E6E6EA;
+  --akm-gray: #999999;
+  --akm-darkgray: #444444;
+}
+
+
+
 /* HTML ELEMENTS */
 body {
   margin: 0;
-  background-color: #0B0500;
+  background-color: var(--akm-black);
   font-family: FallingSky;
 }
 
 main {
-  background-color: #E6E6EA;
+  background-color: var(--akm-white);
+}
+
+p {
+  margin: 16px;
 }
 
 
 
 /* GLOBAL ELEMENTS */
-.global-separator {
-  height: 28px;
+.col-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-.global-separator-xl {
+.title {
+  font-size: 36px;
+  font-family: LGC_Bold;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.form {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.input {
+  width: 100%;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  
+  border: none;
+  border-bottom: 1px solid var(--akm-black);
+  background: none;
+  transition: 0.2s;
+}
+
+.input:focus {
+  outline: none !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+
+.input-red:focus {
+  border-bottom: 1px solid var(--akm-red);
+}
+
+.input-gold:focus {
+  border-bottom: 1px solid var(--akm-gold);
+}
+
+.button {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 8px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+}
+
+.button-red {
+  background-color: var(--akm-red);
+  color: var(--akm-white);
+  transition: 0.3s;
+}
+
+.button-red:hover {
+  background-color: var(--akm-red-dark);
+  transition: 0.3s;
+}
+
+.button-blue {
+  background-color: var(--akm-blue);
+  color: white;
+  transition: 0.3s;
+}
+
+.button-blue:hover {
+  background-color: var(--akm-blue-dark);
+  transition: 0.3s;
+}
+
+.button-gold {
+  background-color: var(--akm-gold);
+  color: black;
+  transition: 0.3s;
+}
+
+.button-gold:hover {
+  background-color: var(--akm-gold-dark);
+  transition: 0.3s;
+}
+
+.error {
+  color: var(--akm-red);
+  text-align: center;
+}
+
+.separator-s {
+  height: 24px;
+}
+
+.separator-m {
+  height: 32px;
+}
+
+.separator-l {
+  height: 48px;
+}
+
+.separator-xl {
   height: 64px;
 }
 
-.global-vl {
-  border-left: 1px solid #0B0500;
+.vl {
+  border-left: 1px solid var(--akm-black);
   height: 100%;
-}
-
-.global-error {
-  color: #FE4A49;
 }
 
 
 
 /* HEADER */
 .header-fluid {
-  background-color: #0B0500;
-  color: #E6E6EA;
+  background-color: var(--akm-black);
+  color: var(--akm-white);
 }
 
 .header-row {
@@ -167,7 +300,7 @@ main {
 }
 
 .header-a {
-  color: #E6E6EA;
+  color: var(--akm-white);
   font-family: FallingSky_Light;
 
   text-decoration: none;
@@ -178,17 +311,17 @@ main {
 }
 
 .header-a:hover {
-  color: #FED766;
+  color: var(--akm-gold);
   transition: 0.3s;
 }
 
 .header-active {
-  border-bottom: 2px solid #E6E6EA;
+  border-bottom: 2px solid var(--akm-white);
   transition: 0.3s;
 }
 
 .header-active:hover {
-  border-bottom: 2px solid #FED766;
+  border-bottom: 2px solid var(--akm-gold);
   transition: 0.3s;
 }
 
@@ -196,8 +329,8 @@ main {
 
 /* FOOTER */
 .footer-fluid {
-  background-color: #0B0500;
-  color: #E6E6EA;
+  background-color: var(--akm-black);
+  color: var(--akm-white);
 }
 
 .footer-row {
@@ -222,37 +355,37 @@ main {
 
 .footer-subtext {
   font-family: LGC;
-  color: #999999;
+  color: var(--akm-gray);
 
   margin-bottom: 8px;
 }
 
 .footer-link {
   text-decoration: none;
-  color: #999999;
+  color: var(--akm-gray);
   transition: 0.3s;
 }
 
 .footer-link:hover {
-  color: #E6E6EA;
+  color: var(--akm-white);
   transition: 0.3s;
 }
 
 .footer-row2 {
   padding-top: 24px;
   padding-bottom: 24px;
-  background-color: #0B0500;
+  background-color: var(--akm-black);
 }
 
 .footer-hr {
-  color: #E6E6EA;
+  color: var(--akm-white);
   margin: 0;
 }
 
 
 
-/* PAGE ELEMENTS */
-.page-title-div {
+/* HOME */
+.home-title-div {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -260,102 +393,51 @@ main {
   padding: 150px;
 }
 
-.page-title {
-  font-size: 36px;
-  font-family: LGC_Bold;
-  text-align: center;
-}
 
 
-
-/* ACCOUNT */
-.account-container {
-  padding-top: 36px;
-  padding-bottom: 36px;
-}
-
-.account-title {
-  font-size: 28px;
-  margin-bottom: 16px;
-}
-
-.account-col {
+/* SHOP */
+.shop-sort {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  
-}
-
-.account-form {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 }
 
-.account-label {
-  width: 100%;
-  margin-top: 16px;
+.shop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
 }
 
-.account-input {
-  width: 100%;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  
-  border: none;
-  border-bottom: 1px solid #0B0500;
-  background: none;
-  transition: 0.2s;
+.shop-insideitem {
+  text-align: left;
 }
 
-.account-input:focus {
-  outline: none !important;
-  border: none;
-  background: none;
-  transition: 0.2s;
+.shop-item-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--akm-black);
 }
 
-.account-input-red:focus {
-  border-bottom: 1px solid #FE4A49;
+.shop-item-description {
+  font-size: 14px;
+  color: var(--akm-darkgray);
+  margin-bottom: 8px;
 }
 
-.account-input-gold:focus {
-  border-bottom: 1px solid #FED766;
+.shop-item-price {
+  font-size: 12px;
+  color: var(--akm-gray);
+  margin-top: 0;
 }
 
-.account-btn {
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 8px;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 6px;
-}
-
-.account-btn-red {
-  background-color: #FE4A49;
-  color: white;
-  transition: 0.3s;
-}
-
-.account-btn-red:hover {
-  background-color: #c43838;
-  transition: 0.3s;
-}
-
-.account-btn-gold {
-  background-color: #FED766;
-  color: black;
-  transition: 0.3s;
-}
-
-.account-btn-gold:hover {
-  background-color: #caac52;
-  transition: 0.3s;
+#sort-button {
+  font-size: 14px;
+  padding: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 12px;
+  width: auto;
 }

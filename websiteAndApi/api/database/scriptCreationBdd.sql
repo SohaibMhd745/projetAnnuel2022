@@ -3,10 +3,10 @@
 CREATE TABLE akm_partners(
 	id INT AUTO_INCREMENT,
 	name VARCHAR(30) NOT NULL,
-	inscription DATETIME,
+	inscription DATE,
 	revenue INT NOT NULL,
-	website VARCHAR(30),
-	id_sponsor INT,
+	website VARCHAR(30) NOT NULL,
+	id_sponsor INT NULL,
 	id_user INT NOT NULL,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
