@@ -26,6 +26,11 @@ const INVALID_AUTH_TOKEN = -13;
 const COMPANY_NOT_FOUND = -15;
 const INVALID_CODE = -16;
 
+//Order related exceptions
+const ORDER_ALREADY_EXISTS = -30;
+const ALREADY_IN_CART = -31;
+const NOT_IN_CART = -32;
+
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";
 const TOKEN_VALIDITY = "+1 day";
