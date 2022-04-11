@@ -42,7 +42,8 @@
                         <div class="col shop-item"><div class="shop-insideitem">
                             <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>
                             <p class="shop-item-description" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
-                            <p class="shop-item-price" id="shop-item-price' . $i . '">0€00</p>
+                            <p class="shop-item-price" id="shop-item-price' . $i . '">0.0€</p>
+                            <button class="button button-red shop-btn" id="shop-btn' . $i . '">Ajouter au panier</button>
                         </div></div>';}
 
                     echo '</div><div class="row">';
@@ -53,6 +54,7 @@
                             <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>
                             <p class="shop-item-description" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
                             <p class="shop-item-price" id="shop-item-price' . $i . '">0€00</p>
+                            <button class="button button-red shop-btn" id="shop-btn' . $i . '">Ajouter au panier</button>
                         </div></div>';}
 
                     echo '</div>';
