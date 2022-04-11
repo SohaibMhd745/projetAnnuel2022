@@ -52,38 +52,32 @@
 /* LOUIS GEORGE CAFE */
 @font-face {
   font-family: "LGC";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC.woff") format("woff");
 }
 
 @font-face {
   font-family: "LGC_Obl";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC_Obl.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC_Obl.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC_Obl.woff") format("woff");
 }
 
 @font-face {
   font-family: "LGC_Light";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC_Light.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC_Light.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC_Light.woff") format("woff");
 }
 
 @font-face {
   font-family: "LGC_LightObl";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC_LightObl.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC_LightObl.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC_LightObl.woff") format("woff");
 }
 
 @font-face {
   font-family: "LGC_Bold";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC_Bold.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC_Bold.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC_Bold.woff") format("woff");
 }
 
 @font-face {
   font-family: "LGC_BoldObl";
-  src: url("../assets/fonts/louis_george_café/woff2/LGC_BoldObl.woff2") format("woff2"),
-         url("../assets/fonts/louis_george_café/woff/LGC_BoldObl.woff") format("woff");
+  src: url("../assets/fonts/louis_george_café/woff/LGC_BoldObl.woff") format("woff");
 }
 
 
@@ -186,6 +180,10 @@ p {
 
 .input-red:focus {
   border-bottom: 1px solid var(--akm-red);
+}
+
+.input-blue:focus {
+  border-bottom: 1px solid var(--akm-blue);
 }
 
 .input-gold:focus {

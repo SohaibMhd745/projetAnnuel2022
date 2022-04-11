@@ -18,7 +18,7 @@
                 <div class="row">
                     <p class="title">Catalogue des prestations</p>
                     <div class="separator-s"></div>
-                    <img src="/assets/img/ill/shop.svg" alt="Espace Compte" height="256px" />
+                    <img src="/assets/img/ill/shop.svg" alt="Catalogue des prestations" height="256px" />
                 </div>
 
                 <div class="separator-m"></div>

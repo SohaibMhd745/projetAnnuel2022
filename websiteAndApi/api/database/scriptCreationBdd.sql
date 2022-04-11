@@ -9,6 +9,7 @@ CREATE TABLE akm_partners(
 	id_sponsor INT NULL,
 	id_user INT NOT NULL,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
+	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
 );
 
@@ -33,16 +34,13 @@ CREATE TABLE akm_users(
 	points INT NOT NULL,
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id),
-
 	token CHAR(16),
 	token_end DATETIME
 );
 
-ALTER TABLE akm_partners ADD FOREIGN KEY (id_user) REFERENCES akm_users(id);
-
 CREATE TABLE akm_prestation(
 	id INT AUTO_INCREMENT,
-	name VARCHAR(30) NOT NULL,
+	name VARCHAR(50) NOT NULL,
 	description VARCHAR(2000) NOT NULL,
 	price FLOAT NOT NULL,
 	id_partner INT NOT NULL,

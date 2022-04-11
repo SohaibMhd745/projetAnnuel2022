@@ -1,6 +1,5 @@
 import {INVALID_AUTH_TOKEN} from "./const.js";
 
-
 function checkTokenValidity(callback){
     if(localStorage.getItem("token") == ""||localStorage.getItem("token") == null) callback(false);
     else try {
@@ -25,6 +24,4 @@ function checkTokenValidity(callback){
     }
 }
 
-export{
-    checkTokenValidity
-}
+export{ checkTokenValidity }

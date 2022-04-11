@@ -25,14 +25,14 @@
                     <div class="col col-centered">
                         <p class="subtitle">Ouvrir un compte</p>
                         <div id="signup-form" class="form">
-                            <input class="input input-red" name="lastname" type="text" placeholder="Nom" minlength="2" maxlength="30" required>
-                            <input class="input input-red" name="firstname" type="text" placeholder="Prénom" minlength="2" maxlength="30" required>
+                            <input class="input input-red" id="signup-lastname" type="text" placeholder="Nom">
+                            <input class="input input-red" id="signup-firstname" type="text" placeholder="Prénom">
                             <label class="label">Date de naissance</label>
-                            <input class="input input-red" name="birthdate" type="date" min="<?php echo DEFAULT_DATE_MIN; ?>" max="<?php echo getYearsAgo(18); ?>" required>
-                            <input class="input input-red" name="phone" type="text" placeholder="Téléphone" minlength="10" maxlength="10" required>
-                            <input class="input input-red" name="email" type="email" placeholder="E-mail" maxlength="30" required>
-                            <input class="input input-red" name="password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
-                            <button class="button button-red" type="submit">Valider</button>
+                            <input class="input input-red" id="signup-birthdate" type="date" min="<?php echo DEFAULT_DATE_MIN; ?>" max="<?php echo getYearsAgo(18); ?>">
+                            <input class="input input-red" id="signup-number" type="text" placeholder="Téléphone">
+                            <input class="input input-red" id="signup-email" type="email" placeholder="E-mail">
+                            <input class="input input-red" id="signup-password" type="password" placeholder="Mot de passe">
+                            <button class="button button-red" id="signup-submit" type="submit">Valider</button>
                             <p class="error" id="signup-error"></p>
                         </div>
                     </div>
@@ -44,8 +44,8 @@
                     <div class="col col-centered">
                         <p class="subtitle">Se connecter</p>
                         <div id="signin-form" class="form">
-                            <input class="input input-red" id="signin-email" type="email" placeholder="E-mail" maxlength="30" required>
-                            <input class="input input-red" id="signin-password" type="password" placeholder="Mot de passe" minlength="8" maxlength="30" required>
+                            <input class="input input-red" id="signin-email" type="email" placeholder="E-mail">
+                            <input class="input input-red" id="signin-password" type="password" placeholder="Mot de passe">
                             <button class="button button-red" id="signin-submit" type="submit">Valider</button>
                             <p class="error" id="signin-error"></p>
                         </div>
@@ -59,15 +59,23 @@
         <main id="main-signed">
             <div class="separator-l"></div>
 
-            <div class="container container">
+            <div class="container" id="subview-account">
                 <div class="row">
                     <p class="title">Votre Espace Compte</p>
                     <img src="/assets/img/ill/account.svg" alt="Espace Compte" height="256px" />
                     <div class="separator-m"></div>
                     
                     <div class="col col-centered">
-                        <!-- TODO: Infos du compte (modifiables dans le form) PRIORITE BASSE -->
-                        <div></div>
+                        <p class="subtitle">Mes coordonnées</p>
+                        <div id="profile-form" class="form">
+                            <input class="input input-blue" id="profile-lastname" type="text" placeholder="Nom">
+                            <input class="input input-blue" id="profile-firstname" type="text" placeholder="Prénom">
+                            <label class="label">Date de naissance</label>
+                            <input class="input input-blue" id="profile-birthdate" type="date" min="<?php echo DEFAULT_DATE_MIN; ?>" max="<?php echo getYearsAgo(18); ?>">
+                            <input class="input input-blue" id="profile-number" type="text" placeholder="Téléphone">
+                            <button class="button button-blue" id="profile-submit" type="submit">Modifier</button>
+                            <p class="error" id="profile-error"></p>
+                        </div>
                     </div>
                     
                     <div class="col-1 col-centered">
@@ -75,9 +83,8 @@
                     </div>
                     
                     <div class="col col-centered">
-                        <!-- TODO: Devenir partenaire (form) PRIORITE ELEVEE, supprimer le compte PRIORITE BASSE -->
-                        <p class="subtitle">Devenir partenaire</p>
-                        <div id="upgrade-form" class="form">
+                        <div id="upgrade-section" class="form">
+                            <p class="subtitle">Devenir partenaire</p>
                             <input class="input input-gold" id="upgrade-partnername" type="text" placeholder="Nom d'entreprise" minlength="2" maxlength="30" required>
                             <input class="input input-gold" id="upgrade-revenue" type="text" placeholder="Chiffre d'affaires" minlength="1" maxlength="20" required>
                             <input class="input input-gold" id="upgrade-website" type="text" placeholder="Site Internet" minlength="3" maxlength="30" required>
@@ -85,13 +92,23 @@
                             <button class="button button-gold" id="upgrade-submit" type="submit">Valider</button>
                             <p class="error" id="upgrade-error"></p>
                         </div>
+                        <div id="partner-section" class="form">
+                            <p class="subtitle">Espace partenaire</p>
+                            <button class="button button-gold" id="partner-1" type="submit">Gérer mes prestations</button>
+                            <button class="button button-gold" id="partner-2" type="submit">Ajouter une prestation</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="separator-xl"></div>
 
                 <div class="row">
-                    <div class="col col-centered"></div>
+                    <div class="col col-centered">
+                        <div class="form">
+                            <p class="subtitle">Fermer le compte</p>
+                            <button class="button button-red" id="delete-account" type="submit">Fermeture</button>
+                        </div>
+                    </div>
                     
                     <div class="col-1 col-centered">
                         <div class="vl"></div>
@@ -99,8 +116,26 @@
                     
                     <div class="col col-centered">
                         <div class="form">
-                            <p class="subtitle">Déconnexion</p>
+                            <p class="subtitle">Se déconnecter</p>
                             <button class="button button-red" id="signout" type="submit">Déconnexion</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container" id="subview-addpresta">
+                <div class="row">
+                    <p class="title">Ajouter une prestation</p>
+                    <img src="/assets/img/ill/addpresta.svg" alt="Ajouter une prestation" height="256px" />
+                    <div class="separator-m"></div>
+
+                    <div class="col col-centered">
+                        <div class="form">
+                            <input class="input input-blue" id="addpresta-name" type="text" placeholder="Nom de la prestation">
+                            <input class="input input-blue" id="addpresta-description" type="textarea" placeholder="Description de la la prestation">
+                            <input class="input input-blue" id="addpresta-price" type="number" placeholder="Prix de la prestation">
+                            <button class="button button-blue" id="addpresta-submit" type="submit">Ajouter</button>
+                            <p class="error" id="addpresta-error"></p>
                         </div>
                     </div>
                 </div>

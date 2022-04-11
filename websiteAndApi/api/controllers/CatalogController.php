@@ -233,20 +233,12 @@ class CatalogController
         if(strlen($param) < $minLength || strlen($param) > $maxLength)
             throw new Exception("Parameter Length Incorrect", PARAMETER_WRONG_LENGTH);
 
-        switch($paramName){
-            case "name":
-                $inputWithoutSpaces = str_replace(' ', '', $param);
-                if(!(ctype_alpha($inputWithoutSpaces)))
-                    throw new Exception("Parameter incorrect", INVALID_PARAMETER);
-                break;
-
-            case "price":
-                if (!is_numeric($param))
-                    throw new Exception("Parameter incorrect", INVALID_PARAMETER);
-                break;
-            default:
-                break;
-
+        if($paramName == "price") {
+            $inputCleaned = str_replace('.', '', $param);
+            $inputCleaned = str_replace(',', '', $inputCleaned);
+            $inputCleaned = str_replace(' ', '', $inputCleaned);
+            if (!is_numeric($inputCleaned))
+                throw new Exception("Parameter incorrect", INVALID_PARAMETER);
         }
     }
 
@@ -262,7 +254,7 @@ class CatalogController
             switch ($paramName) {
                 case "name":
                     $min = 2;
-                    $max = 30;
+                    $max = 50;
                     break;
                 case "description":
                     $max = 2000;

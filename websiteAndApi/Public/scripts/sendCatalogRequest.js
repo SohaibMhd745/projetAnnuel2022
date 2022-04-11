@@ -1,8 +1,4 @@
-import {
-    FATAL_EXCEPTION,
-    MYSQL_EXCEPTION,
-    INVALID_AUTH_TOKEN
-} from './const.js';
+import { FATAL_EXCEPTION, MYSQL_EXCEPTION, INVALID_AUTH_TOKEN } from './const.js';
 
 function sendCatalogRequest(mode, reverse) {
     const serializedInput = JSON.stringify({ "mode": mode, "reverse": reverse });
@@ -45,6 +41,4 @@ function sendCatalogRequest(mode, reverse) {
     }
 }
 
-export {
-    sendCatalogRequest
-}
+export { sendCatalogRequest }

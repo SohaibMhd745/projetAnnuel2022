@@ -4,6 +4,4 @@ function addToCart(productNumber) {
     window.alert('Article ajouté au panier' + productNumber);
 }
 
-export {
-    addToCart
-}
+export { addToCart }
