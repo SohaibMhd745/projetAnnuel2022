@@ -163,7 +163,7 @@ class CatalogController
 
         $json = json_decode(file_get_contents("php://input"));
 
-        $id = $json->id_partner ?? -1;
+        $id = intval($json->id_partner) ?? -1;
 
         if(!isset($json->mode)||empty($json->mode))
             reportMissingParam("mode");

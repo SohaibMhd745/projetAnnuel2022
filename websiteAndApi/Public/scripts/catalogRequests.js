@@ -18,9 +18,11 @@ function sendCatalogRequest(mode, reverse, partner = "-1") {
                             const name = document.getElementById("shop-item-name" + i);
                             const description = document.getElementById("shop-item-description" + i);
                             const price = document.getElementById("shop-item-price" + i);
+                            const id = document.getElementById("shop-item-id" + i);
                             name.innerHTML = parsedResponse.table[i - 1].name;
                             description.innerHTML = parsedResponse.table[i - 1].description;
                             price.innerHTML = parsedResponse.table[i - 1].price + '€';
+                            id.innerHTML = parsedResponse.table[i - 1].id;
                         } else {
                             const divToHide = document.getElementById("shop-item" + i);
                             divToHide.style.display = "none";
@@ -57,9 +59,10 @@ function setupFilterByPartner() {
                     let i;
                     for (i = 0; i < parsedResponse.table.length; i++) {
                         const partnerName = parsedResponse.table[i].name;
+                        const partnerID = parsedResponse.table[i].id;
 
                         const option = document.createElement("option");
-                        option.setAttribute("value", partnerName);
+                        option.setAttribute("value", partnerID);
                         option.innerHTML = partnerName;
 
                         const filterSelect = document.getElementById("filter-select");

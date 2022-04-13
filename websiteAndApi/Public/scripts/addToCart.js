@@ -3,7 +3,8 @@ import { FATAL_EXCEPTION, MYSQL_EXCEPTION, INVALID_AUTH_TOKEN, ALREADY_IN_CART, 
 function addToCart(productNumber) {
     const token = localStorage.getItem("token");
     const id = document.getElementById("shop-item-id" + productNumber);
-    const serializedInput = JSON.stringify({ "token": token, "id_prestation": id.value, "change": 1 });
+    const idValue = id.innerHTML;
+    const serializedInput = JSON.stringify({ "token": token, "id_prestation": idValue, "change": 1 });
 
     try {
         var xhttp = new XMLHttpRequest();
