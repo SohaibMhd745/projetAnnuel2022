@@ -1,9 +1,20 @@
 "use strict";
 
-import { sendCatalogRequest } from "./sendCatalogRequest.js";
+import { sendCatalogRequest, setupFilterByPartner } from "./catalogRequests.js";
 import { addToCart } from "./addToCart.js";
 
-sendCatalogRequest("alpha", false); // Affichage par défaut
+sendCatalogRequest("chrono", true); // Default sort
+setupFilterByPartner(); // Setup "filter by partner" feature
+
+// Add event listeners to "Add to cart" buttons
+document.querySelectorAll('.shop-btn').forEach(button => {
+    button.addEventListener('click', event => {
+        event.preventDefault();
+
+        const buttonID = button.id.charAt(button.id.length - 1);
+        addToCart(buttonID);
+    })
+})
 
 const sortButton = document.getElementById("sort-button");
 sortButton.addEventListener("click", async (event) => {
@@ -20,11 +31,11 @@ sortButton.addEventListener("click", async (event) => {
     }
 });
 
-document.querySelectorAll('.shop-btn').forEach(button => {
-    button.addEventListener('click', event => {
-        event.preventDefault();
+const filterButton = document.getElementById("filter-button");
+filterButton.addEventListener("click", async (event) => {
+    event.preventDefault();
 
-        const buttonID = button.id.charAt(button.id.length - 1);
-        addToCart(buttonID);
-    })
-})
+    const filterSelect = document.getElementById("filter-select");
+    const partner = filterSelect.value;
+    sendCatalogRequest("chrono", false, partner);
+});

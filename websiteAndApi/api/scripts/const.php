@@ -6,7 +6,6 @@ const INVALID_ORDER = -102;
 const ALPHABETICAL_ORDER = 10;
 const CHRONOLOGICAL_ORDER = 11;
 
-
 const NO_EXCEPTION = 1;
 
 //General Exceptions

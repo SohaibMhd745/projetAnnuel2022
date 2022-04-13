@@ -27,22 +27,31 @@
                     <div class="shop-sort">
                         <p>Trier par :</p>
                         <select class="shop-select" id="sort-select">
-                            <option value="alpha-c">Ordre alphabétique (croissant)</option>
-                            <option value="chrono-c">Ordre chronologique (croissant)</option>
-                            <option value="alpha-d">Ordre alphabétique (décroissant)</option>
                             <option value="chrono-d">Ordre chronologique (décroissant)</option>
+                            <option value="chrono-c">Ordre chronologique (croissant)</option>
+                            <option value="alpha-c">Ordre alphabétique (croissant)</option>
+                            <option value="alpha-d">Ordre alphabétique (décroissant)</option>
                         </select>
                         <button class="button button-red" id="sort-button">OK</button>
+
+                        <p>Filtrer par partenaire :</p>
+                        <select class="shop-select" id="filter-select">
+                            <option value="null"></option>
+                        </select>
+                        <button class="button button-red" id="filter-button">OK</button>
                     </div>
                     
                     <p class="error" id="shop-error"></p>
 
                     <?php for($i=1; $i<5; $i++) {
                         echo '
-                        <div class="col shop-item"><div class="shop-insideitem">
+                        <div class="col shop-item" id="shop-item' . $i . '"><div class="shop-insideitem">
                             <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>
                             <p class="shop-item-description" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
-                            <p class="shop-item-price" id="shop-item-price' . $i . '">0.0€</p>
+                            <div class="shop-item-numbers">
+                                <p class="shop-item-price" id="shop-item-price' . $i . '">0.0€</p>
+                                <p class="shop-item-price shop-item-id" id="shop-item-id' . $i . '">-1</p>
+                            </div>
                             <button class="button button-red shop-btn" id="shop-btn' . $i . '">Ajouter au panier</button>
                         </div></div>';}
 
@@ -50,10 +59,13 @@
                     
                     for($i=5; $i<9; $i++) {
                         echo '
-                        <div class="col shop-item"><div class="shop-insideitem">
+                        <div class="col shop-item" id="shop-item' . $i . '"><div class="shop-insideitem">
                             <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>
                             <p class="shop-item-description" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
-                            <p class="shop-item-price" id="shop-item-price' . $i . '">0€00</p>
+                            <div class="shop-item-numbers">
+                                <p class="shop-item-price" id="shop-item-price' . $i . '">0.0€</p>
+                                <p class="shop-item-price shop-item-id" id="shop-item-id' . $i . '">-1</p>
+                            </div>
                             <button class="button button-red shop-btn" id="shop-btn' . $i . '">Ajouter au panier</button>
                         </div></div>';}
 
