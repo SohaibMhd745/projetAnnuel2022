@@ -15,7 +15,7 @@ function addToCart(productNumber) {
                 const response = this.responseText;
                 const parsedResponse = JSON.parse(response);
                 if (parsedResponse.success === true) {
-                    console.log("Ajout réussi !");
+                    window.alert("Ajouté au panier.");
                 } else {
                     switch (parsedResponse.errorCode) {
                         case FATAL_EXCEPTION: console.log("Erreur fatale. Veuillez réessayer."); break;

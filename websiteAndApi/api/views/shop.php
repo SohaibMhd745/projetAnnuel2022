@@ -43,11 +43,11 @@
                     
                     <p class="error" id="shop-error"></p>
 
-                    <?php for($i=1; $i<5; $i++) {
+                    <?php for($i=0; $i<4; $i++) {
                         echo '
                         <div class="col shop-item" id="shop-item' . $i . '"><div class="shop-insideitem">
-                            <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>
-                            <p class="shop-item-description" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
+                            <p class="shop-item-name shop-item-height" id="shop-item-name' . $i . '">Nom de la prestation</p>
+                            <p class="shop-item-description shop-item-height" id="shop-item-description' . $i . '">Ce paragraphe sert de description à la prestation.</p>
                             <div class="shop-item-numbers">
                                 <p class="shop-item-price" id="shop-item-price' . $i . '">0.0€</p>
                                 <p class="shop-item-price shop-item-id" id="shop-item-id' . $i . '">-1</p>
@@ -57,7 +57,7 @@
 
                     echo '</div><div class="row">';
                     
-                    for($i=5; $i<9; $i++) {
+                    for($i=4; $i<8; $i++) {
                         echo '
                         <div class="col shop-item" id="shop-item' . $i . '"><div class="shop-insideitem">
                             <p class="shop-item-name" id="shop-item-name' . $i . '">Nom de la prestation</p>

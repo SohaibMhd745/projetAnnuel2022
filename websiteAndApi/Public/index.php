@@ -146,6 +146,11 @@ if ($route !== ""){
             Shop::view();
             break;
 
+        case "cart":
+            include __DIR__ . "/../api/controllers/Cart.php";
+            Cart::view();
+            break;
+
         case "order":
             switch ($method){
                 case "POST":

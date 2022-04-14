@@ -13,16 +13,16 @@ function sendCatalogRequest(mode, reverse, partner = "-1") {
                 const parsedResponse = JSON.parse(response);
                 if (parsedResponse.success === true) {
                     let i;
-                    for (i = 1; i <= 8; i++) {
+                    for (i = 0; i < 8; i++) {
                         if (i <= parsedResponse.table.length) {
                             const name = document.getElementById("shop-item-name" + i);
                             const description = document.getElementById("shop-item-description" + i);
                             const price = document.getElementById("shop-item-price" + i);
                             const id = document.getElementById("shop-item-id" + i);
-                            name.innerHTML = parsedResponse.table[i - 1].name;
-                            description.innerHTML = parsedResponse.table[i - 1].description;
-                            price.innerHTML = parsedResponse.table[i - 1].price + '€';
-                            id.innerHTML = parsedResponse.table[i - 1].id;
+                            name.innerHTML = parsedResponse.table[i].name;
+                            description.innerHTML = parsedResponse.table[i].description;
+                            price.innerHTML = parsedResponse.table[i].price + '€';
+                            id.innerHTML = parsedResponse.table[i].id;
                         } else {
                             const divToHide = document.getElementById("shop-item" + i);
                             divToHide.style.display = "none";

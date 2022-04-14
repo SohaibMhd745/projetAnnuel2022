@@ -18,6 +18,7 @@
                 <ul class="header-ul">
                     <a class="header-a <?php if($script_name=="/home.php") { ?>header-active<?php } ?>" href="/"><li class="header-li">Accueil</li></a>
                     <a class="header-a <?php if($script_name=="/shop.php") { ?>header-active<?php } ?>" href="/shop"><li class="header-li">Boutique</li></a>
+                    <a class="header-a <?php if($script_name=="/cart.php") { ?>header-active<?php } ?>" href="/cart"><li class="header-li">Panier</li></a>
                     <a class="header-a <?php if(in_array($script_name, $account_pages)) { ?>header-active<?php } ?>" href="/account"><li class="header-li">Espace compte</li></a>
                 </ul>
             </div>
