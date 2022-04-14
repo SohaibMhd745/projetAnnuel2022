@@ -19,6 +19,7 @@ CREATE TABLE akm_sponsor_code(
     id_sponsor INT NOT NULL,
     used BOOLEAN NOT NULL,
     code CHAR(10) NOT NULL,
+    date_used DATE,
     FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id)
 );
 

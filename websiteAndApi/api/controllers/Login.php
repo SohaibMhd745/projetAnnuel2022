@@ -238,7 +238,10 @@ class Login
 
         try {
             if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], $params["revenue"], $params["website"]);
-            else Partner::registerWithCode($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
+            else{
+                self::rewardSponsor($sponsor);
+                Partner::registerWithCode($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
+            }
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
@@ -259,6 +262,48 @@ class Login
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
             ["success" => true]);
+    }
+
+    private static function rewardSponsor(int $sponsorId){
+        include __DIR__."/CheckoutController.php";
+        try {
+            $sponsored = Partner::countSponsored($sponsorId);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Sponsor Reward"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Sponsor Reward"]);
+                    break;
+            }
+            die();
+        }
+        if ($sponsored > count(SPONSOR_REWARD_POLICY)) $reward = SUBSEQUENT_SPONSORS;
+        else $reward = SPONSOR_REWARD_POLICY[$sponsored-1];
+
+        $points = CheckoutController::euroToPoints($reward);
+
+        $user = new Partner();
+        try{
+            $user->constructFromPartnerId($sponsorId);
+            $user->updatePoints($user->getPoints() + $points);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case USER_NOT_FOUND:
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Point update"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Point update"]);
+                    break;
+            }
+            die();
+        }
     }
 
     /**

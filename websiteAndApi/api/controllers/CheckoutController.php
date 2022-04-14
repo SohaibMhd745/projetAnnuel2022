@@ -70,11 +70,11 @@ class CheckoutController
 
 
     /**
-     * Converts raw price to points
+     * Converts raw price to points when buying
      * @param float $price price to be converted
      * @return int price in points
      */
-    private static function convertToPoints(float $price):int{
+    public static function convertToPoints(float $price):int{
         $price_int = intval($price);
         $price_dec = $price - $price_int;
 
@@ -93,6 +93,25 @@ class CheckoutController
      * Utility functions
      *
      */
+
+    //1 point = 0.2€
+    /**
+     * Converts points to price
+     * @param float $points points
+     * @return float price
+     */
+    public static function pointToEuros(float $points):float{
+        return $points*0.2;
+    }
+
+    /**
+     * Converts price to points
+     * @param float $price price
+     * @return float points
+     */
+    public static function euroToPoints(float $price):float{
+        return $price/0.2;
+    }
 
     /**
      * Attempts user connection, breaks execution in case of error, returns user otherwise

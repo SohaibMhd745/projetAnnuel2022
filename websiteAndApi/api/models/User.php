@@ -35,7 +35,7 @@ class User{
     /**
      * Construct user class from user id
      * @param int $id : user id
-     * @throws Exception : INVALID_PARAMETER | INCORRECT_USER_CREDENTIALS | MYSQL_EXCEPTION
+     * @throws Exception : USER_NOT_FOUND | MYSQL_EXCEPTION
      */
     public function constructFromId(int $id){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);

@@ -20,6 +20,27 @@ class Partner extends User {
         $this->constructCompany();
     }
 
+    /**
+     * Construct partner class from partner id
+     * @param int $id : user id
+     * @throws Exception : USER_NOT_FOUND | MYSQL_EXCEPTION
+     */
+    public function constructFromPartnerId(int $id){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT id, email, firstname, lastname, inscription, birthdate, phone, id_partner, points FROM akm_users WHERE id_partner = ?";
+        $res = $link->query($q, [$id]);
+
+        if($res === false) throw new Exception("User does not exist", USER_NOT_FOUND);
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+        else{
+            $this->id = $res["id"];
+            $this->email = $res["email"];
+            $this->assignValues($res);
+            $this->constructCompany();
+        }
+    }
+
     //@Override user constructFromToken
     public function constructFromToken(string $token)
     {
@@ -174,10 +195,30 @@ class Partner extends User {
         if($res === false)
             throw new Exception("Code is not valid", INVALID_CODE);
 
-        if (!$link->insert("UPDATE akm_sponsor_code SET used = true WHERE code = :code", ['code'=>$code]))
+        if (!$link->insert('UPDATE akm_sponsor_code SET used = true, date_used = NOW() WHERE code = :code', ['code'=>$code]))
             throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
 
         return $res['id_sponsor'];
+    }
+
+    /**
+     * Count amount of partners sponsored by the provided sponsor id in the current civil year
+     * @param int $pId partner id
+     * @return int mount sponsored
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public static function countSponsored(int $pId):int{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $civilYear = getCivilYear();
+
+        $res = $link->query("SELECT COUNT(id) as sponsored FROM akm_sponsor_code 
+                                    WHERE used = true AND id_sponsor = :pid AND date_used BETWEEN :date_min AND :date_max",
+                                    ['pid' => $pId, "date_min" => $civilYear["date_min"], "date_max"=>$civilYear["date_max"]]);
+        if($res === false) return 0;
+        if($res === -1) throw new Exception("Database error", MYSQL_EXCEPTION);
+
+        return $res['sponsored'];
     }
 
     /**

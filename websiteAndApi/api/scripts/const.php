@@ -1,5 +1,9 @@
 <?php
 
+//Partnership policy
+const SPONSOR_REWARD_POLICY = [500, 615, 1000];
+const SUBSEQUENT_SPONSORS = 1500;
+
 //Order
 const INVALID_ORDER = -102;
 
