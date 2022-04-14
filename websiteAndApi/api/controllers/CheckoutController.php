@@ -28,6 +28,8 @@ class CheckoutController
         $user = self::attemptUserConnection($json->token);
 
         try {
+            //Reset token instantly after use for safety reasons
+            $user->updateToken();
             Partner::checkApiToken($json->partner_token);
         }catch (Exception $e) {
             switch ($e->getCode()) {
