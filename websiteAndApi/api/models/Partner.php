@@ -182,6 +182,37 @@ class Partner extends User {
 
     /**
      *
+     * Setter/Update functions
+     *
+     */
+
+    /**
+     * Updates company api token
+     * @param int $id id of the company
+     * @return string : -1 if user not set, new token if token refreshed successfully
+     * @throws Exception - MYSQL_EXCEPTION if error while trying to access database
+     */
+    public static function updateApiToken(int $id):string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $new = generateRandomString(30);
+
+        if ($id != -1){
+            $status = $link->insert("UPDATE akm_partners SET api_token = :newtoken WHERE id = :pid", [
+                'pid' => $id,
+                'newtoken' => $new
+            ]);
+
+            if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+            return $new;
+        }
+
+        return -1;
+    }
+
+    /**
+     *
      * Getters
      *
      */

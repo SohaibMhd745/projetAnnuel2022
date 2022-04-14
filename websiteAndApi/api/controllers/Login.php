@@ -141,6 +141,46 @@ class Login
     }
 
     /**
+     * @httpmethod get
+     * @return void
+     */
+    public static function generateApiToken(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Partner.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if(!isset($json->token)||empty($json->token))
+            reportMissingParam("token");
+
+        $token = $json->token;
+
+        $user = self::attemptConnection($token);
+
+        if ($user->getIdPartner() === -1) echo formatResponse(401, ["Content-Type" => "application/json"],
+            ["success" => false, "errorMessage" => "Provided user has no linked company", "errorCode" => COMPANY_NOT_FOUND]);
+
+        try {
+            $code = Partner::updateApiToken($user->getIdPartner());
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "code" => $code]);
+    }
+
+    /**
      * @httpmethod post
      * @return void
      */
@@ -315,8 +355,8 @@ class Login
 
         $user = self::attemptConnection($token);
 
-        if ($user->getIdPartner() === -1) echo formatResponse(400, ["Content-Type" => "application/json"],
-            ["success" => false, "errorMessage" => "Provided user is not ", "errorCode" => MYSQL_EXCEPTION]);
+        if ($user->getIdPartner() === -1) echo formatResponse(401, ["Content-Type" => "application/json"],
+            ["success" => false, "errorMessage" => "Provided user has no linked company", "errorCode" => COMPANY_NOT_FOUND]);
 
         try {
             $code = Partner::generateSponsorCode($user->getIdPartner());

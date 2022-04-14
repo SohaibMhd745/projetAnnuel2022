@@ -69,6 +69,10 @@ if ($route !== ""){
                             include __DIR__ . "/../api/controllers/Login.php";
                             Login::getCompanies();
                             break;
+                        case "generateapitoken":
+                            include __DIR__ . "/../api/controllers/Login.php";
+                            Login::generateApiToken();
+                            break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
                                 ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
