@@ -20,6 +20,7 @@ const USER_NOT_FOUND = -10;
 const INCORRECT_USER_CREDENTIALS = -11;
 const EMAIL_USED = -12;
 const INVALID_AUTH_TOKEN = -13;
+const INVALID_PARTNER_TOKEN = -14;
 
 //Partner Related Exceptions
 const COMPANY_NOT_FOUND = -15;

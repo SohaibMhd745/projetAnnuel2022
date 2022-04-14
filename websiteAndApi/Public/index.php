@@ -120,6 +120,27 @@ if ($route !== ""){
             }
             break;
 
+        case "checkout":
+            switch ($method){
+                case "POST":
+                    switch ($action){
+                        case "partner":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::partnerCheckout();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                default:
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "This controller does not support this method", "errorCode" => WRONG_METHOD]);
+                    die();
+            }
+            break;
+
         case "shop":
             include __DIR__ . "/../api/controllers/Shop.php";
             Shop::view();

@@ -185,6 +185,20 @@ class User{
     }
 
     /**
+     * Updates points amount
+     * @throws :
+     * - MYSQL_EXCEPTION if fatal sql error
+     */
+    public function updatePoints(int $points){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "UPDATE akm_users SET points = :points WHERE id = :id";
+        $res = $link->insert($q, ["points"=>$points, "id"=>$this->id]);
+
+        if ($res !== true) throw new Exception("Database error", MYSQL_EXCEPTION);
+    }
+
+    /**
      *
      * Getter functions
      *

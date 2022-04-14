@@ -177,7 +177,7 @@ class Login
         }
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
-            ["success" => true, "code" => $code]);
+            ["success" => true, "token" => $code]);
     }
 
     /**

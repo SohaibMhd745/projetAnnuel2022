@@ -181,6 +181,22 @@ class Partner extends User {
     }
 
     /**
+     * Checks validity of API token
+     * @param string $token
+     * @throws Exception
+     * - MYSQL_EXCEPTION
+     * - INVALID_PARTNER_TOKEN
+     */
+    public static function checkApiToken(string $token){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->query('SELECT id FROM akm_partners WHERE api_token = :token', ['token' => $token]);
+
+        if($res === -1) throw new Exception("Database error", MYSQL_EXCEPTION);
+        if($res === false) throw new Exception("Invalid token", INVALID_PARTNER_TOKEN);
+    }
+
+    /**
      *
      * Setter/Update functions
      *

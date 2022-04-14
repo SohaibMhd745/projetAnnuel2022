@@ -18,7 +18,7 @@ function reportMissingParam(string $param){
  */
 function reportInvalidParam(string $param){
     echo formatResponse(400, ["Content-Type" => "application/json"],
-        ["success" => false, "errorMessage" => "Invalid parameter '".$param."'", "errorCode" => INVALID_PARAMETER, "parameter"=>$param]);
+        ["success" => false, "errorMessage" => "Invalid parameter value for param '".$param."'", "errorCode" => INVALID_PARAMETER, "parameter"=>$param]);
     die();
 }
 
