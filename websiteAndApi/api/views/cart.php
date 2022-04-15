@@ -14,15 +14,27 @@
                     xhttp.onreadystatechange = function () {
                         if (this.readyState === 4) {
                             const response = this.responseText;
-                            console.log(response);
                             const parsedResponse = JSON.parse(response);
                             if (parsedResponse.success === true) {
+                                //window.location.replace("/cart");
                                 const quantity = document.getElementById("cart-quantity" + cartItem);
                                 let quantityValue;
                                 quantityValue = parseInt(quantity.innerHTML.replace('x', ''));
                                 if(action == 1) quantityValue += 1; else quantityValue -= 1;
                                 console.log(quantityValue);
                                 quantity.innerHTML = quantityValue + 'x';
+                            } else {
+                                switch (parsedResponse.errorCode) {
+                                    case FATAL_EXCEPTION: console.log("Erreur fatale. Veuillez réessayer."); break;
+                                    case MYSQL_EXCEPTION: console.log("Erreur base de données. Veuillez réessayer."); break;
+                                    case INVALID_PARAMETER: console.log("Paramètre invalide."); break;
+                                    case MISSING_PARAMETER: console.log("Paramètre manquant."); break;
+                                    case PARAMETER_WRONG_LENGTH: console.log("Paramètre de longueur invalide."); break;
+                                    case USER_NOT_FOUND: console.log("Utilisateur inexistant."); break;
+                                    case INCORRECT_USER_CREDENTIALS: console.log("Identifiants invalides."); break;
+                                    case INVALID_AUTH_TOKEN: console.log("Token invalide."); break;
+                                    default: console.log("Uknown error."); break;
+                                }
                             }
                         }
                     };

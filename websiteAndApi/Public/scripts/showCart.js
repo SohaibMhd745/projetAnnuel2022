@@ -3,25 +3,16 @@ import {
     USER_NOT_FOUND, INCORRECT_USER_CREDENTIALS, INVALID_AUTH_TOKEN
 } from './const.js';
 
-function changeDisplay(display) {
+function showCart() {
     const signedCart = document.getElementById("cart-signed");
     const unsignedCart = document.getElementById("cart-unsigned");
-    if (display === "cart") {
-        signedCart.style.display = "block";
-        unsignedCart.style.display = "none";
-    } else if (display === "empty") {
-        unsignedCart.style.display = "block";
-        signedCart.style.display = "none";
-    } else console.log("Paramètre invalide");
-}
-
-function showCart() {
     const token = localStorage.getItem("token");
     if (token == null) {
-        changeDisplay("empty");
+        signedCart.style.display = "none";
+        unsignedCart.style.display = "block";
     } else {
-        changeDisplay("cart");
-        const token = localStorage.getItem("token");
+        signedCart.style.display = "block";
+        unsignedCart.style.display = "none";
         const serializedInput = JSON.stringify({ "token": token });
         try {
             var xhttp = new XMLHttpRequest();
@@ -32,20 +23,16 @@ function showCart() {
                     const response = this.responseText;
                     const parsedResponse = JSON.parse(response);
                     if (parsedResponse.success === true) {
-                        if(parsedResponse.table.length > 0) {
-                            let i;
-                            for (i = 0; i < parsedResponse.table.length; i++) {
-                                const quantity = document.getElementById("cart-quantity" + i);
-                                const name = document.getElementById("cart-name" + i);
-                                const price = document.getElementById("cart-price" + i);
-                                const id = document.getElementById("cart-id" + i);
-                                quantity.innerHTML = parsedResponse.table[i].quantity + 'x';
-                                name.innerHTML = parsedResponse.table[i].name;
-                                price.innerHTML = parsedResponse.table[i].individualprice + '€';
-                                id.innerHTML = 'ID: ' + parsedResponse.table[i].id;
-                            }
-                        } else {
-                            changeDisplay("empty");
+                        let i;
+                        for (i = 0; i < parsedResponse.table.length; i++) {
+                            const quantity = document.getElementById("cart-quantity" + i);
+                            const name = document.getElementById("cart-name" + i);
+                            const price = document.getElementById("cart-price" + i);
+                            const id = document.getElementById("cart-id" + i);
+                            quantity.innerHTML = parsedResponse.table[i].quantity + 'x';
+                            name.innerHTML = parsedResponse.table[i].name;
+                            price.innerHTML = parsedResponse.table[i].individualprice + '€';
+                            id.innerHTML = parsedResponse.table[i].id;
                         }
                     } else {
                         switch (parsedResponse.errorCode) {
