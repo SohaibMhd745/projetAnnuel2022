@@ -56,10 +56,13 @@ class OrderController
         if (!isset($json->change) || empty($json->change))
             reportMissingParam("change");
 
+        $id_prestation = intval($json->id_prestation);
+        $change = intval($json->change);
+
         $id = self::getOrderId($json->token);
 
         try{
-            $currAmount = Order::getAmount($json->id_prestation, $id);
+            $currAmount = Order::getAmount($id_prestation, $id);
         }catch (Exception $e){
             switch ($e->getCode()) {
                 case MYSQL_EXCEPTION:
@@ -75,15 +78,15 @@ class OrderController
         }
 
 
-        $new = $currAmount+$json->change;
-        if ($currAmount === -1 && $json->change <= 0){
+        $new = $currAmount+$change;
+        if ($currAmount === -1 && $change <= 0){
             echo formatResponse(500, ["Content-Type" => "application/json"],
                 ["success" => false, "errorMessage" => "Item doesn't exist in cart", "errorCode" => NOT_IN_CART, "step" => "Calculating new amount"]);
             die();
         }
         else if ($new <= 0 && $currAmount !== -1) {
             try {
-                Order::removeFromCart($id, $json->id_prestation);
+                Order::removeFromCart($id, $id_prestation);
             }catch (Exception $e){
                 switch ($e->getCode()) {
                     case MYSQL_EXCEPTION:
@@ -103,8 +106,8 @@ class OrderController
             }
         }else{
             try{
-                if ($currAmount === -1) Order::addToCart($id, $json->id_prestation, $json->change);
-                else Order::setAmount($json->id_prestation,$id,$new);
+                if ($currAmount === -1) Order::addToCart($id, $id_prestation, $change);
+                else Order::setAmount($id_prestation,$id,$new);
             }catch (Exception $e){
                 switch ($e->getCode()) {
                     case MYSQL_EXCEPTION:
