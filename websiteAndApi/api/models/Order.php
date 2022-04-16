@@ -140,6 +140,27 @@ class Order
     }
 
     /**
+     * Returns stripe ready cart information
+     * @param int $oId order id
+     * @return array|mixed Array of prestation info with cart info
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     */
+    public static function getStripeInfo(int $oId){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT ak_p.stripe_price_id as price, ak_c.amount as quantity,
+            FROM akm_prestation as ak_p LEFT JOIN akm_cart as ak_c ON ak_p.id = ak_c.id_prestation
+            WHERE ak_c.id_order = :oid";
+
+        $res = $link->queryAll($q, ["oid" => $oId]);
+
+        if ($res === false) return [];
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        else return $res;
+    }
+
+    /**
      * Remove item from cart
      * @param int $oId order id
      * @param int $pId prestation id
