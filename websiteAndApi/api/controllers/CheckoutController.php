@@ -71,6 +71,76 @@ class CheckoutController
     }
 
 
+    private static function stripePayment(){
+        include __DIR__.'/../models/Order.php';
+
+        if (!isset($json->token) || empty($json->token))
+            reportMissingParam("token");
+
+        try{
+            $oId = Order::getCurrentOrder($json->token);
+            $cart = Order::getCartInfo($oId);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case INVALID_AUTH_TOKEN:
+                    echo formatResponse(401, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "Get Order Info"]);
+                    break;
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Get Order Info"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Get Order Info"]);
+                    break;
+            }
+            die();
+        }
+
+        if ($cart === []) {
+            echo formatResponse(400, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Cannot proceed to payment because cart is empty", "errorCode" => ORDER_EMPTY]);
+            die();
+        }
+
+        /**
+         *
+         * [[
+         * # Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
+         * 'price' => '{{PRICE_ID}}',
+         * 'quantity' => 1,
+         * ]]
+         *
+         */
+
+        \Stripe\Stripe::setApiKey(STRIPE_KEY);
+
+        //TODO: replace domain once online
+        $YOUR_DOMAIN = 'http://localhost/';
+
+        try{
+            header('Content-Type: application/json');
+            $checkout_session = \Stripe\Checkout\Session::create([
+                'line_items' => $stripe_cart,
+                'mode' => 'payment',
+                //TODO: test values
+                //Visa test value: 4242 4242 4242 4242 ??? ??/??
+                //'payment_method' => 'pm_card_visa',
+                'success_url' => $YOUR_DOMAIN . '/reussite',
+                'cancel_url' => $YOUR_DOMAIN . '/echec',
+            ]);
+        }catch (\Stripe\Exception\ApiConnectionException $e ){
+            echo formatResponse(500, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
+            die();
+        }
+
+
+        header("HTTP/1.1 303 See Other");
+        header("Location: " . $checkout_session->url);
+    }
+
     /**
      * Converts raw price to points when buying
      * @param float $price price to be converted
@@ -89,6 +159,7 @@ class CheckoutController
 
          return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
     }
+
 
     /**
      *

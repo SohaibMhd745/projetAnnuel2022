@@ -1,4 +1,7 @@
 <?php
+//TODO: ENUM
+//TODO: report caught error function
+
 
 //Partnership policy
 const SPONSOR_REWARD_POLICY = [500, 615, 1000];
@@ -11,6 +14,7 @@ const ALPHABETICAL_ORDER = 10;
 const CHRONOLOGICAL_ORDER = 11;
 
 const NO_EXCEPTION = 1;
+const OUTSIDE_API_EXCEPTION = -1000;
 
 //General Exceptions
 const FATAL_EXCEPTION = 0;
@@ -34,6 +38,7 @@ const INVALID_CODE = -16;
 const ORDER_ALREADY_EXISTS = -30;
 const ALREADY_IN_CART = -31;
 const NOT_IN_CART = -32;
+const ORDER_EMPTY = -33;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";
