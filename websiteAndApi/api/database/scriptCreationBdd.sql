@@ -46,6 +46,8 @@ CREATE TABLE akm_prestation(
 	description VARCHAR(2000) NOT NULL,
 	price FLOAT NOT NULL,
 	id_partner INT NOT NULL,
+	stripe_product_id VARCHAR (64) NOT NULL,
+	stripe_price_id VARCHAR (64) NOT NULL,
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)
 );

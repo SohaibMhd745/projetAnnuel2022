@@ -10,6 +10,8 @@ include __DIR__ . "/../api/scripts/formatResponse.php";
 include __DIR__ . "/../api/scripts/generateRandomString.php";
 include __DIR__ . "/../api/scripts/reportErrors.php";
 
+require '../lib/vendor/autoload.php';
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

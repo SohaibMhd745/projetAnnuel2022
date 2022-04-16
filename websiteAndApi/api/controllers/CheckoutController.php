@@ -71,6 +71,7 @@ class CheckoutController
     }
 
 
+
     private static function stripePayment(){
         include __DIR__.'/../models/Order.php';
 
@@ -79,7 +80,8 @@ class CheckoutController
 
         try{
             $oId = Order::getCurrentOrder($json->token);
-            $cart = Order::getCartInfo($oId);
+            //new function in the controlelr for product id and price id
+            //$cart = Order::($oId);
         }catch (Exception $e) {
             switch ($e->getCode()) {
                 case INVALID_AUTH_TOKEN:
@@ -97,12 +99,13 @@ class CheckoutController
             }
             die();
         }
-
+        /*
         if ($cart === []) {
             echo formatResponse(400, ["Content-Type" => "application/json"],
                 ["success" => false, "errorMessage" => "Cannot proceed to payment because cart is empty", "errorCode" => ORDER_EMPTY]);
             die();
         }
+        */
 
         /**
          *
@@ -119,6 +122,7 @@ class CheckoutController
         //TODO: replace domain once online
         $YOUR_DOMAIN = 'http://localhost/';
 
+        /*
         try{
             header('Content-Type: application/json');
             $checkout_session = \Stripe\Checkout\Session::create([
@@ -130,7 +134,7 @@ class CheckoutController
                 'success_url' => $YOUR_DOMAIN . '/reussite',
                 'cancel_url' => $YOUR_DOMAIN . '/echec',
             ]);
-        }catch (\Stripe\Exception\ApiConnectionException $e ){
+        }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
                 ["success" => false, "errorMessage" => "Database error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
             die();
@@ -139,6 +143,7 @@ class CheckoutController
 
         header("HTTP/1.1 303 See Other");
         header("Location: " . $checkout_session->url);
+        */
     }
 
     /**

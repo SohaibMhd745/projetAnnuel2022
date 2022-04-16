@@ -1,7 +1,31 @@
 <?php
 
+use Stripe\StripeClient;
+
 class CatalogController
 {
+    /**
+     *
+     * Stripe product response format
+    {
+    "id": "prod_LWAzYAIk6AUABj",
+    "object": "product",
+    "active": true,
+    "created": 1650104048,
+    "description": "Comfortable gray cotton t-shirt",
+    "images": [],
+    "livemode": false,
+    "metadata": {},
+    "name": "Gold Special",
+    "package_dimensions": null,
+    "shippable": null,
+    "statement_descriptor": null,
+    "tax_code": null,
+    "unit_label": null,
+    "updated": 1650104048,
+    "url": null
+    }
+     */
 
     /**
      * Adds article to the database
@@ -26,6 +50,11 @@ class CatalogController
 
         $token = $json->token;
 
+        //remove decimals lower than 1 cent (0.01)
+        $json->price *= 100;
+        $json->price = floor($json->price);
+        $json->price /= 100;
+
         $params = [
             "name" => $json->name,
             "description" => $json->description,
@@ -34,8 +63,20 @@ class CatalogController
 
         self::checkParams($params);
 
+        $stripe = new StripeClient(STRIPE_KEY);
+
         try {
-            Catalog::addArticle($token, $params["name"], $params["price"], $params["description"]);
+
+            $stripe_product = $stripe->products->create([
+                'name' =>$params["name"]
+            ]);
+            $stripe_price = $stripe->prices->create([
+                'unit_amount' => $params["price"]*100,
+                'currency' => 'eur',
+                'product' => $stripe_product->id
+            ]);
+
+            Catalog::addArticle($token, $params["name"], $params["price"], $params["description"], $stripe_product->id, $stripe_price->id);
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
