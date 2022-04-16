@@ -158,7 +158,7 @@
                 <p id="pdf-firstname">Prénom : </p>
                 <p id="pdf-birthdate">Date de naissance : </p>
                 <p id="pdf-number">Téléphone : </p>
-                <?php for($i=0; $i<22; $i++){ echo '<p class="invisible">f</p>'; } ?>
+                <?php for($i=0; $i<20; $i++){ echo '<p class="invisible">f</p>'; } ?>
             </div>
         </main>
 

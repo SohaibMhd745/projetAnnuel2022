@@ -100,6 +100,7 @@ invoice.style.display = "none";
 const downloadUserPDF = document.getElementById("download-user-pdf");
 downloadUserPDF.addEventListener("click", async (event) => {
     event.preventDefault();
+    window.open("/blank.php", '_blank').focus();
     invoice.style.display = "block";
     getUserData("pdf");
     const opt = {
@@ -110,6 +111,6 @@ downloadUserPDF.addEventListener("click", async (event) => {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'p' }
     };
     html2pdf().set(opt).from(invoice).save();
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     invoice.style.display = "none";
 });
