@@ -1,0 +1,1 @@
+<?php sleep(3); echo "<script>window.close();</script>"; ?>

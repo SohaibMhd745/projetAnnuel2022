@@ -121,6 +121,8 @@
                         </div>
                     </div>
                 </div>
+
+                <button class="button button-gold" id="download-user-pdf">Télécharger ma fiche au format PDF</button>
             </div>
 
             <div class="container" id="subview-addpresta">
@@ -142,6 +144,22 @@
             </div>
 
             <div class="separator-l"></div>
+
+            <div id="user-invoice">
+                <br>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <h3>AKM Gestion - Carte utilisateur</h3>
+                    <img src="/assets/logo/logo_right.png" width="180px">
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <h5 style="font-weight: bold; text-decoration: underline;">Fiche utilisateur</h5>
+                </div>
+                <p id="pdf-lastname">Nom : </p>
+                <p id="pdf-firstname">Prénom : </p>
+                <p id="pdf-birthdate">Date de naissance : </p>
+                <p id="pdf-number">Téléphone : </p>
+                <?php for($i=0; $i<20; $i++){ echo '<p class="invisible">f</p>'; } ?>
+            </div>
         </main>
 
         <footer>
