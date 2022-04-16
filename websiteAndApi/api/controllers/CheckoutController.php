@@ -70,69 +70,91 @@ class CheckoutController
             ["success" => true, "points"=>$points]);
     }
 
-
-
-    private static function stripePayment(){
+    /**
+     * @httpmethod GET
+     * @param string $token user auth token
+     * @param string $confirmCode order confirmation code
+     * @return void
+     */
+    public static function completeOrder(string $token, string $confirmCode){
+        include __DIR__.'/../models/User.php';
         include __DIR__.'/../models/Order.php';
 
-        if (!isset($json->token) || empty($json->token))
-            reportMissingParam("token");
-
         try{
-            $oId = Order::getCurrentOrder($json->token);
-            //new function in the controlelr for product id and price id
-            //$cart = Order::($oId);
-        }catch (Exception $e) {
-            switch ($e->getCode()) {
+            $orderCode = Order::getOrderConfirm($token);
+            if ($orderCode !== $confirmCode){
+                //TODO Redirect to 401 error page
+                die();
+            }
+
+            $price = Order::getOrderTotal(Order::getCurrentOrder($token));
+
+            $user = new User();
+            $user->constructFromToken($token);
+            $user->updatePoints($user->getPoints()+self::euroToPoints($price));
+
+            Order::finalizeOrder($confirmCode);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                //TODO: error pages
                 case INVALID_AUTH_TOKEN:
-                    echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "Get Order Info"]);
-                    break;
-                case MYSQL_EXCEPTION:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Get Order Info"]);
+                    //TODO Redirect to 401 error page
                     break;
                 default:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Get Order Info"]);
+                    //TODO Redirect to error 500 page
                     break;
             }
             die();
         }
-        /*
-        if ($cart === []) {
-            echo formatResponse(400, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Cannot proceed to payment because cart is empty", "errorCode" => ORDER_EMPTY]);
+        header("Location: /");
+    }
+
+    /**
+     * @httpmethod GET
+     * @param string $token
+     * @return void
+     */
+    public static function orderCheckout(string $token){
+        include __DIR__."/../models/User.php";
+        include __DIR__.'/../models/Order.php';
+
+        try{
+            $oId = Order::getCurrentOrder($token);
+            $cart = Order::getStripeInfo($oId);
+            $orderCode = Order::getOrderConfirm($token);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case INVALID_AUTH_TOKEN:
+                    //TODO page 401
+                    break;
+                default:
+                    //TODO page 500
+                    break;
+            }
             die();
         }
-        */
 
-        /**
-         *
-         * [[
-         * # Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
-         * 'price' => '{{PRICE_ID}}',
-         * 'quantity' => 1,
-         * ]]
-         *
-         */
+        if ($cart === []) {
+            //TODO rediriger sur le cart
+            die();
+        }
+
+        if ($orderCode === "") {
+            //TODO page 401
+            die();
+        }
 
         \Stripe\Stripe::setApiKey(STRIPE_KEY);
 
-        //TODO: replace domain once online
-        $YOUR_DOMAIN = 'http://localhost/';
-
-        /*
         try{
             header('Content-Type: application/json');
             $checkout_session = \Stripe\Checkout\Session::create([
-                'line_items' => $stripe_cart,
+                'line_items' => $cart,
                 'mode' => 'payment',
-                //TODO: test values
-                //Visa test value: 4242 4242 4242 4242 ??? ??/??
-                //'payment_method' => 'pm_card_visa',
-                'success_url' => $YOUR_DOMAIN . '/reussite',
-                'cancel_url' => $YOUR_DOMAIN . '/echec',
+                'success_url' => DOMAIN_NAME . 'checkout/completeorder/'.$token.'/'.$orderCode,
+
+                //TODO: redirection page cart
+                'cancel_url' => DOMAIN_NAME . 'cancel'
             ]);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
@@ -143,7 +165,7 @@ class CheckoutController
 
         header("HTTP/1.1 303 See Other");
         header("Location: " . $checkout_session->url);
-        */
+
     }
 
     /**

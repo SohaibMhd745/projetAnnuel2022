@@ -32,16 +32,14 @@ $method = $_SERVER["REQUEST_METHOD"];
 if ($route !== ""){
     $controller = explode('/', $route)[0];
     $action = explode('/', $route)[1] ?? "index";
+    $param1 = explode('/', $route)[2] ?? "none";
+    $param2 = explode('/', $route)[3] ?? "none";
 
     //Switch based on controller
     switch ($controller){
         case "account":
             include __DIR__ . "/../api/controllers/Account.php";
             Account::view();
-            break;
-        case "session":
-            include __DIR__."/../api/controllers/Session.php";
-            Session::createSession($action);
             break;
         case "login":
             switch ($method){
@@ -129,6 +127,22 @@ if ($route !== ""){
                         case "partner":
                             include __DIR__."/../api/controllers/CheckoutController.php";
                             CheckoutController::partnerCheckout();
+                            break;
+                        default:
+                            echo formatResponse(400, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
+                            die();
+                    }
+                    break;
+                case "GET":
+                    switch($action){
+                        case "validateorder":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::orderCheckout($param1);
+                            break;
+                        case "completeorder":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::completeOrder($param1, $param2);
                             break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],

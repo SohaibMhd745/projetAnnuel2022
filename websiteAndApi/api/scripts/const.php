@@ -39,6 +39,7 @@ const ORDER_ALREADY_EXISTS = -30;
 const ALREADY_IN_CART = -31;
 const NOT_IN_CART = -32;
 const ORDER_EMPTY = -33;
+const INVALID_CONFIRM_CODE = -34;
 
 //Handle set field values
 const DEFAULT_DATE_MIN = "1900-01-01";

@@ -24,12 +24,31 @@ class Order
 
         if($status !== false) throw new Exception("User already has an active order", ORDER_ALREADY_EXISTS);
 
-        $q = "INSERT INTO akm_order(id_user, order_time, cost, ordered) VALUES(:id, :now, 0, false)";
+        $q = "INSERT INTO akm_order(id_user, order_time, cost, ordered, confirm_code) VALUES(:id, :now, 0, false, :code)";
 
-        $status = $link->insert($q, ["id"=>$user->getId(),"now" => getYearsAgo(0)]);
+        $status = $link->insert($q, ["id"=>$user->getId(),"now" => getYearsAgo(0), "code"=>generateRandomString(30)]);
 
         if ($status !== true) throw new Exception("Critical Database Failure", MYSQL_EXCEPTION);
 
+    }
+
+    /**
+     * Sets an order as ordered
+     * @param string $code confirmation code
+     * @return void
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     * INVALID_CONFIRM_CODE
+     */
+    public static function finalizeOrder(string $code){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "UPDATE akm_order SET ordered = true, order_time = NOW() WHERE confirm_code = :code AND ordered = false";
+
+        $status = $link->insert($q, ["code"=>$code]);
+
+        if ($status === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        if ($status === false) throw new Exception("Confirmation code is not valid", INVALID_CONFIRM_CODE);
     }
 
     /**
@@ -52,6 +71,45 @@ class Order
 
         if($status === false) return -1;
         else return $status["id"];
+    }
+
+    public static function getOrderTotal(int $oId):int{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $q = "SELECT SUM(subtotal) as total FROM 
+            (
+                SELECT ak_c.amount*ROUND(ak_p.price,2) as subtotal 
+                FROM akm_prestation as ak_p LEFT JOIN akm_cart as ak_c ON ak_p.id = ak_c.id_prestation 
+                WHERE ak_c.id_order = :oid
+            ) as subtotals;";
+
+        $res = $link->query($q, ["oid" => $oId]);
+
+        if ($res === false) return 0;
+        else if($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
+        else return $res["total"];
+    }
+
+    /**
+     * returns confirm code for user's current active order or -1 if none is active
+     * @param string $token
+     * @return string
+     * @throws Exception
+     * MYSQL_EXCEPTION
+     * INVALID_AUTH_TOKEN
+     */
+    public static function getOrderConfirm(string $token):string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $user = new User();
+        $user->constructFromToken($token);
+        //Can throw MYSQL & AUTH TOKEN exceptions
+
+        $select = "SELECT confirm_code FROM akm_order WHERE id_user = :id AND ordered = false";
+        $status = $link->query($select, ["id"=>$user->getId()]);
+
+        if($status === false) return "";
+        else return $status["confirm_code"];
     }
 
     /**
@@ -127,8 +185,8 @@ class Order
     public static function getCartInfo(int $oId){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT ak_p.id as id, ak_p.name as name, ak_p.price as individualprice,
-            ak_c.amount as quantity, (ak_c.amount*ak_p.price) as subtotal 
+        $q = "SELECT ak_p.id as id, ak_p.name as name, ROUND(ak_p.price,2) as individualprice,
+            ak_c.amount as quantity, (ak_c.amount*ROUND(ak_p.price,2)) as subtotal 
             FROM akm_prestation as ak_p LEFT JOIN akm_cart as ak_c ON ak_p.id = ak_c.id_prestation
             WHERE ak_c.id_order = :oid";
 
@@ -149,7 +207,7 @@ class Order
     public static function getStripeInfo(int $oId){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT ak_p.stripe_price_id as price, ak_c.amount as quantity,
+        $q = "SELECT ak_p.stripe_price_id as price, ak_c.amount as quantity
             FROM akm_prestation as ak_p LEFT JOIN akm_cart as ak_c ON ak_p.id = ak_c.id_prestation
             WHERE ak_c.id_order = :oid";
 
