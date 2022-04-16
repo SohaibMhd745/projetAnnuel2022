@@ -1,2 +1,2 @@
 #Do not include DB credentials on the github
-../../database/CREDENTIALS.php
+CREDENTIALS.php
