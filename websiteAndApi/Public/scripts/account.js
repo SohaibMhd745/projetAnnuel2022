@@ -44,7 +44,7 @@ checkTokenValidity(function (tokenValid) {
 
         // Upgrade form
         getUserData("partner"); // Check if user is a partner
-        if(localStorage.getItem("isPartner") == "true") {
+        if (localStorage.getItem("isPartner") == "true") {
             const upgradeSection = document.getElementById("upgrade-section");
             upgradeSection.style.display = 'none';
         } else {
@@ -83,4 +83,33 @@ partnerActionButton2.addEventListener("click", async (event) => {
     event.preventDefault();
     subviewAccount.style.display = "none";
     subviewAddPresta.style.display = "block";
+});
+
+/* PDF GENERATION */
+function addScript(url) {
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = url;
+    document.head.appendChild(script);
+}
+addScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+
+const invoice = document.getElementById("user-invoice");
+invoice.style.display = "none";
+
+const downloadUserPDF = document.getElementById("download-user-pdf");
+downloadUserPDF.addEventListener("click", async (event) => {
+    event.preventDefault();
+    invoice.style.display = "block";
+    getUserData("pdf");
+    const opt = {
+        margin: 0.8,
+        filename: 'profile_card.pdf',
+        image: { type: 'png' },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'p' }
+    };
+    html2pdf().set(opt).from(invoice).save();
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    invoice.style.display = "none";
 });

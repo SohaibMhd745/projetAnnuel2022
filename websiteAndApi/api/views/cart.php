@@ -83,8 +83,10 @@
                                 <button class="button-red" onclick="changeQuantity(' . $i . ', 1);">+</button>
                                 <button class="button-red" onclick="changeQuantity(' . $i . ', -1);">-</button>
                             </div>
-                        </div>';}
+                        </div>
+                        ';}
                     ?>
+                    <button class="button button-red" id="pay-button">Valider la commande</button>
                 </div>
                 <div id="cart-unsigned">
                     <div class="row">
@@ -99,6 +101,6 @@
         <footer>
             <?php include("includes/footer.php"); ?>
         </footer>
-        <script type="module" src="/scripts/showCart.js"></script>
+        <script type="module" src="/scripts/cart.js"></script>
     </body>
 </html>

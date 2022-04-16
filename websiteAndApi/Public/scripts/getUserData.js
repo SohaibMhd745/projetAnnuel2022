@@ -21,6 +21,13 @@ function getUserData(action) {
                         case "partner":
                             const idPartner = parsedResponse.user.id_partner;
                             if(idPartner!==-1) localStorage.setItem("isPartner", true); else localStorage.setItem("isPartner", false); break;
+                        case "pdf":
+                            console.log("yes");
+                            document.getElementById("pdf-lastname").innerHTML += parsedResponse.user.lastname;
+                            document.getElementById("pdf-firstname").innerHTML += parsedResponse.user.firstname;
+                            document.getElementById("pdf-birthdate").innerHTML += parsedResponse.user.birthdate;
+                            document.getElementById("pdf-number").innerHTML += parsedResponse.user.phone;
+                            break;
                         default: console.log("Invalid getUserData method"); break;
                     }
                 } else {

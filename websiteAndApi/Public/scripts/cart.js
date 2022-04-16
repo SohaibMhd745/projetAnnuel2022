@@ -3,6 +3,11 @@ import {
     USER_NOT_FOUND, INCORRECT_USER_CREDENTIALS, INVALID_AUTH_TOKEN
 } from './const.js';
 
+/*const payButton = document.getElementById("pay-button");
+payButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+})*/
+
 function showCart() {
     const signedCart = document.getElementById("cart-signed");
     const unsignedCart = document.getElementById("cart-unsigned");
