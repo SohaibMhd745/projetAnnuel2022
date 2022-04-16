@@ -190,12 +190,14 @@ class Catalog
      * @param string $name
      * @param float $price
      * @param string $description
+     * @param string $stripe_product_id
+     * @param string $stripe_price_id
      * @throws Exception:
      * - INVALID_AUTH_TOKEN if provided token is invalid
      * - MYSQL_EXCEPTION in case of critical database failure
      * - COMPANY_NOT_FOUND if the user is not in control of a database
      */
-    public static function addArticle(string $token, string $name, float $price, string $description){
+    public static function addArticle(string $token, string $name, float $price, string $description, string $stripe_product_id, string $stripe_price_id){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         include __DIR__.'/User.php';
@@ -205,9 +207,18 @@ class Catalog
 
         if ($user->getIdPartner()===-1) throw new Exception("User does not manage a company", COMPANY_NOT_FOUND);
 
-        $q = "INSERT INTO akm_prestation (name, description, price, id_partner) VALUES(:name, :description, :price, :id_partner)";
+        $q = "INSERT INTO akm_prestation (name, description, price, id_partner, stripe_product_id, stripe_price_id) 
+                VALUES(:name, :description, :price, :id_partner, :st_prod_id, :st_pri_id)";
 
-        $status = $link->insert($q, ["name"=>$name,"description" => $description, "price" => $price, "id_partner" => $user->getIdPartner()]);
+        $status = $link->insert($q, [
+                "name"=>$name,
+                "description" => $description,
+                "price" => $price,
+                "id_partner" => $user->getIdPartner(),
+                "st_prod_id" => $stripe_product_id,
+                "st_pri_id" => $stripe_price_id
+            ]
+        );
 
         if ($status !== true) throw new Exception("Critical Database Failure", MYSQL_EXCEPTION);
     }

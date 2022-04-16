@@ -70,6 +70,103 @@ class CheckoutController
             ["success" => true, "points"=>$points]);
     }
 
+    /**
+     * @httpmethod GET
+     * @param string $token user auth token
+     * @param string $confirmCode order confirmation code
+     * @return void
+     */
+    public static function completeOrder(string $token, string $confirmCode){
+        include __DIR__.'/../models/User.php';
+        include __DIR__.'/../models/Order.php';
+
+        try{
+            $orderCode = Order::getOrderConfirm($token);
+            if ($orderCode !== $confirmCode){
+                //TODO Redirect to 401 error page
+                die();
+            }
+
+            $price = Order::getOrderTotal(Order::getCurrentOrder($token));
+
+            $user = new User();
+            $user->constructFromToken($token);
+            $user->updatePoints($user->getPoints()+self::euroToPoints($price));
+
+            Order::finalizeOrder($confirmCode);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                //TODO: error pages
+                case INVALID_AUTH_TOKEN:
+                    //TODO Redirect to 401 error page
+                    break;
+                default:
+                    //TODO Redirect to error 500 page
+                    break;
+            }
+            die();
+        }
+        header("Location: /");
+    }
+
+    /**
+     * @httpmethod GET
+     * @param string $token
+     * @return void
+     */
+    public static function orderCheckout(string $token){
+        include __DIR__."/../models/User.php";
+        include __DIR__.'/../models/Order.php';
+
+        try{
+            $oId = Order::getCurrentOrder($token);
+            $cart = Order::getStripeInfo($oId);
+            $orderCode = Order::getOrderConfirm($token);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case INVALID_AUTH_TOKEN:
+                    //TODO page 401
+                    break;
+                default:
+                    //TODO page 500
+                    break;
+            }
+            die();
+        }
+
+        if ($cart === []) {
+            //TODO rediriger sur le cart
+            die();
+        }
+
+        if ($orderCode === "") {
+            //TODO page 401
+            die();
+        }
+
+        \Stripe\Stripe::setApiKey(STRIPE_KEY);
+
+        try{
+            header('Content-Type: application/json');
+            $checkout_session = \Stripe\Checkout\Session::create([
+                'line_items' => $cart,
+                'mode' => 'payment',
+                'success_url' => DOMAIN_NAME . 'checkout/completeorder/'.$token.'/'.$orderCode,
+
+                //TODO: redirection page cart
+                'cancel_url' => DOMAIN_NAME . 'cancel'
+            ]);
+        }catch (Exception $e){
+            echo formatResponse(500, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Database error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
+            die();
+        }
+
+
+        header("HTTP/1.1 303 See Other");
+        header("Location: " . $checkout_session->url);
+
+    }
 
     /**
      * Converts raw price to points when buying
@@ -89,6 +186,7 @@ class CheckoutController
 
          return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
     }
+
 
     /**
      *

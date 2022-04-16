@@ -46,6 +46,8 @@ CREATE TABLE akm_prestation(
 	description VARCHAR(2000) NOT NULL,
 	price FLOAT NOT NULL,
 	id_partner INT NOT NULL,
+	stripe_product_id VARCHAR (64) NOT NULL,
+	stripe_price_id VARCHAR (64) NOT NULL,
 	FOREIGN KEY (id_partner) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)
 );
@@ -56,9 +58,9 @@ CREATE TABLE akm_order(
 	order_time DATETIME,
 	cost INT,
 	ordered BOOLEAN NOT NULL,
+    confirm_code CHAR (32) NOT NULL,
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
-    /*TODO: Code confirmation de stripe*/
 );
 
 CREATE TABLE akm_cart(
