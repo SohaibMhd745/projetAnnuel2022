@@ -6,7 +6,8 @@
             function changeQuantity(cartItem, action) {
                 const token = localStorage.getItem("token");
                 const id = document.getElementById("cart-id" + cartItem).innerHTML;
-                const serializedInput = JSON.stringify({ "token": token, "id_prestation": id, "change": action });
+                const idValue = id.replace('ID: ', '');
+                const serializedInput = JSON.stringify({ "token": token, "id_prestation": idValue, "change": action });
                 try {
                     var xhttp = new XMLHttpRequest();
                     xhttp.open("POST", "/order/change", false);
@@ -16,12 +17,10 @@
                             const response = this.responseText;
                             const parsedResponse = JSON.parse(response);
                             if (parsedResponse.success === true) {
-                                //window.location.replace("/cart");
                                 const quantity = document.getElementById("cart-quantity" + cartItem);
                                 let quantityValue;
                                 quantityValue = parseInt(quantity.innerHTML.replace('x', ''));
                                 if(action == 1) quantityValue += 1; else quantityValue -= 1;
-                                console.log(quantityValue);
                                 quantity.innerHTML = quantityValue + 'x';
                             } else {
                                 switch (parsedResponse.errorCode) {
