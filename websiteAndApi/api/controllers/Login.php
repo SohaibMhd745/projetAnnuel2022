@@ -237,10 +237,10 @@ class Login
         }
 
         try {
-            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], $params["revenue"], $params["website"]);
+            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], (int)$params["revenue"], $params["website"]);
             else{
                 self::rewardSponsor($sponsor);
-                Partner::registerWithCode($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
+                Partner::registerWithCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $sponsor);
             }
         }catch (Exception $e){
             switch ($e->getCode()){

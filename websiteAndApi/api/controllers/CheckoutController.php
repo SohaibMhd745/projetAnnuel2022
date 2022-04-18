@@ -199,8 +199,12 @@ class CheckoutController
 
         $partner = self::createPartner($json->token);
 
+        $status = $partner->returnSubscriptionStatus();
+        if(!$status) $amount = self::getSubscriptionPrice($partner->getRevenue());
+        else $amount = 0;
+
         echo formatResponse(200, ["Content-Type" => "application/json"],
-            ["success" => true, "status"=>$partner->returnSubscriptionStatus()]);
+            ["success" => true, "status"=>$status, "amount"=>$amount]);
     }
 
     /**
@@ -229,7 +233,7 @@ class CheckoutController
             die();
         }
         try{
-            $partner->updateRevenue($json->revenue);
+            $partner->updateRevenue((int)$json->revenue);
         }catch (Exception $e){
             switch ($e->getCode()) {
                 case MYSQL_EXCEPTION:
@@ -308,4 +312,18 @@ class CheckoutController
         return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
     }
 
+    /**
+     * Converts revenue to subscription price
+     * @param int $revenue
+     * @return float subscription price
+     */
+    public static function getSubscriptionPrice(int $revenue):float{
+        $i = 0;
+        while (SUBSCRIPTION_POLICY[$i]["upper_limit"]!==-1){
+            if($revenue < SUBSCRIPTION_POLICY[$i]["upper_limit"])
+                return round((SUBSCRIPTION_POLICY[$i]["percentage"]*(float)$revenue)/100,2);
+            else $i++;
+        }
+        return round((SUBSCRIPTION_POLICY[$i]["percentage"]*(float)$revenue)/100,2);
+    }
 }

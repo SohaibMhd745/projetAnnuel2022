@@ -6,6 +6,13 @@
 //Partnership policy
 const SPONSOR_REWARD_POLICY = [500, 615, 1000];
 const SUBSEQUENT_SPONSORS = 1500;
+const SUBSCRIPTION_POLICY = [
+    ["upper_limit"=>200000, "percentage"=>0.0],
+    ["upper_limit"=>800000,"percentage"=>0.8],
+    ["upper_limit"=>1500000,"percentage"=>0.6],
+    ["upper_limit"=>3000000,"percentage"=>0.4],
+    ["upper_limit"=>-1,"percentage"=>0.3],
+];
 
 //Order
 const INVALID_ORDER = -102;
