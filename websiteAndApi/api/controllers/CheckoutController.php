@@ -10,6 +10,7 @@ class CheckoutController
     public static function partnerCheckout(){
         include __DIR__."/../models/User.php";
         include __DIR__."/../models/Partner.php";
+        include __DIR__."Login.php";
 
         $json = json_decode(file_get_contents("php://input"));
 
@@ -25,7 +26,7 @@ class CheckoutController
             die();
         }
 
-        $user = self::attemptUserConnection($json->token);
+        $user = Login::attemptConnection($json->token);
 
         try {
             //Reset token instantly after use for safety reasons
@@ -169,24 +170,40 @@ class CheckoutController
     }
 
     /**
-     * Converts raw price to points when buying
-     * @param float $price price to be converted
-     * @return int price in points
+     * Returns status for the payment of the partner annual subscription
+     * @httpmethod POST
+     * - false: still has to be paid
+     * - true: has been paid
      */
-    public static function convertToPoints(float $price):int{
-        $price_int = intval($price);
-        $price_dec = $price - $price_int;
+    public static function getPartnerSubscriptionStatus(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Partner.php";
+        include __DIR__."/Login.php";
 
-        $price_int += ($price_dec >= 0.5 ? 1:0);
+        $json = json_decode(file_get_contents("php://input"));
 
-        $rawBonus = 0.3*$price_int + (intval($price_int/100));
+        if (!isset($json->token) || empty($json->token))
+            reportMissingParam("token");
 
-        $bonus_int = intval($rawBonus);
-        $bonus_dec = $rawBonus - $bonus_int;
+        $user = Login::attemptConnection($json->token);
+        if ($user->getIdPartner() === -1){
+            echo formatResponse(401, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Account is not linked to a partner company", "errorCode" => COMPANY_NOT_FOUND, "step" => "Partner Authentication"]);
+            die();
+        }
 
-         return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
+        $partner = Login::attemptPartnerConnection($json->token);
+
+        $civil_year = getCivilYear();
+
+        $lastPayment = date("y-m-d H:i:s", strtotime($partner->getLastPayment()));
+
+        if ($lastPayment<$civil_year["date_min"]) $status = false;
+        else $status = true;
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true, "status"=>$status]);
     }
-
 
     /**
      *
@@ -214,31 +231,22 @@ class CheckoutController
     }
 
     /**
-     * Attempts user connection, breaks execution in case of error, returns user otherwise
-     * @param string $token token to attempt connection with
-     * @return User built structure from token
+     * Converts raw price to points when buying from the store
+     * @param float $price price to be converted
+     * @return int price in points
      */
-    private static function attemptUserConnection(string $token) : User{
-        $user = new User();
-        try {
-            $user->constructFromToken($token);
-        } catch (Exception $e) {
-            switch ($e->getCode()) {
-                case INVALID_AUTH_TOKEN:
-                    echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
-                    break;
-                case MYSQL_EXCEPTION:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-                default:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-            }
-            die();
-        }
-        return $user;
+    public static function convertToPoints(float $price):int{
+        $price_int = intval($price);
+        $price_dec = $price - $price_int;
+
+        $price_int += ($price_dec >= 0.5 ? 1:0);
+
+        $rawBonus = 0.3*$price_int + (intval($price_int/100));
+
+        $bonus_int = intval($rawBonus);
+        $bonus_dec = $rawBonus - $bonus_int;
+
+        return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
     }
+
 }

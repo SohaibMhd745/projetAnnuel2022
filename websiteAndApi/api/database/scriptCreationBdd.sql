@@ -9,6 +9,7 @@ CREATE TABLE akm_partners(
 	id_sponsor INT NULL,
 	id_user INT NOT NULL,
 	api_token CHAR(30),
+	last_payment DATE,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
 	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)

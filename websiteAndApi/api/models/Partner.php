@@ -6,6 +6,7 @@ class Partner extends User {
     private int $revenue;
     private string $website;
     private $id_sponsor;
+    private $lastPayment;
 
 
     //@Override user constructFromEmailAndPassword
@@ -53,7 +54,7 @@ class Partner extends User {
     private function constructCompany(){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT name, inscription, revenue, website, id_sponsor FROM akm_partners WHERE id = ?";
+        $q = "SELECT name, inscription, revenue, website, id_sponsor, last_payment FROM akm_partners WHERE id = ?";
         $res = $link->query($q, [$this->id_partner]);
 
         if($res === false) throw new Exception("Partner does not exist", COMPANY_NOT_FOUND);
@@ -64,6 +65,8 @@ class Partner extends User {
             $this->revenue = $res["revenue"];
             $this->website = $res["website"];
             $this->id_sponsor = $res["id_sponsor"];
+            if($res["last_payment"] === null) $this->lastPayment = $res["inscription"];
+            else $this->lastPayment = $res["last_payment"];
         }
     }
 
@@ -296,6 +299,13 @@ class Partner extends User {
     public function getRevenue()
     {
         return $this->revenue;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastPayment(){
+        return $this->lastPayment;
     }
 
 

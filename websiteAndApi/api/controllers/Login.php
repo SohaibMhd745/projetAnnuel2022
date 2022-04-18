@@ -264,6 +264,11 @@ class Login
             ["success" => true]);
     }
 
+    /**
+     * Rewards owner of sponsorship code used
+     * @param int $sponsorId id of sponsor to be rewarded
+     * @return void
+     */
     private static function rewardSponsor(int $sponsorId){
         include __DIR__."/CheckoutController.php";
         try {
@@ -548,7 +553,7 @@ class Login
      * @param string $token token to attempt connection with
      * @return User built structure from token
      */
-    private static function attemptConnection(string $token) : User{
+    public static function attemptConnection(string $token) : User{
         $user = new User();
         try {
             $user->constructFromToken($token);
@@ -577,7 +582,7 @@ class Login
      * @param string $token token to attempt connection with
      * @return Partner built structure from token
      */
-    private static function attemptPartnerConnection(string $token):Partner{
+    public static function attemptPartnerConnection(string $token):Partner{
         $partner = new Partner();
         try {
             $partner->constructFromToken($token);
