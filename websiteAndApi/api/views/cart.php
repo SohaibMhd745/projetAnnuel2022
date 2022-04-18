@@ -64,10 +64,10 @@
 
                 <div class="separator-m"></div>
 
-                <div id="cart-signed"></div>
+                <div id="cart-full"></div>
 
-                <div id="cart-unsigned">
-                    <div class="row"><p class="shop-item-name">Panier vide.</p></div>
+                <div id="cart-empty">
+                    <div class="row"><p class="shop-item-name">Panier vide / non-connecté.</p></div>
                 </div>
             </div>
 
