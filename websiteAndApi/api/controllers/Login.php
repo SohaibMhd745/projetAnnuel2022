@@ -1,6 +1,8 @@
 <?php
 
 //TODO: Réunir tout les codes d'erreur des catchs dans une fonction pour la lisibilité
+use Stripe\StripeClient;
+
 class Login
 {
     /**
@@ -184,10 +186,10 @@ class Login
      * @httpmethod post
      * @return void
      */
-    public static function registercompany()
-    {
+    public static function registercompany(){
         include __DIR__ . "/../models/User.php";
         include __DIR__ . "/../models/Partner.php";
+        include __DIR__ . "/CheckoutController.php";
 
         $json = json_decode(file_get_contents("php://input"));
 
@@ -237,10 +239,17 @@ class Login
         }
 
         try {
-            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], (int)$params["revenue"], $params["website"]);
+            $stripe = new StripeClient(STRIPE_KEY);
+            $stripe_price = $stripe->prices->create([
+                'unit_amount' => CheckoutController::getSubscriptionPrice($params["revenue"])*100,
+                'currency' => 'eur',
+                'product' => SUBSCRIPTION_PRODUCT_ID
+            ]);
+
+            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $stripe_price->id);
             else{
                 self::rewardSponsor($sponsor);
-                Partner::registerWithCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $sponsor);
+                Partner::registerWithCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $sponsor, $stripe_price->id);
             }
         }catch (Exception $e){
             switch ($e->getCode()){

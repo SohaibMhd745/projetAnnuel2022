@@ -11,7 +11,7 @@ CREATE TABLE akm_partners(
 	api_token CHAR(30),
 	last_payment DATE,
 	payment_code CHAR(30),
-	stripe_payment_id VARCHAR (64),
+	stripe_payment_id VARCHAR (64) NOT NULL,
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
 	PRIMARY KEY (id)
 );

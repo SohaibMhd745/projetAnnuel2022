@@ -7,6 +7,7 @@ class Partner extends User {
     private string $website;
     private $id_sponsor;
     private $lastPayment;
+    private $id_stripe;
 
 
     //@Override user constructFromEmailAndPassword
@@ -54,7 +55,7 @@ class Partner extends User {
     private function constructCompany(){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT name, inscription, revenue, website, id_sponsor, last_payment FROM akm_partners WHERE id = ?";
+        $q = "SELECT name, inscription, revenue, website, id_sponsor, last_payment, stripe_payment_id FROM akm_partners WHERE id = ?";
         $res = $link->query($q, [$this->id_partner]);
 
         if($res === false) throw new Exception("Partner does not exist", COMPANY_NOT_FOUND);
@@ -67,6 +68,7 @@ class Partner extends User {
             $this->id_sponsor = $res["id_sponsor"];
             if($res["last_payment"] === null) $this->lastPayment = $res["inscription"];
             else $this->lastPayment = $res["last_payment"];
+            $this->id_stripe = $res["stripe_payment_id"];
         }
     }
 
@@ -113,18 +115,20 @@ class Partner extends User {
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function registerWithCode(User $user, string $name, int $revenue, string $website, int $id_sponsor){
+    public static function registerWithCode(User $user, string $name, int $revenue, string $website, int $id_sponsor, string $id_stripe){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
             $status = $link->insert(
-                'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
-                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+                'INSERT INTO akm_partners (name, inscription, revenue, website, id_user, id_sponsor, stripe_payment_id)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user, :id_sponsor, :id_stripe)',
                 [
                     'partnername' => $name,
                     'inscription' => getYearsAgo(0),
                     'revenue' => $revenue,
                     'website' => $website,
                     'id_user' => $user->getId(),
+                    'id_sponsor'=>$id_sponsor,
+                    'id_stripe'=>$id_stripe
                 ]);
 
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
@@ -158,18 +162,19 @@ class Partner extends User {
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function registerWithoutCode(User $user, string $name, int $revenue, string $website){
+    public static function registerWithoutCode(User $user, string $name, int $revenue, string $website, string $id_stripe){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $status = $link->insert(
-        'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
-                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+        'INSERT INTO akm_partners (name, inscription, revenue, website, id_user, stripe_payment_id)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user, :id_stripe)',
         [
             'partnername' => $name,
             'inscription' => getYearsAgo(0),
             'revenue' => $revenue,
             'website' => $website,
             'id_user' => $user->getId(),
+            'id_stripe'=>$id_stripe
         ]);
 
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
@@ -202,11 +207,11 @@ class Partner extends User {
      * @param int $new new revenue
      * @throws Exception Mysql_Exception
      */
-    public function updateRevenue(int $new){
+    public function updateRevenue(int $new, string $id_stripe){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $status = $link->insert("UPDATE akm_partners SET revenue = :new WHERE id = :pid",
-            ["new" => $new, "pid" => $this->id_partner]);
+        $status = $link->insert("UPDATE akm_partners SET revenue = :new,  stripe_payment_id = :id_stripe WHERE id = :pid",
+            ["new" => $new, "pid" => $this->id_partner, "id_stripe"=>$id_stripe]);
 
         if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
     }
@@ -353,4 +358,8 @@ class Partner extends User {
         return $this->id_sponsor;
     }
 
+    public function getIdStripe():string
+    {
+        return $this->id_stripe;
+    }
 }

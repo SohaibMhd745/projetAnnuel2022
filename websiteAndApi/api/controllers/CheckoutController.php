@@ -1,5 +1,7 @@
 <?php
 
+use Stripe\StripeClient;
+
 class CheckoutController
 {
 
@@ -233,7 +235,20 @@ class CheckoutController
             die();
         }
         try{
-            $partner->updateRevenue((int)$json->revenue);
+            $stripe = new StripeClient(STRIPE_KEY);
+
+            $stripe->prices->update(
+                $partner->getIdStripe(),
+                ["active"=>false]
+            );//We can't delete a price with the API, so we archive it instead
+
+            $id_stripe = $stripe->prices->create([
+                'unit_amount' => (int) self::getSubscriptionPrice($json->revenue)*100,
+                'currency' => 'eur',
+                'product' => SUBSCRIPTION_PRODUCT_ID
+            ])->id;
+
+            $partner->updateRevenue((int)$json->revenue, $id_stripe);
         }catch (Exception $e){
             switch ($e->getCode()) {
                 case MYSQL_EXCEPTION:
