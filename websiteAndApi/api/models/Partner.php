@@ -6,6 +6,8 @@ class Partner extends User {
     private int $revenue;
     private string $website;
     private $id_sponsor;
+    private $lastPayment;
+    private $id_stripe;
 
 
     //@Override user constructFromEmailAndPassword
@@ -53,7 +55,7 @@ class Partner extends User {
     private function constructCompany(){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
-        $q = "SELECT name, inscription, revenue, website, id_sponsor FROM akm_partners WHERE id = ?";
+        $q = "SELECT name, inscription, revenue, website, id_sponsor, last_payment, stripe_payment_id FROM akm_partners WHERE id = ?";
         $res = $link->query($q, [$this->id_partner]);
 
         if($res === false) throw new Exception("Partner does not exist", COMPANY_NOT_FOUND);
@@ -64,6 +66,9 @@ class Partner extends User {
             $this->revenue = $res["revenue"];
             $this->website = $res["website"];
             $this->id_sponsor = $res["id_sponsor"];
+            if($res["last_payment"] === null) $this->lastPayment = $res["inscription"];
+            else $this->lastPayment = $res["last_payment"];
+            $this->id_stripe = $res["stripe_payment_id"];
         }
     }
 
@@ -110,23 +115,40 @@ class Partner extends User {
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function registerWithCode(User $user, string $name, int $revenue, string $website, int $id_sponsor){
+    public static function registerWithCode(User $user, string $name, int $revenue, string $website, int $id_sponsor, string $id_stripe){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
             $status = $link->insert(
-                'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
-                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+                'INSERT INTO akm_partners (name, inscription, revenue, website, id_user, id_sponsor, stripe_payment_id)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user, :id_sponsor, :id_stripe)',
                 [
                     'partnername' => $name,
                     'inscription' => getYearsAgo(0),
                     'revenue' => $revenue,
                     'website' => $website,
                     'id_user' => $user->getId(),
+                    'id_sponsor'=>$id_sponsor,
+                    'id_stripe'=>$id_stripe
                 ]);
 
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
 
         $user->updateIdPartner();
+    }
+
+    /**
+     * Returns status for the payment of the partner annual subscription
+     * @return bool
+     * - false: still has to be paid
+     * - true: has been paid
+     */
+    public function returnSubscriptionStatus():bool{
+        $civil_year = getCivilYear();
+
+        $lastPayment = date("y-m-d H:i:s", strtotime($this->lastPayment));
+
+        if ($lastPayment<$civil_year["date_min"]) return false;
+        else return true;
     }
 
     /**
@@ -140,25 +162,25 @@ class Partner extends User {
      * - MYSQL_EXCEPTION : Database Fatal Error
      * - COMPANY_NOT_FOUND : unauthorized use of the function
      */
-    public static function registerWithoutCode(User $user, string $name, int $revenue, string $website){
+    public static function registerWithoutCode(User $user, string $name, int $revenue, string $website, string $id_stripe){
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $status = $link->insert(
-        'INSERT INTO akm_partners (name, inscription, revenue, website, id_user)
-                    VALUES (:partnername, :inscription, :revenue, :website, :id_user)',
+        'INSERT INTO akm_partners (name, inscription, revenue, website, id_user, stripe_payment_id)
+                    VALUES (:partnername, :inscription, :revenue, :website, :id_user, :id_stripe)',
         [
             'partnername' => $name,
             'inscription' => getYearsAgo(0),
             'revenue' => $revenue,
             'website' => $website,
             'id_user' => $user->getId(),
+            'id_stripe'=>$id_stripe
         ]);
 
         if ($status === false) throw new Exception("Database error", MYSQL_EXCEPTION);
 
         $user->updateIdPartner();
     }
-
 
     /**
      * Generates, inserts into the database and returns sponsorship code
@@ -178,7 +200,6 @@ class Partner extends User {
 
         return $code;
     }
-
 
     /**
      * Checks sponsor code validity and returns sponsor id and uses it
@@ -244,6 +265,20 @@ class Partner extends User {
      */
 
     /**
+     * Refreshes revenue
+     * @param int $new new revenue
+     * @throws Exception Mysql_Exception
+     */
+    public function updateRevenue(int $new, string $id_stripe){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert("UPDATE akm_partners SET revenue = :new,  stripe_payment_id = :id_stripe WHERE id = :pid",
+            ["new" => $new, "pid" => $this->id_partner, "id_stripe"=>$id_stripe]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+    }
+
+    /**
      * Updates company api token
      * @param int $id id of the company
      * @return string : -1 if user not set, new token if token refreshed successfully
@@ -266,6 +301,69 @@ class Partner extends User {
         }
 
         return -1;
+    }
+
+    /**
+     * Sets and returns new subscription code
+     * @return string
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function updateSubscriptionCode():string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $new = generateRandomString(30);
+
+        $status = $link->insert("UPDATE akm_partners SET payment_code = :code WHERE id = :id", [
+            'id' => $this->id_partner,
+            'code' => $new
+        ]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $new;
+    }
+
+    /**
+     * Sets new subscription payment date
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function updateSubscriptionPaymentDate(){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert("UPDATE akm_partners SET last_payment = NOW() WHERE id = :id", [
+            'id' => $this->id_partner,
+        ]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+    }
+
+    /**
+     * Returns subscription payment code
+     * @return string
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function getSubscriptionCode():string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->query("SELECT payment_code FROM akm_partners WHERE id = :id", ['id' => $this->id_partner]);
+
+        if ($res === false||$res === -1) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $res["payment_code"];
+    }
+
+    /**
+     * Returns subscription payment code
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function resetSubscriptionCode(){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->insert("UPDATE akm_partners SET payment_code = '' WHERE id = :id", ['id' => $this->id_partner]);
+
+        if ($res === false||$res === -1) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $res["payment_code"];
     }
 
     /**
@@ -298,6 +396,13 @@ class Partner extends User {
         return $this->revenue;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getLastPayment(){
+        return $this->lastPayment;
+    }
+
 
     /**
      * @return mixed
@@ -315,4 +420,8 @@ class Partner extends User {
         return $this->id_sponsor;
     }
 
+    public function getIdStripe():string
+    {
+        return $this->id_stripe;
+    }
 }

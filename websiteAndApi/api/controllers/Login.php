@@ -1,6 +1,8 @@
 <?php
 
 //TODO: Réunir tout les codes d'erreur des catchs dans une fonction pour la lisibilité
+use Stripe\StripeClient;
+
 class Login
 {
     /**
@@ -184,10 +186,10 @@ class Login
      * @httpmethod post
      * @return void
      */
-    public static function registercompany()
-    {
+    public static function registercompany(){
         include __DIR__ . "/../models/User.php";
         include __DIR__ . "/../models/Partner.php";
+        include __DIR__ . "/CheckoutController.php";
 
         $json = json_decode(file_get_contents("php://input"));
 
@@ -237,10 +239,17 @@ class Login
         }
 
         try {
-            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], $params["revenue"], $params["website"]);
+            $stripe = new StripeClient(STRIPE_KEY);
+            $stripe_price = $stripe->prices->create([
+                'unit_amount' => CheckoutController::getSubscriptionPrice($params["revenue"])*100,
+                'currency' => 'eur',
+                'product' => SUBSCRIPTION_PRODUCT_ID
+            ]);
+
+            if($sponsor === false) Partner::registerWithoutCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $stripe_price->id);
             else{
                 self::rewardSponsor($sponsor);
-                Partner::registerWithCode($user, $params["partnername"], $params["revenue"], $params["website"], $sponsor);
+                Partner::registerWithCode($user, $params["partnername"], (int)$params["revenue"], $params["website"], $sponsor, $stripe_price->id);
             }
         }catch (Exception $e){
             switch ($e->getCode()){
@@ -264,6 +273,11 @@ class Login
             ["success" => true]);
     }
 
+    /**
+     * Rewards owner of sponsorship code used
+     * @param int $sponsorId id of sponsor to be rewarded
+     * @return void
+     */
     private static function rewardSponsor(int $sponsorId){
         include __DIR__."/CheckoutController.php";
         try {
@@ -548,7 +562,7 @@ class Login
      * @param string $token token to attempt connection with
      * @return User built structure from token
      */
-    private static function attemptConnection(string $token) : User{
+    public static function attemptConnection(string $token) : User{
         $user = new User();
         try {
             $user->constructFromToken($token);
@@ -577,7 +591,7 @@ class Login
      * @param string $token token to attempt connection with
      * @return Partner built structure from token
      */
-    private static function attemptPartnerConnection(string $token):Partner{
+    public static function attemptPartnerConnection(string $token):Partner{
         $partner = new Partner();
         try {
             $partner->constructFromToken($token);

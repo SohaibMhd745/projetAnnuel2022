@@ -1,14 +1,17 @@
 CREATE TABLE akm_partners(
-    id INT AUTO_INCREMENT,
-    name VARCHAR(30) NOT NULL,
-    inscription DATE,
-    revenue INT NOT NULL,
-    website VARCHAR(30) NOT NULL,
-    id_sponsor INT NULL,
-    id_user INT NOT NULL,
-    api_token CHAR(30),
-    FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
-    PRIMARY KEY (id)
+	id INT AUTO_INCREMENT,
+	name VARCHAR(30) NOT NULL,
+	inscription DATE,
+	revenue INT NOT NULL,
+	website VARCHAR(30) NOT NULL,
+	id_sponsor INT NULL,
+	id_user INT NOT NULL,
+	api_token CHAR(30),
+	last_payment DATE,
+	payment_code CHAR(30),
+	stripe_payment_id VARCHAR (64) NOT NULL,
+	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE akm_sponsor_code(
