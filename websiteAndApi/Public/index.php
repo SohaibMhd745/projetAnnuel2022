@@ -132,6 +132,10 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CheckoutController.php";
                             CheckoutController::getPartnerSubscriptionStatus();
                             break;
+                        case "declarerevenue":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::declareRevenue();
+                            break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
                                 ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);

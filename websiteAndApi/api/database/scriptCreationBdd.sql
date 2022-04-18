@@ -10,8 +10,9 @@ CREATE TABLE akm_partners(
 	id_user INT NOT NULL,
 	api_token CHAR(30),
 	last_payment DATE,
+	payment_code CHAR(30),
+	stripe_payment_id VARCHAR (64),
 	FOREIGN KEY (id_sponsor) REFERENCES akm_partners(id),
-	FOREIGN KEY (id_user) REFERENCES akm_users(id),
 	PRIMARY KEY (id)
 );
 
@@ -40,6 +41,8 @@ CREATE TABLE akm_users(
 	token CHAR(16),
 	token_end DATETIME
 );
+
+ALTER TABLE akm_partners ADD FOREIGN KEY (id_user) REFERENCES akm_users(id);
 
 CREATE TABLE akm_prestation(
 	id INT AUTO_INCREMENT,

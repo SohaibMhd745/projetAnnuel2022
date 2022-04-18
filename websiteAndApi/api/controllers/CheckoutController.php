@@ -72,6 +72,12 @@ class CheckoutController
     }
 
     /**
+     *
+     * User order checkout
+     *
+     */
+
+    /**
      * @httpmethod GET
      * @param string $token user auth token
      * @param string $confirmCode order confirmation code
@@ -170,6 +176,12 @@ class CheckoutController
     }
 
     /**
+     *
+     * Partner Subscription checkout
+     *
+     */
+
+    /**
      * Returns status for the payment of the partner annual subscription
      * @httpmethod POST
      * - false: still has to be paid
@@ -185,17 +197,55 @@ class CheckoutController
         if (!isset($json->token) || empty($json->token))
             reportMissingParam("token");
 
-        $user = Login::attemptConnection($json->token);
-        if ($user->getIdPartner() === -1){
-            echo formatResponse(401, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Account is not linked to a partner company", "errorCode" => COMPANY_NOT_FOUND, "step" => "Partner Authentication"]);
-            die();
-        }
-
-        $partner = Login::attemptPartnerConnection($json->token);
+        $partner = self::createPartner($json->token);
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
             ["success" => true, "status"=>$partner->returnSubscriptionStatus()]);
+    }
+
+    /**
+     * Changes revenue stored in the database
+     * @httpmethod POST
+     * @return void
+     */
+    public static function declareRevenue(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Partner.php";
+        include __DIR__."/Login.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if (!isset($json->token) || empty($json->token))
+            reportMissingParam("token");
+
+        if (!isset($json->revenue) || empty($json->revenue))
+            reportMissingParam("revenue");
+
+        $partner = self::createPartner($json->token);
+
+        if(!is_numeric($json->revenue)) {
+            echo formatResponse(400, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Invalid value", "errorCode" => INVALID_PARAMETER, "step" => "Partner Authentication"]);
+            die();
+        }
+        try{
+            $partner->updateRevenue($json->revenue);
+        }catch (Exception $e){
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Revenue update"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Revenue update"]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true]);
     }
 
     /**
@@ -203,6 +253,22 @@ class CheckoutController
      * Utility functions
      *
      */
+
+    /**
+     * makes the appropriate checks and creates a partner object
+     * @param string $token user token
+     * @return Partner Corresponsding user
+     */
+    private static function createPartner(string $token):Partner{
+        $user = Login::attemptConnection($token);
+        if ($user->getIdPartner() === -1){
+            echo formatResponse(401, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Account is not linked to a partner company", "errorCode" => COMPANY_NOT_FOUND, "step" => "Partner Authentication"]);
+            die();
+        }
+
+        return Login::attemptPartnerConnection($token);
+    }
 
     //1 point = 0.2€
     /**

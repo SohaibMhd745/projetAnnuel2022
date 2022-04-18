@@ -197,6 +197,19 @@ class Partner extends User {
         return $code;
     }
 
+    /**
+     * Refreshes revenue
+     * @param int $new new revenue
+     * @throws Exception Mysql_Exception
+     */
+    public function updateRevenue(int $new){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert("UPDATE akm_partners SET revenue = :new WHERE id = :pid",
+            ["new" => $new, "pid" => $this->id_partner]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+    }
 
     /**
      * Checks sponsor code validity and returns sponsor id and uses it
