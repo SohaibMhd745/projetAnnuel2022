@@ -69,37 +69,3 @@ if (token == null) {
         console.error(error);
     }
 }
-/*
-const payButton = document.getElementById("pay-button");
-payButton.addEventListener("click", async (event) => {
-    event.preventDefault();
-    console.log("coucou");
-    window.location.replace("/checkout/validateorder/" + token);
-});
-
-<div class="row cart-row">
-    <div class="col-3">
-        <p class="cart-quantity" id="cart-quantity" + i>0x</p>
-    </div>
-    <div class="col-6">
-        <p class="shop-item-name" id="cart-name" + i>Nom de la prestation</p>
-        <div class="shop-item-numbers">
-            <p id="cart-price" + i>0</p>
-            <p id="cart-id" + i>0</p>
-        </div>
-    </div>
-    <div class="col-3">
-        <button class="button-red" onclick="changeQuantity(i, 1);">+</button>
-        <button class="button-red" onclick="changeQuantity(i, -1);">-</button>
-    </div>
-</div>
-<button class="button button-red" id="pay-button">Valider la commande</button>
-
-const quantity = document.getElementById("cart-quantity" + i);
-const name = document.getElementById("cart-name" + i);
-const price = document.getElementById("cart-price" + i);
-const id = document.getElementById("cart-id" + i);
-quantity.innerHTML = parsedResponse.table[i].quantity + 'x';
-name.innerHTML = parsedResponse.table[i].name;
-price.innerHTML = parsedResponse.table[i].individualprice + '€';
-id.innerHTML = parsedResponse.table[i].id;*/
