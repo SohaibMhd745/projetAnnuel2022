@@ -207,6 +207,11 @@ if ($route !== ""){
             }
             break;
 
+        case "cancel":
+            include __DIR__ . "/../api/controllers/Cart.php";
+            Cart::view();
+            break;
+
         case "error":
             include __DIR__ . "/../api/controllers/ErrorPage.php";
             ErrorPage::view($action);
