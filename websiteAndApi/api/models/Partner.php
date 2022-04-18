@@ -182,7 +182,6 @@ class Partner extends User {
         $user->updateIdPartner();
     }
 
-
     /**
      * Generates, inserts into the database and returns sponsorship code
      * @param int $id id of the company that will be the generator of the code
@@ -200,20 +199,6 @@ class Partner extends User {
         if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
 
         return $code;
-    }
-
-    /**
-     * Refreshes revenue
-     * @param int $new new revenue
-     * @throws Exception Mysql_Exception
-     */
-    public function updateRevenue(int $new, string $id_stripe){
-        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
-
-        $status = $link->insert("UPDATE akm_partners SET revenue = :new,  stripe_payment_id = :id_stripe WHERE id = :pid",
-            ["new" => $new, "pid" => $this->id_partner, "id_stripe"=>$id_stripe]);
-
-        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
     }
 
     /**
@@ -280,6 +265,20 @@ class Partner extends User {
      */
 
     /**
+     * Refreshes revenue
+     * @param int $new new revenue
+     * @throws Exception Mysql_Exception
+     */
+    public function updateRevenue(int $new, string $id_stripe){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert("UPDATE akm_partners SET revenue = :new,  stripe_payment_id = :id_stripe WHERE id = :pid",
+            ["new" => $new, "pid" => $this->id_partner, "id_stripe"=>$id_stripe]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+    }
+
+    /**
      * Updates company api token
      * @param int $id id of the company
      * @return string : -1 if user not set, new token if token refreshed successfully
@@ -302,6 +301,69 @@ class Partner extends User {
         }
 
         return -1;
+    }
+
+    /**
+     * Sets and returns new subscription code
+     * @return string
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function updateSubscriptionCode():string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $new = generateRandomString(30);
+
+        $status = $link->insert("UPDATE akm_partners SET payment_code = :code WHERE id = :id", [
+            'id' => $this->id_partner,
+            'code' => $new
+        ]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $new;
+    }
+
+    /**
+     * Sets new subscription payment date
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function updateSubscriptionPaymentDate(){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $status = $link->insert("UPDATE akm_partners SET last_payment = NOW() WHERE id = :id", [
+            'id' => $this->id_partner,
+        ]);
+
+        if (!$status) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+    }
+
+    /**
+     * Returns subscription payment code
+     * @return string
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function getSubscriptionCode():string{
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->query("SELECT payment_code FROM akm_partners WHERE id = :id", ['id' => $this->id_partner]);
+
+        if ($res === false||$res === -1) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $res["payment_code"];
+    }
+
+    /**
+     * Returns subscription payment code
+     * @throws Exception MYSQL_EXCEPTION
+     */
+    public function resetSubscriptionCode(){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        $res = $link->insert("UPDATE akm_partners SET payment_code = '' WHERE id = :id", ['id' => $this->id_partner]);
+
+        if ($res === false||$res === -1) throw new Exception("Error while trying to access database", MYSQL_EXCEPTION);
+
+        return $res["payment_code"];
     }
 
     /**

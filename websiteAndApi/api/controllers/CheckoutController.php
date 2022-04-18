@@ -167,7 +167,7 @@ class CheckoutController
             ]);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
-                ["success" => false, "errorMessage" => "Database error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
+                ["success" => false, "errorMessage" => "Api error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
             die();
         }
 
@@ -265,6 +265,105 @@ class CheckoutController
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
             ["success" => true]);
+    }
+
+    /**
+     * @httpmethod GET
+     * @param string $token user auth token
+     * @param string $confirmCode subscription confirmation code
+     * @return void
+     */
+    public static function completeSubscriptionPayment(string $token, string $confirmCode){
+        include __DIR__.'/../models/User.php';
+        include __DIR__.'/../models/Order.php';
+        include __DIR__.'/../models/Partner.php';
+        include __DIR__.'/Login.php';
+
+        try{
+            $partner = self::createPartner($token);
+            $orderCode = $partner->getSubscriptionCode();
+            if ($orderCode===''||$orderCode !== $confirmCode){
+                //TODO Redirect to 401 error page
+                die();
+            }
+            $partner->updateSubscriptionPaymentDate();
+            $partner->resetSubscriptionCode();
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                //TODO: error pages
+                case INVALID_AUTH_TOKEN:
+                    //TODO Redirect to 401 error page
+                    break;
+                default:
+                    //TODO Redirect to error 500 page
+                    break;
+            }
+            die();
+        }
+        header("Location: /");
+    }
+
+    /**
+     * @httpmethod GET
+     * @param string $token
+     * @return void
+     */
+    public static function subscriptionPayment(string $token){
+        include __DIR__."/../models/User.php";
+        include __DIR__.'/../models/Order.php';
+        include __DIR__.'/../models/Partner.php';
+        include __DIR__.'/Login.php';
+
+        try{
+            $partner = self::createPartner($token);
+            $code = $partner->updateSubscriptionCode();
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case INVALID_AUTH_TOKEN:
+                    //TODO page 401
+                    break;
+                default:
+                    //TODO page 500
+                    break;
+            }
+            die();
+        }
+
+        if ($partner->returnSubscriptionStatus()){
+            //TODO page 401
+            die();
+        }
+
+        if(self::getSubscriptionPrice($partner->getRevenue()) < 0.0){
+            //TODO page 401
+            die();
+        }
+
+        \Stripe\Stripe::setApiKey(STRIPE_KEY);
+
+        try{
+            header('Content-Type: application/json');
+            $checkout_session = \Stripe\Checkout\Session::create([
+                'line_items' => [[
+                    "price"=>$partner->getIdStripe(),
+                    "quantity"=>1
+                ]],
+                'mode' => 'payment',
+                'success_url' => DOMAIN_NAME . 'checkout/completesubscriptionpayment/'.$token.'/'.$code,
+
+                //TODO: redirection page entreprise
+                'cancel_url' => DOMAIN_NAME . 'cancel'
+            ]);
+        }catch (Exception $e){
+            echo formatResponse(500, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Api error", "errorCode" => OUTSIDE_API_EXCEPTION, "step" => "Stripe connection"]);
+            die();
+        }
+
+
+        header("HTTP/1.1 303 See Other");
+        header("Location: " . $checkout_session->url);
+
     }
 
     /**

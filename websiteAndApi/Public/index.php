@@ -152,6 +152,14 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CheckoutController.php";
                             CheckoutController::completeOrder($param1, $param2);
                             break;
+                            case "subscriptionpayment":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::subscriptionPayment($param1);
+                            break;
+                        case "completesubscriptionpayment":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::completeSubscriptionPayment($param1, $param2);
+                            break;
                         default:
                             echo formatResponse(400, ["Content-Type" => "application/json"],
                                 ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
