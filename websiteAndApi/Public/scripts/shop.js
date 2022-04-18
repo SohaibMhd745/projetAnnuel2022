@@ -6,7 +6,6 @@ import { addToCart } from "./addToCart.js";
 sendCatalogRequest("chrono", true); // Default sort
 setupFilterByPartner(); // Setup "filter by partner" feature
 
-// Add event listeners to "Add to cart" buttons
 document.querySelectorAll('.shop-btn').forEach(button => {
     button.addEventListener('click', event => {
         event.preventDefault();
@@ -39,3 +38,5 @@ filterButton.addEventListener("click", async (event) => {
     const partner = filterSelect.value;
     sendCatalogRequest("chrono", false, partner);
 });
+
+document.getElementsByTagName("BODY")[0].style.display = "block";

@@ -34,8 +34,7 @@ if ($route !== ""){
     $action = explode('/', $route)[1] ?? "index";
     $param1 = explode('/', $route)[2] ?? "none";
     $param2 = explode('/', $route)[3] ?? "none";
-
-    //Switch based on controller
+    
     switch ($controller){
         case "account":
             include __DIR__ . "/../api/controllers/Account.php";
@@ -192,10 +191,14 @@ if ($route !== ""){
             }
             break;
 
+        case "error":
+            include __DIR__ . "/../api/controllers/ErrorPage.php";
+            ErrorPage::view($action);
+            break;
+
         default:
-            //TODO: Page 404
-            include __DIR__ . "/../api/controllers/Home.php";
-            Home::view();
+            include __DIR__ . "/../api/controllers/ErrorPage.php";
+            ErrorPage::view(404);
             break;
     }
 } else {

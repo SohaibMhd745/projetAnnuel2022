@@ -107,6 +107,7 @@ class CheckoutController
             die();
         }
         header("Location: /");
+        exit();
     }
 
     /**
@@ -184,7 +185,7 @@ class CheckoutController
         $bonus_int = intval($rawBonus);
         $bonus_dec = $rawBonus - $bonus_int;
 
-         return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
+        return $bonus_int + ($bonus_dec >= 0.5 ? 1:0);
     }
 
 
@@ -194,7 +195,7 @@ class CheckoutController
      *
      */
 
-    //1 point = 0.2€
+    // 1 point = 0.2€
     /**
      * Converts points to price
      * @param float $points points
