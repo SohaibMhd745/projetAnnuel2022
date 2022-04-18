@@ -48,7 +48,7 @@
     <body>
         <header>
             <?php
-            $script_name = "/shop.php";
+            $page_name = "cart";
             include("includes/header.php");
             ?>
         </header>
@@ -60,38 +60,15 @@
                 <div class="row">
                     <p class="title">Panier</p>
                     <div class="separator-s"></div>
-                    <img src="/assets/img/ill/cart.svg" alt="Catalogue des prestations" height="256px" />
+                    <img src="/assets/img/cart.svg" alt="Catalogue des prestations" height="256px" />
                 </div>
 
                 <div class="separator-m"></div>
 
-                    <div id="cart-signed">
-                    <?php for($i=0; $i<8; $i++) {
-                        echo '
-                        <div class="row cart-row">
-                            <div class="col-3">
-                                <p class="cart-quantity" id="cart-quantity' . $i . '">0x</p>
-                            </div>
-                            <div class="col-6">
-                                <p class="shop-item-name" id="cart-name' . $i . '">Nom de la prestation</p>
-                                <div class="shop-item-numbers">
-                                    <p id="cart-price' . $i . '">0</p>
-                                    <p id="cart-id' . $i . '">0</p>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <button class="button-red" onclick="changeQuantity(' . $i . ', 1);">+</button>
-                                <button class="button-red" onclick="changeQuantity(' . $i . ', -1);">-</button>
-                            </div>
-                        </div>
-                        ';}
-                    ?>
-                    <button class="button button-red" id="pay-button">Valider la commande</button>
-                </div>
+                <div id="cart-signed"></div>
+
                 <div id="cart-unsigned">
-                    <div class="row">
-                        <p class="shop-item-name">Panier vide.</p>
-                    </div>
+                    <div class="row"><p class="shop-item-name">Panier vide.</p></div>
                 </div>
             </div>
 

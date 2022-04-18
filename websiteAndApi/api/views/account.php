@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php include("includes/headInfo.php"); ?> <!-- TODO: Passer le script_name pour afficher le bon <title> -->
+        <?php include("includes/headInfo.php"); ?>
     </head>
     <body>
         <header>
             <?php
-            $script_name = "/account.php";
+            $page_name = "account";
             include("includes/header.php");
             ?>
         </header>
@@ -18,7 +18,7 @@
                 <div class="row">
                     <p class="title">Accès Espace Compte</p>
                     <div class="separator-s"></div>
-                    <img src="/assets/img/ill/account.svg" alt="Espace Compte" height="256px" />
+                    <img src="/assets/img/account.svg" alt="Espace Compte" height="256px" />
 
                     <div class="separator-m"></div>
                     
@@ -62,7 +62,7 @@
             <div class="container" id="subview-account">
                 <div class="row">
                     <p class="title">Votre Espace Compte</p>
-                    <img src="/assets/img/ill/account.svg" alt="Espace Compte" height="256px" />
+                    <img src="/assets/img/account.svg" alt="Espace Compte" height="256px" />
                     <div class="separator-m"></div>
                     
                     <div class="col col-centered">
@@ -128,7 +128,7 @@
             <div class="container" id="subview-addpresta">
                 <div class="row">
                     <p class="title">Ajouter une prestation</p>
-                    <img src="/assets/img/ill/addpresta.svg" alt="Ajouter une prestation" height="256px" />
+                    <img src="/assets/img/addpresta.svg" alt="Ajouter une prestation" height="256px" />
                     <div class="separator-m"></div>
 
                     <div class="col col-centered">

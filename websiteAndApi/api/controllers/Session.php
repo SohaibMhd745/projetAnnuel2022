@@ -12,7 +12,7 @@ class Session
         include __DIR__."/../models/Partner.php";
 
         if(!isset($token)||empty($token)){
-            //TODO: Include Page d'erreur avec msg
+            header("Location: /error/500"); exit();
             die();
         }
 
@@ -23,13 +23,13 @@ class Session
         } catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
-                    //TODO: Include Page d'erreur (token plus valide)
+                    header("Location: /error/500"); exit();
                     break;
                 case MYSQL_EXCEPTION:
-                    //TODO: Include Page d'erreur (erreur bdd)
+                    header("Location: /error/500"); exit();
                     break;
                 default:
-                    //TODO: Include Page d'erreur avec msg (erreur fatale)
+                    header("Location: /error/500"); exit();
                     break;
             }
             die();
@@ -63,10 +63,10 @@ class Session
                         header('Location: localhost/account');
                         break;
                     case MYSQL_EXCEPTION:
-                        //TODO: Include Page d'erreur
+                        header("Location: /error/500"); exit();
                         break;
                     default:
-                        //TODO: Include Page d'erreur avec msg (erreur fatale)
+                        header("Location: /error/500"); exit();
                         break;
                 }
                 die();

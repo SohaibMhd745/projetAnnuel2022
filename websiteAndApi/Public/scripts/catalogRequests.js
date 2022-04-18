@@ -14,7 +14,7 @@ function sendCatalogRequest(mode, reverse, partner = "-1") {
                 if (parsedResponse.success === true) {
                     let i;
                     for (i = 0; i < 8; i++) {
-                        if (i <= parsedResponse.table.length) {
+                        if (i < parsedResponse.table.length) {
                             const name = document.getElementById("shop-item-name" + i);
                             const description = document.getElementById("shop-item-description" + i);
                             const price = document.getElementById("shop-item-price" + i);

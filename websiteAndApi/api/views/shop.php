@@ -3,10 +3,10 @@
     <head>
         <?php include("includes/headInfo.php"); ?>
     </head>
-    <body>
+    <body style="display: none;">
         <header>
             <?php
-            $script_name = "/shop.php";
+            $page_name = "shop";
             include("includes/header.php");
             ?>
         </header>
@@ -18,7 +18,7 @@
                 <div class="row">
                     <p class="title">Catalogue des prestations</p>
                     <div class="separator-s"></div>
-                    <img src="/assets/img/ill/shop.svg" alt="Catalogue des prestations" height="256px" />
+                    <img src="/assets/img/shop.svg" alt="Catalogue des prestations" height="256px" />
                 </div>
 
                 <div class="separator-m"></div>
@@ -36,7 +36,7 @@
 
                         <p>Filtrer par partenaire :</p>
                         <select class="shop-select" id="filter-select">
-                            <option value="null"></option>
+                            <option value="null">Tous</option>
                         </select>
                         <button class="button button-red" id="filter-button">OK</button>
                     </div>

@@ -102,7 +102,7 @@
   --akm-gold-dark: #caac52;
 
   --akm-black: #0B0500;
-  --akm-white: #E6E6EA;
+  --akm-white: #FFFFFF;
   --akm-gray: #999999;
   --akm-darkgray: #444444;
 }
@@ -414,10 +414,14 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 330px;
+  height: 366px;
   padding: 48px;
 }
 
 .shop-insideitem {
+  width: 234px;
+  height: 270px;
   text-align: left;
 }
 
@@ -456,6 +460,10 @@ p {
 
 .shop-item-id {
   text-align: right;
+}
+
+.shop-btn {
+  width: 100%;
 }
 
 #sort-button, #filter-button {

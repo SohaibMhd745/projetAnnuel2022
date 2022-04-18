@@ -8,7 +8,7 @@
     <body>
         <header>
             <?php
-            $script_name = "/home.php";
+            $page_name = "home";
             include("includes/header.php");
             ?>
         </header>
