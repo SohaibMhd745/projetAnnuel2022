@@ -92,7 +92,7 @@ class CheckoutController
         try{
             $orderCode = Order::getOrderConfirm($token);
             if ($orderCode !== $confirmCode){
-                //TODO Redirect to 401 error page
+                header('Location: /error/401'); exit();
                 die();
             }
 
@@ -105,16 +105,16 @@ class CheckoutController
             Order::finalizeOrder($confirmCode);
         }catch (Exception $e){
             switch ($e->getCode()){
-                //TODO: error pages
                 case INVALID_AUTH_TOKEN:
-                    //TODO Redirect to 401 error page
+                    header('Location: /error/401'); exit();
                     break;
                 default:
-                    //TODO Redirect to error 500 page
+                    header('Location: /error/500'); exit();
                     break;
             }
             die();
         }
+        include __DIR__.'/../scripts/push.php';
         header("Location: /");
         exit();
     }
@@ -135,22 +135,22 @@ class CheckoutController
         }catch (Exception $e) {
             switch ($e->getCode()) {
                 case INVALID_AUTH_TOKEN:
-                    //TODO page 401
+                    header('Location: /error/401'); exit();
                     break;
                 default:
-                    //TODO page 500
+                    header('Location: /error/500'); exit();
                     break;
             }
             die();
         }
 
         if ($cart === []) {
-            //TODO rediriger sur le cart
+            header('Location: /cart'); exit();
             die();
         }
 
         if ($orderCode === "") {
-            //TODO page 401
+            header('Location: /error/401'); exit();
             die();
         }
 
@@ -175,7 +175,6 @@ class CheckoutController
 
         header("HTTP/1.1 303 See Other");
         header("Location: " . $checkout_session->url);
-
     }
 
     /**
@@ -284,19 +283,18 @@ class CheckoutController
             $partner = self::createPartner($token);
             $orderCode = $partner->getSubscriptionCode();
             if ($orderCode===''||$orderCode !== $confirmCode){
-                //TODO Redirect to 401 error page
+                header('Location: /error/401'); exit();
                 die();
             }
             $partner->updateSubscriptionPaymentDate();
             $partner->resetSubscriptionCode();
         }catch (Exception $e){
             switch ($e->getCode()){
-                //TODO: error pages
                 case INVALID_AUTH_TOKEN:
-                    //TODO Redirect to 401 error page
+                    header('Location: /error/401'); exit();
                     break;
                 default:
-                    //TODO Redirect to error 500 page
+                    header('Location: /error/500'); exit();
                     break;
             }
             die();
@@ -321,22 +319,22 @@ class CheckoutController
         }catch (Exception $e) {
             switch ($e->getCode()) {
                 case INVALID_AUTH_TOKEN:
-                    //TODO page 401
+                    header('Location: /error/401'); exit();
                     break;
                 default:
-                    //TODO page 500
+                    header('Location: /error/500'); exit();
                     break;
             }
             die();
         }
 
         if ($partner->returnSubscriptionStatus()){
-            //TODO page 401
+            header('Location: /error/401'); exit();
             die();
         }
 
         if(self::getSubscriptionPrice($partner->getRevenue()) < 0.0){
-            //TODO page 401
+            header('Location: /error/401'); exit();
             die();
         }
 

@@ -2,6 +2,20 @@
 <html lang="fr">
     <head>
         <?php include("includes/headInfo.php"); ?>
+        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+        <script>
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function() {
+            OneSignal.init({
+            appId: "27a4e60f-17cc-4949-b10d-22ea4ae5d38d",
+            safari_web_id: "web.onesignal.auto.14469d21-a548-446f-9323-a0e21fc14d38",
+            notifyButton: {
+                enable: true,
+            },
+            allowLocalhostAsSecureOrigin: true,
+            });
+        });
+        </script>
     </head>
     <body>
         <header>
