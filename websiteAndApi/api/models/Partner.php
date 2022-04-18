@@ -133,6 +133,21 @@ class Partner extends User {
     }
 
     /**
+     * Returns status for the payment of the partner annual subscription
+     * @return bool
+     * - false: still has to be paid
+     * - true: has been paid
+     */
+    public function returnSubscriptionStatus():bool{
+        $civil_year = getCivilYear();
+
+        $lastPayment = date("y-m-d H:i:s", strtotime($this->lastPayment));
+
+        if ($lastPayment<$civil_year["date_min"]) return false;
+        else return true;
+    }
+
+    /**
      * @param User $user : User object to extend
      * @param string $name
      * @param int $revenue

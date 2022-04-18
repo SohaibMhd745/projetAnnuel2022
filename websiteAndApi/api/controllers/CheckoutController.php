@@ -194,15 +194,8 @@ class CheckoutController
 
         $partner = Login::attemptPartnerConnection($json->token);
 
-        $civil_year = getCivilYear();
-
-        $lastPayment = date("y-m-d H:i:s", strtotime($partner->getLastPayment()));
-
-        if ($lastPayment<$civil_year["date_min"]) $status = false;
-        else $status = true;
-
         echo formatResponse(200, ["Content-Type" => "application/json"],
-            ["success" => true, "status"=>$status]);
+            ["success" => true, "status"=>$partner->returnSubscriptionStatus()]);
     }
 
     /**
