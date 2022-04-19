@@ -24,7 +24,7 @@ function sendRequest(method, url, serializedInput) {
                         case USER_NOT_FOUND: console.log("Utilisateur inexistant."); break;
                         case INCORRECT_USER_CREDENTIALS: console.log("Identifiants invalides."); break;
                         case INVALID_AUTH_TOKEN: console.log("Token invalide."); break;
-                        default: console.log("Unknown error."); break;
+                        default: console.log("Erreur inconnue."); break;
                     }
                     return false;
                 }

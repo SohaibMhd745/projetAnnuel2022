@@ -3,7 +3,7 @@ import { sendRequest } from './sendRequest';
 function sendCatalogRequest(mode, reverse, partner = "-1") {
     const serializedInput = JSON.stringify({ "mode": mode, "reverse": reverse, "id_partner": partner });
 
-    if (sendRequest("POST", "/order/getorder", serializedInput) == true) {
+    if (sendRequest("POST", "/catalog/orderedsearch", serializedInput) == true) {
         let i;
         for (i = 0; i < 8; i++) {
             if (i < parsedResponse.table.length) {
@@ -25,7 +25,7 @@ function sendCatalogRequest(mode, reverse, partner = "-1") {
 
 function setupFilterByPartner() {
     const serializedInput = JSON.stringify({});
-    if (sendRequest("POST", "/order/getorder", serializedInput) == true) {
+    if (sendRequest("POST", "/login/getpartners", serializedInput) == true) {
         let i;
         for (i = 0; i < parsedResponse.table.length; i++) {
             const partnerName = parsedResponse.table[i].name;
