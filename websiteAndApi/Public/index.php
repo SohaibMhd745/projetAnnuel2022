@@ -206,31 +206,6 @@ if ($route !== ""){
                     die();
             }
             break;
-        
-        case "pdf":
-            switch ($method){
-                case "POST":
-                    switch ($action){
-                        case "profile":
-                            include __DIR__."/../api/controllers/PDFController.php";
-                            PDFController::generateUserPDF();
-                            break;
-                        case "order":
-                            include __DIR__."/../api/controllers/PDFController.php";
-                            PDFController::generateOrderPDF();
-                            break;
-                        default:
-                            echo formatResponse(400, ["Content-Type" => "application/json"],
-                                ["success" => false, "errorMessage" => "This function does not exist", "errorCode" => WRONG_ACTION]);
-                            die();
-                    }
-                    break;
-                default:
-                    echo formatResponse(400, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "This controller does not support this method", "errorCode" => WRONG_METHOD]);
-                    die();
-            }
-            break;
 
         case "cancel":
             include __DIR__ . "/../api/controllers/Cart.php";
