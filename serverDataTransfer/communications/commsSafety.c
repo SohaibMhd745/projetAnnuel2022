@@ -181,6 +181,11 @@ int checkData(loggedData * data, int serverId){
     return status;
 }
 
+static size_t read_callback(char *ptr, size_t size, size_t nmemb, void *stream){
+    size_t retcode = fread(ptr, size, nmemb, stream);
+    return retcode;
+}
+
 /**
  * @usage send report to target
  * @param yaml -- formatted yaml string
@@ -188,39 +193,62 @@ int checkData(loggedData * data, int serverId){
  * @return CURL_SUCCESS | CURL_FAILURE
  */
 int sendReport(char* yaml, char* target){
-    CURL* curlHandler;
-    CURLcode returnCode;
-    int attempt = 0;
-    char post[MAX_BUFFER+20];
+    CURL *curlHandler;
+    CURLcode res;
+    int reportSize;
+    FILE* reportFile;
+    struct curl_slist *headerList = NULL;
 
-    strcpy(post, "report=");
-    strcat(post, yaml);
 
+    reportFile = fopen("buffer.yaml", "wb+");
+    if (reportFile == NULL) {
+        outputError("Program does not have writing perms");
+        exit(-1);
+    }
+    fprintf(reportFile, "%s", yaml);
+
+    reportSize = getFilesize("buffer.yaml");
     curl_global_init(CURL_GLOBAL_ALL);
+
     curlHandler = curl_easy_init();
 
     if(curlHandler) {
+        /* build a list of commands to pass to libcurl */
+        headerList = curl_slist_append(headerList, "RNFR buffer.yaml");
+        headerList = curl_slist_append(headerList, "RNTO report.yaml");
+
+        /* we want to use our own read function */
+        curl_easy_setopt(curlHandler, CURLOPT_READFUNCTION, read_callback);
+
+        /* enable uploading */
+        curl_easy_setopt(curlHandler, CURLOPT_UPLOAD, 1L);
+
+        /* specify target */
         curl_easy_setopt(curlHandler, CURLOPT_URL, target);
-        curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, post);
 
-        do{
-            returnCode = curl_easy_perform(curlHandler);
-            if(returnCode != CURLE_OK){
-                char errStr[500];
-                strcpy(errStr, "Failed to start CURL POST request: ");
-                strcat(errStr, curl_easy_strerror(returnCode));
+        /* pass in that last of FTP commands to run after the transfer */
+        curl_easy_setopt(curlHandler, CURLOPT_POSTQUOTE, headerList);
 
-                fprintf(stderr, "%s\n" ,errStr);
-                outputError(errStr);
+        /* now specify which file to upload */
+        curl_easy_setopt(curlHandler, CURLOPT_READDATA, reportFile);
 
-                attempt++;
-            }
-        }while(returnCode!=CURLE_OK && attempt != 3);
+        /* Set the size of the file to upload */
+        curl_easy_setopt(curlHandler, CURLOPT_INFILESIZE_LARGE,
+                         (curl_off_t)reportSize);
 
+        /* Now run off and do what you have been told! */
+        res = curl_easy_perform(curlHandler);
+        /* Check for errors */
+        if(res != CURLE_OK){
+            outputError(curl_easy_strerror(res));
+            exit(-1);
+        }
+        /* clean up the FTP commands list */
+        curl_slist_free_all(headerList);
+        /* always cleanup */
         curl_easy_cleanup(curlHandler);
     }
-    curl_global_cleanup();
+    fclose(reportFile);
 
-    if (attempt == 3) return CURL_FAILURE;
-    else return CURL_SUCCESS;
+    curl_global_cleanup();
 }

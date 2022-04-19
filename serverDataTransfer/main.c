@@ -39,7 +39,7 @@ int parseArgs(int argc, char **argv){
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
                 printf("h\t\t\t\t\t\t\t:\tHelp"
-                "\ns [DB Credentials Filepath] [target IP address]\t\t:\tStart the program in sender mode"
+                "\ns [DB Credentials Filepath] [target url]\t\t:\tStart the program in sender mode"
                 "\nr [Central Excel Sheet] [port]\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
