@@ -114,7 +114,7 @@ class CheckoutController
             }
             die();
         }
-        include __DIR__.'/../scripts/push.php';
+        //include __DIR__.'/../scripts/push.php';
         header("Location: /");
         exit();
     }
