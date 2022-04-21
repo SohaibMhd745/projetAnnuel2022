@@ -127,6 +127,10 @@ if ($route !== ""){
                             include __DIR__."/../api/controllers/CheckoutController.php";
                             CheckoutController::partnerCheckout();
                             break;
+                        case "pointscheckout":
+                            include __DIR__."/../api/controllers/CheckoutController.php";
+                            CheckoutController::pointsCheckout();
+                            break;
                         case "partnersubscriptionstatus":
                             include __DIR__."/../api/controllers/CheckoutController.php";
                             CheckoutController::getPartnerSubscriptionStatus();
