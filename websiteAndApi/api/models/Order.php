@@ -73,7 +73,7 @@ class Order
         else return $status["id"];
     }
 
-    public static function getOrderTotal(int $oId):int{
+    public static function getOrderTotal(int $oId):float{
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q = "SELECT SUM(subtotal) as total FROM 
@@ -85,7 +85,7 @@ class Order
 
         $res = $link->query($q, ["oid" => $oId]);
 
-        if ($res === false) return 0;
+        if ($res === false) return 0.0;
         else if($res === MYSQL_EXCEPTION) throw new Exception("Database Error", MYSQL_EXCEPTION);
         else return $res["total"];
     }
