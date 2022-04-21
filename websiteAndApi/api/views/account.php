@@ -2,6 +2,7 @@
 <html lang="fr">
     <head>
         <?php include("includes/headInfo.php"); ?>
+        <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     </head>
     <body>
         <header>
@@ -97,6 +98,11 @@
                             <button class="button button-gold" id="partner-1" type="submit">Gérer mes prestations</button>
                             <button class="button button-gold" id="partner-2" type="submit">Ajouter une prestation</button>
                         </div>
+
+                        <div class="separator-m"></div>
+
+                        <p class="subtitle">Code barre</p>
+                        <svg class="barcode" jsbarcode-format="EAN13"></svg>
                     </div>
                 </div>
 
@@ -158,7 +164,7 @@
                 <p id="pdf-firstname">Prénom : </p>
                 <p id="pdf-birthdate">Date de naissance : </p>
                 <p id="pdf-number">Téléphone : </p>
-                <?php for($i=0; $i<20; $i++){ echo '<p class="invisible">f</p>'; } ?>
+                <?php for($i=0; $i<20; $i++){ echo '<p class="invisible">.</p>'; } ?>
             </div>
         </main>
 
@@ -166,5 +172,6 @@
             <?php include("includes/footer.php"); ?>
         </footer>
     <script type="module" src="/scripts/account.js"></script>
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/barcodes/JsBarcode.ean-upc.min.js"></script>
     </body>
 </html>

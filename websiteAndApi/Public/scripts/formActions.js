@@ -64,8 +64,78 @@ function signinUser() {
 }
 
 function signupUser() {
-    // TODO: Create user account
-    window.alert("Compte créé.");
+    const lastnameInput = document.getElementById("signup-lastname");
+    const firstnameInput = document.getElementById("signup-firstname");
+    const birthdateInput = document.getElementById("signup-birthdate");
+    const numberInput = document.getElementById("signup-number");
+    const emailInput = document.getElementById("signup-email");
+    const passwordInput = document.getElementById("signup-password");
+
+    const lastname = lastnameInput.value;
+    const firstname = firstnameInput.value;
+    const birthdate = birthdateInput.value;
+    const number = numberInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    const serializedInput = JSON.stringify({
+        "lastname": lastname,
+        "firstname": firstname,
+        "birthdate": birthdate,
+        "phone": number,
+        "email": email,
+        "password": password
+    });
+
+    try {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "/login/signup", false);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                const response = this.responseText;
+                const parsedResponse = JSON.parse(response);
+                if (parsedResponse.success === true) {
+                    localStorage.setItem("token", parsedResponse.token);
+                    window.location.replace("/");
+                } else {
+                    const errorSignup = document.getElementById("signup-error");
+                    switch (parsedResponse.errorCode) {
+                        case FATAL_EXCEPTION:
+                            errorSignup.innerHTML = "Erreur fatale. Veuillez réessayer.";
+                            break;
+                        case MYSQL_EXCEPTION:
+                            errorSignup.innerHTML = "Erreur base de données. Veuillez réessayer.";
+                            break;
+                        case INVALID_PARAMETER:
+                            errorSignup.innerHTML = "Paramètre invalide.";
+                            break;
+                        case MISSING_PARAMETER:
+                            errorSignup.innerHTML = "Paramètre manquant.";
+                            break;
+                        case PARAMETER_WRONG_LENGTH:
+                            errorSignup.innerHTML = "Paramètre de longueur invalide.";
+                            break;
+                        case USER_NOT_FOUND:
+                            errorSignup.innerHTML = "Utilisateur inexistant.";
+                            break;
+                        case INCORRECT_USER_CREDENTIALS:
+                            errorSignup.innerHTML = "Identifiants invalides.";
+                            break;
+                        case INVALID_AUTH_TOKEN:
+                            errorSignup.innerHTML = "Token invalide.";
+                            break;
+                        default:
+                            errorSignup.innerHTML = "Erreur inconnue.";
+                            break;
+                    }
+                }
+            }
+        };
+        xhttp.send(serializedInput);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 function signoutUser() {

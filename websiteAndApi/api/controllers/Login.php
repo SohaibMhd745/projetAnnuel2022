@@ -26,12 +26,15 @@ class Login
             reportMissingParam("email");
         if(!isset($json->password)||empty($json->password))
             reportMissingParam("password");
+        
+        $barcode = rand(100000,999999);
 
         $params = [
             "lastname" => $json->lastname,
             "firstname" => $json->firstname,
             "birthdate" => $json->birthdate,
             "phone" => $json->phone,
+            "barcode" => $barcode,
             "email" => $json->email,
             "password" => $json->password
         ];
@@ -44,6 +47,7 @@ class Login
                 $params["firstname"],
                 $params["birthdate"],
                 $params["phone"],
+                $params["barcode"],
                 $params["email"],
                 $params["password"]
             );
@@ -359,15 +363,25 @@ class Login
 
         $json = json_decode(file_get_contents("php://input"));
 
-        if(!isset($json->token)||empty($json->token))
-            reportMissingParam("token");
+        if((!isset($json->token)||empty($json->token)) && (!isset($json->barcode)||empty($json->barcode)))
+            reportMissingParam("token/barcode");
 
-        $token = $json->token;
+        elseif(isset($json->token) && !empty($json->token)) {
+            $key = $json->token;
+            $method = "token";
+        }
 
-        $user = self::attemptConnection($token);
+        elseif(isset($json->barcode) && !empty($json->barcode)) {
+            $key = $json->barcode;
+            $method = "barcode";
+        }
+
+        else reportMissingParam("token/barcode");
+
+        $user = self::attemptConnection($key, $method);
 
         if ($user->getIdPartner()!==-1){
-            $partner = self::attemptPartnerConnection($token);
+            $partner = self::attemptPartnerConnection($key);
             echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "partner",
                 "user" => [
                     "id"=>$partner->getId(),
@@ -376,6 +390,7 @@ class Login
                     "inscription"=>$partner->getInscription(),
                     "birthdate"=>$partner->getBirth(),
                     "phone"=>$partner->getPhone(),
+                    "barcode"=>$user->getBarcode(),
                     "id_partner"=>$partner->getIdPartner(),
                     "partner" => [
                         "name" => $partner->getPartnerName(),
@@ -393,6 +408,7 @@ class Login
                 "inscription"=>$user->getInscription(),
                 "birthdate"=>$user->getBirth(),
                 "phone"=>$user->getPhone(),
+                "barcode"=>$user->getBarcode(),
                 "id_partner"=>$user->getIdPartner()
         ]]);
     }
@@ -562,26 +578,51 @@ class Login
      * @param string $token token to attempt connection with
      * @return User built structure from token
      */
-    public static function attemptConnection(string $token) : User{
+    public static function attemptConnection(string $key, string $method) : User{
         $user = new User();
-        try {
-            $user->constructFromToken($token);
-        } catch (Exception $e) {
-            switch ($e->getCode()) {
-                case INVALID_AUTH_TOKEN:
-                    echo formatResponse(401, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
-                    break;
-                case MYSQL_EXCEPTION:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-                default:
-                    echo formatResponse(500, ["Content-Type" => "application/json"],
-                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
-                    break;
-            }
-            die();
+        switch ($method) {
+            case "token":
+                try {
+                    $user->constructFromToken($key);
+                } catch (Exception $e) {
+                    switch ($e->getCode()) {
+                        case INVALID_AUTH_TOKEN:
+                            echo formatResponse(401, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Invalid auth token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
+                            break;
+                        case MYSQL_EXCEPTION:
+                            echo formatResponse(500, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
+                            break;
+                        default:
+                            echo formatResponse(500, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
+                            break;
+                    }
+                    die();
+                }
+                break;
+            case "barcode":
+                try {
+                    $user->constructFromBarcode($key);
+                } catch (Exception $e) {
+                    switch ($e->getCode()) {
+                        case INVALID_AUTH_TOKEN:
+                            echo formatResponse(401, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Invalid auth barcode", "errorCode" => INVALID_AUTH_TOKEN, "step" => "User Authentication"]);
+                            break;
+                        case MYSQL_EXCEPTION:
+                            echo formatResponse(500, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "User Authentication"]);
+                            break;
+                        default:
+                            echo formatResponse(500, ["Content-Type" => "application/json"],
+                                ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "User Authentication"]);
+                            break;
+                    }
+                    die();
+                }
+                break;
         }
         return $user;
     }

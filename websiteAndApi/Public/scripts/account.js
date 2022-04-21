@@ -1,8 +1,12 @@
 "use strict";
 
+import {
+    FATAL_EXCEPTION, MYSQL_EXCEPTION, INVALID_PARAMETER, MISSING_PARAMETER, PARAMETER_WRONG_LENGTH,
+    USER_NOT_FOUND, INCORRECT_USER_CREDENTIALS, INVALID_AUTH_TOKEN
+} from './const.js';
+import { signinUser, signupUser, signoutUser, updateProfile, upgradeToPartner, addPrestation } from "./formActions.js";
 import { checkTokenValidity } from "./checkTokenValidity.js";
 import { getUserData } from "./getUserData.js";
-import { signinUser, signupUser, signoutUser, updateProfile, upgradeToPartner, addPrestation } from "./formActions.js";
 
 // Unsigned & signed <main>
 const mainUnsigned = document.getElementById("main-unsigned");
@@ -70,6 +74,41 @@ checkTokenValidity(function (tokenValid) {
             event.preventDefault();
             addPrestation();
         });
+
+        /* BARCODE */
+        const token = localStorage.getItem("token");
+        const serializedInput = JSON.stringify({ "token": token });
+        try {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/login/getdata", false);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    const response = this.responseText;
+                    const parsedResponse = JSON.parse(response);
+                    if (parsedResponse.success === true) {
+                        const barcode = document.querySelector(".barcode");
+                        barcode.setAttribute("jsbarcode-value", '867905' + parsedResponse.user.barcode);
+                        JsBarcode(".barcode").init();
+                    } else {
+                        switch (parsedResponse.errorCode) {
+                            case FATAL_EXCEPTION: console.log("Erreur fatale. Veuillez réessayer."); break;
+                            case MYSQL_EXCEPTION: console.log("Erreur base de données. Veuillez réessayer."); break;
+                            case INVALID_PARAMETER: console.log("Paramètre invalide."); break;
+                            case MISSING_PARAMETER: console.log("Paramètre manquant."); break;
+                            case PARAMETER_WRONG_LENGTH: console.log("Paramètre de longueur invalide."); break;
+                            case USER_NOT_FOUND: console.log("Utilisateur inexistant."); break;
+                            case INCORRECT_USER_CREDENTIALS: console.log("Identifiants invalides."); break;
+                            case INVALID_AUTH_TOKEN: console.log("Token invalide."); break;
+                            default: console.log("Unknown error."); break;
+                        }
+                    }
+                }
+            };
+            xhttp.send(serializedInput);
+        } catch (error) {
+            console.error(error);
+        }
     }
 });
 
@@ -86,17 +125,8 @@ partnerActionButton2.addEventListener("click", async (event) => {
 });
 
 /* PDF GENERATION */
-function addScript(url) {
-    var script = document.createElement('script');
-    script.type = 'application/javascript';
-    script.src = url;
-    document.head.appendChild(script);
-}
-addScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
-
 const invoice = document.getElementById("user-invoice");
 invoice.style.display = "none";
-
 const downloadUserPDF = document.getElementById("download-user-pdf");
 downloadUserPDF.addEventListener("click", async (event) => {
     event.preventDefault();
