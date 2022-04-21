@@ -92,8 +92,8 @@ class CheckoutController
         try{
             $orderCode = Order::getOrderConfirm($token);
             if ($orderCode !== $confirmCode){
-                header('Location: /error/401'); exit();
-                die();
+                header('Location: /error/401');
+                exit();
             }
 
             $price = Order::getOrderTotal(Order::getCurrentOrder($token));
@@ -106,13 +106,13 @@ class CheckoutController
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
-                    header('Location: /error/401'); exit();
+                    header('Location: /error/401');
                     break;
                 default:
-                    header('Location: /error/500'); exit();
+                    header('Location: /error/500');
                     break;
             }
-            die();
+            exit();
         }
         //include __DIR__.'/../scripts/push.php';
         header("Location: /");
@@ -135,23 +135,23 @@ class CheckoutController
         }catch (Exception $e) {
             switch ($e->getCode()) {
                 case INVALID_AUTH_TOKEN:
-                    header('Location: /error/401'); exit();
+                    header('Location: /error/401');
                     break;
                 default:
-                    header('Location: /error/500'); exit();
+                    header('Location: /error/500');
                     break;
             }
-            die();
+            exit();
         }
 
         if ($cart === []) {
-            header('Location: /cart'); exit();
-            die();
+            header('Location: /cart');
+            exit();
         }
 
         if ($orderCode === "") {
-            header('Location: /error/401'); exit();
-            die();
+            header('Location: /error/401');
+            exit();
         }
 
         \Stripe\Stripe::setApiKey(STRIPE_KEY);
@@ -162,9 +162,7 @@ class CheckoutController
                 'line_items' => $cart,
                 'mode' => 'payment',
                 'success_url' => DOMAIN_NAME . 'checkout/completeorder/'.$token.'/'.$orderCode,
-
-                //TODO: redirection page cart
-                'cancel_url' => DOMAIN_NAME . 'cancel'
+                'cancel_url' => DOMAIN_NAME . '/cart'
             ]);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
@@ -175,6 +173,74 @@ class CheckoutController
 
         header("HTTP/1.1 303 See Other");
         header("Location: " . $checkout_session->url);
+    }
+
+    /**
+     * @httpmethod POST
+     * @return void
+     */
+    public static function pointsCheckout(){
+        include __DIR__."/../models/User.php";
+        include __DIR__."/../models/Order.php";
+        include __DIR__."/Login.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if (!isset($json->token) || empty($json->token))
+            reportMissingParam("token");
+
+        $user = Login::attemptConnection($json->token);
+
+        try{
+            $oId = Order::getCurrentOrder($json->token);
+            $total = Order::getOrderTotal($oId);
+            $confirmCode = Order::getOrderConfirm($json->token);
+        }catch (Exception $e) {
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Unexpected error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        if ($total === 0.0){
+            echo formatResponse(401, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Cart is empty", "errorCode" => ORDER_EMPTY]);
+            die();
+        }
+
+        $pointsNeeded = self::euroToPoints($total);
+
+        if($user->getPoints() < $pointsNeeded){
+            echo formatResponse(401, ["Content-Type" => "application/json"],
+                ["success" => false, "errorMessage" => "Not enough points", "errorCode" => NOT_ENOUGH_POINTS]);
+            die();
+        }
+
+        try{
+            $user->updatePoints($user->getPoints()-$pointsNeeded);
+            Order::finalizeOrder($confirmCode);
+        } catch (Exception $e) {
+            switch ($e->getCode()) {
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Unexpected error", "errorCode" => FATAL_EXCEPTION]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true]);
     }
 
     /**
@@ -283,21 +349,21 @@ class CheckoutController
             $partner = self::createPartner($token);
             $orderCode = $partner->getSubscriptionCode();
             if ($orderCode===''||$orderCode !== $confirmCode){
-                header('Location: /error/401'); exit();
-                die();
+                header('Location: /error/401');
+                exit();
             }
             $partner->updateSubscriptionPaymentDate();
             $partner->resetSubscriptionCode();
         }catch (Exception $e){
             switch ($e->getCode()){
                 case INVALID_AUTH_TOKEN:
-                    header('Location: /error/401'); exit();
+                    header('Location: /error/401');
                     break;
                 default:
-                    header('Location: /error/500'); exit();
+                    header('Location: /error/500');
                     break;
             }
-            die();
+            exit();
         }
         header("Location: /");
     }
@@ -319,23 +385,23 @@ class CheckoutController
         }catch (Exception $e) {
             switch ($e->getCode()) {
                 case INVALID_AUTH_TOKEN:
-                    header('Location: /error/401'); exit();
+                    header('Location: /error/401');
                     break;
                 default:
-                    header('Location: /error/500'); exit();
+                    header('Location: /error/500');
                     break;
             }
-            die();
+            exit();
         }
 
         if ($partner->returnSubscriptionStatus()){
-            header('Location: /error/401'); exit();
-            die();
+            header('Location: /error/401');
+            exit();
         }
 
         if(self::getSubscriptionPrice($partner->getRevenue()) < 0.0){
-            header('Location: /error/401'); exit();
-            die();
+            header('Location: /error/401');
+            exit();
         }
 
         \Stripe\Stripe::setApiKey(STRIPE_KEY);
@@ -349,9 +415,7 @@ class CheckoutController
                 ]],
                 'mode' => 'payment',
                 'success_url' => DOMAIN_NAME . 'checkout/completesubscriptionpayment/'.$token.'/'.$code,
-
-                //TODO: redirection page entreprise
-                'cancel_url' => DOMAIN_NAME . 'cancel'
+                'cancel_url' => DOMAIN_NAME . '/account'
             ]);
         }catch (Exception $e){
             echo formatResponse(500, ["Content-Type" => "application/json"],
@@ -403,7 +467,7 @@ class CheckoutController
      * @return float points
      */
     public static function euroToPoints(float $price):float{
-        return $price/0.2;
+        return round($price/0.2);
     }
 
     /**
