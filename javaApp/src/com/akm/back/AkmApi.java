@@ -1,16 +1,12 @@
 package com.akm.back;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.json.*;
+
+import java.io.StringWriter;
+import java.util.HashMap;
 
 public class AkmApi {
     private final String host = "localhost/";
-
-    /*
-    public static String request(Actions action){
-
-    }
-    */
 
     private enum Methods {
         POST, GET;
