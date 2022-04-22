@@ -4,5 +4,4 @@ serverDataTransfer/.idea
 serverDataTransfer/cmake-build-debug
 serverDataTransfer/yamltest
 websiteAndApi/.idea
-websiteAndApi/lib/*
 websiteAndApi/Public/test.php
