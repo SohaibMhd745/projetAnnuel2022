@@ -6,6 +6,7 @@ public enum AkmException {
     FATAL_EXCEPTION(0),
     MYSQL_EXCEPTION(-1),
     OUTSIDE_API_EXCEPTION(-1000),
+    BAD_REQUEST(-1001),
 
     //Parameter related Exceptions
     INVALID_PARAMETER(-2),
@@ -34,7 +35,7 @@ public enum AkmException {
      * @param code int
      * @return AkmException
      */
-    public AkmException getExceptionFromCode(int code){
+    public static AkmException getExceptionFromCode(int code){
         for (AkmException exception:AkmException.values()) {
             if (exception.code == code) return exception;
         }

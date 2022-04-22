@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 public class JsonHandler {
 
+    ///Public Methods
+
     /**
      * Transforms provided key+value combinations of hashmaps into Json
      * @param strParams HashMap<String, String> Map of string params
@@ -30,6 +32,8 @@ public class JsonHandler {
         JSONObject object = buildStringParams(strParams);
         return writeJsonToString(object);
     }
+
+    ///Private Methods
 
     /**
      * Stringifies Json object
