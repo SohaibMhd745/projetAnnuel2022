@@ -2,8 +2,6 @@ package com.ashway.akmbarcodescanner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -16,9 +14,20 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
+    private BarcodeRepository barcodeRepository;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -48,7 +57,18 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
+                        Barcode barcode = new Barcode(result.getText().toString());
+                        barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<Barcode>() {
+                            @Override
+                            public void onResponse(Call<Barcode> call, Response<Barcode> r) {
+                                Toast.makeText(getApplicationContext(), "Barcode " + r.body().getBarcode() + " sent", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onFailure(Call<Barcode> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), "Error Sending Barcode: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
             }
