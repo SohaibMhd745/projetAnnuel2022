@@ -210,9 +210,13 @@ int sendReport(char* yaml, char* target){
     reportSize = getFilesize("buffer.yaml");
     curl_global_init(CURL_GLOBAL_ALL);
 
+    int attempt=0;
     curlHandler = curl_easy_init();
 
     if(curlHandler) {
+        do{
+
+        }
         /* build a list of commands to pass to libcurl */
         headerList = curl_slist_append(headerList, "RNFR buffer.yaml");
         headerList = curl_slist_append(headerList, "RNTO report.yaml");
@@ -236,19 +240,24 @@ int sendReport(char* yaml, char* target){
         curl_easy_setopt(curlHandler, CURLOPT_INFILESIZE_LARGE,
                          (curl_off_t)reportSize);
 
-        /* Now run off and do what you have been told! */
-        res = curl_easy_perform(curlHandler);
-        /* Check for errors */
-        if(res != CURLE_OK){
-            outputError(curl_easy_strerror(res));
-            exit(-1);
-        }
+        do{
+            /* Now run off and do what you have been told! */
+            res = curl_easy_perform(curlHandler);
+            /* Check for errors */
+            if(res != CURLE_OK){
+                outputError(curl_easy_strerror(res));
+                attempt++;
+            }
+        } while (attempt>0&&attempt<3);
+
         /* clean up the FTP commands list */
         curl_slist_free_all(headerList);
         /* always cleanup */
         curl_easy_cleanup(curlHandler);
     }
     fclose(reportFile);
-
     curl_global_cleanup();
+
+    if(attempt==3||!curlHandler) return CURL_FAILURE;
+    else return CURL_SUCCESS;
 }
