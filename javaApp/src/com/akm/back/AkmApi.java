@@ -31,7 +31,7 @@ public class AkmApi {
      * @return Json Object of
      */
     public static JSONObject requestApi(Actions action, String jsonBody){
-        String host = "http://localhost";
+        String host = "http://akmpa2022.westeurope.cloudapp.azure.com/";
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest req = HttpRequest.newBuilder()
