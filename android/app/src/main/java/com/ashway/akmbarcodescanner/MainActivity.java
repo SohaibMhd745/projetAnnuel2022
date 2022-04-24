@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                 if(r.body()!=null&&r.body().isSuccess()){
                                     Gson gson = new Gson();
                                     user = gson.fromJson(r.body().getUser().toString(), User.class);
-                                    //Log.e("User Test", user.getLastname());
+                                    Log.e("User Test", user.getLastname());
                                 }else{
                                     Toast.makeText(getApplicationContext(), "Message Erreur lecture Code Barre", Toast.LENGTH_SHORT).show();
                                 }

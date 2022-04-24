@@ -14,3 +14,11 @@
     });
   });
 </script>
+<script src="//cdn.conveythis.com/javascript/conveythis-initializer.js"></script>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(e) {
+		ConveyThis_Initializer.init({
+			api_key: "pub_0b038b0dd01e7558b1b1bd35e4ff5698"
+		});
+	});
+</script>
