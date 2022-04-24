@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public final class BarcodeRepository {
     private static BarcodeRepository instance;
 
-    private BarcodeService barcodeService;
+    private final BarcodeService barcodeService;
 
     public static BarcodeRepository getInstance() {
         if (instance == null) {

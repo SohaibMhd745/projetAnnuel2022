@@ -380,7 +380,7 @@ class Login
 
         $user = self::attemptConnection($key, $method);
 
-        if ($user->getIdPartner()!==-1){
+        if ($user->getIdPartner()!==-1 && $method === "token"){
             $partner = self::attemptPartnerConnection($key);
             echo formatResponse(200, ["Content-Type" => "application/json"], ["success" => true, "usertype" => "partner",
                 "user" => [

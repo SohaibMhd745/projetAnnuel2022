@@ -1,11 +1,14 @@
 package com.ashway.akmbarcodescanner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +63,16 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         // Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
                         Barcode barcode = new Barcode(result.getText().toString());
-                        barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<Barcode>() {
+                        Log.e("BarCode", result.getText().toString().substring(7));
+                        barcodeRepository = new BarcodeRepository();
+                        barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<User>() {
                             @Override
-                            public void onResponse(Call<Barcode> call, Response<Barcode> r) {
-                                Toast.makeText(getApplicationContext(), "Barcode " + r.body().getBarcode() + " sent", Toast.LENGTH_SHORT).show();
+                            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> r) {
+                                Log.e("Response", r.toString());
+                                //Toast.makeText(getApplicationContext(), "Barcode " + r + " sent", Toast.LENGTH_SHORT).show();
                             }
                             @Override
-                            public void onFailure(Call<Barcode> call, Throwable t) {
+                            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                                 Toast.makeText(getApplicationContext(), "Error Sending Barcode: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
