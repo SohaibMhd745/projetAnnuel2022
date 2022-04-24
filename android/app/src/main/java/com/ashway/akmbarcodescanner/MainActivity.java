@@ -23,6 +23,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,14 +63,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
-                        Barcode barcode = new Barcode(result.getText().toString());
-                        Log.e("BarCode", result.getText().toString().substring(7));
+                        Barcode barcode = new Barcode(result.getText().toString().substring(7));
                         barcodeRepository = new BarcodeRepository();
                         barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> r) {
-                                Log.e("Response", r.toString());
-                                //Toast.makeText(getApplicationContext(), "Barcode " + r + " sent", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Barcode " + r + " sent", Toast.LENGTH_SHORT).show();
                             }
                             @Override
                             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
