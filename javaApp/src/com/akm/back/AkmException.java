@@ -36,7 +36,7 @@ public enum AkmException {
      * @return AkmException
      */
     public static AkmException getExceptionFromCode(int code){
-        for (AkmException exception:AkmException.values()) {
+        for (AkmException exception: values()) {
             if (exception.code == code) return exception;
         }
         return NO_EXCEPTION;
