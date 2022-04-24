@@ -12,18 +12,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.ashway.akmbarcodescanner.barcode.Barcode;
+import com.ashway.akmbarcodescanner.barcode.BarcodeRepository;
+import com.ashway.akmbarcodescanner.httphandler.ResponseHandler;
+import com.ashway.akmbarcodescanner.httphandler.User;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.Result;
 
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private BarcodeRepository barcodeRepository;
+    private User user;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -63,15 +63,21 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
-                        Barcode barcode = new Barcode(result.getText().toString().substring(7));
+                        Barcode barcode = new Barcode(result.getText().toString().substring(6,12));
                         barcodeRepository = new BarcodeRepository();
-                        barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<User>() {
+                        barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<ResponseHandler>() {
                             @Override
-                            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> r) {
-                                Toast.makeText(getApplicationContext(), "Barcode " + r + " sent", Toast.LENGTH_SHORT).show();
+                            public void onResponse(@NonNull Call<ResponseHandler> call, @NonNull Response<ResponseHandler> r) {
+                                if(r.body()!=null&&r.body().isSuccess()){
+                                    Gson gson = new Gson();
+                                    user = gson.fromJson(r.body().getUser().toString(), User.class);
+                                    //Log.e("User Test", user.getLastname());
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Message Erreur lecture Code Barre", Toast.LENGTH_SHORT).show();
+                                }
                             }
                             @Override
-                            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                            public void onFailure(@NonNull Call<ResponseHandler> call, @NonNull Throwable t) {
                                 Toast.makeText(getApplicationContext(), "Error Sending Barcode: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
