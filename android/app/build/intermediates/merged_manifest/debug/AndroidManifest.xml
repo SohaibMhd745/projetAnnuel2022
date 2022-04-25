@@ -27,6 +27,9 @@
         android:theme="@style/Theme.AKMBarcodeScanner"
         android:usesCleartextTraffic="true" >
         <activity
+            android:name="com.ashway.akmbarcodescanner.DisplayActivity"
+            android:exported="false" />
+        <activity
             android:name="com.ashway.akmbarcodescanner.MainActivity"
             android:exported="true" >
             <intent-filter>

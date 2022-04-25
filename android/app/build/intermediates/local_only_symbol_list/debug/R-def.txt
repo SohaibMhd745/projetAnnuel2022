@@ -9,7 +9,14 @@ color teal_700
 color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+id birthdate
+id email
+id firstname
+id lastname
+id number
 id scanner_view
+id title
+layout activity_display
 layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_round

@@ -4,7 +4,7 @@
     package="com.ashway.akmbarcodescanner">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -19,6 +19,9 @@
         android:theme="@style/Theme.AKMBarcodeScanner"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity
+            android:name=".DisplayActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -2613,6 +2613,7 @@ int id baseline 0x7f080058
 int id beginOnFirstDraw 0x7f080059
 int id beginning 0x7f08005a
 int id bestChoice 0x7f08005b
+int id birthdate 0x7f0801dd
 int id blocking 0x7f08005c
 int id bottom 0x7f08005d
 int id bounce 0x7f08005e
@@ -2695,6 +2696,7 @@ int id easeOut 0x7f0800aa
 int id east 0x7f0800ab
 int id edit_query 0x7f0800ac
 int id elastic 0x7f0800ad
+int id email 0x7f0801de
 int id end 0x7f0800ae
 int id endToStart 0x7f0800af
 int id enterAlways 0x7f0800b0
@@ -2707,6 +2709,7 @@ int id fill 0x7f0800b6
 int id fill_horizontal 0x7f0800b7
 int id fill_vertical 0x7f0800b8
 int id filled 0x7f0800b9
+int id firstname 0x7f0801df
 int id fitToContents 0x7f0800ba
 int id fixed 0x7f0800bb
 int id flip 0x7f0800bc
@@ -2749,6 +2752,7 @@ int id item_touch_helper_previous_elevation 0x7f0800e0
 int id jumpToEnd 0x7f0800e1
 int id jumpToStart 0x7f0800e2
 int id labeled 0x7f0800e3
+int id lastname 0x7f0801e0
 int id layout 0x7f0800e4
 int id left 0x7f0800e5
 int id leftToRight 0x7f0800e6
@@ -2832,6 +2836,7 @@ int id north 0x7f080133
 int id notification_background 0x7f080134
 int id notification_main_column 0x7f080135
 int id notification_main_column_container 0x7f080136
+int id number 0x7f0801e1
 int id off 0x7f080137
 int id on 0x7f080138
 int id onInterceptTouchReturnSwipe 0x7f080139
@@ -3083,6 +3088,7 @@ int layout abc_search_dropdown_item_icons_2line 0x7f0b0018
 int layout abc_search_view 0x7f0b0019
 int layout abc_select_dialog_material 0x7f0b001a
 int layout abc_tooltip 0x7f0b001b
+int layout activity_display 0x7f0b0074
 int layout activity_main 0x7f0b001c
 int layout custom_dialog 0x7f0b001d
 int layout design_bottom_navigation_item 0x7f0b001e

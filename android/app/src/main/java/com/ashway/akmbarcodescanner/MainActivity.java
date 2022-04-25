@@ -5,10 +5,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,7 +20,6 @@ import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.zxing.Result;
 
 import retrofit2.Call;
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private BarcodeRepository barcodeRepository;
-    private User user;
+    public static User user;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Toast.makeText(MainActivity.this, "Le code barre est : " + result.getText(), Toast.LENGTH_SHORT).show();
                         Barcode barcode = new Barcode(result.getText().toString().substring(6,12));
                         barcodeRepository = new BarcodeRepository();
                         barcodeRepository.getBarcodeService().createBarcode(barcode).enqueue(new Callback<ResponseHandler>() {
@@ -71,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
                                 if(r.body()!=null&&r.body().isSuccess()){
                                     Gson gson = new Gson();
                                     user = gson.fromJson(r.body().getUser().toString(), User.class);
-                                    Log.e("User Test", user.getLastname());
+                                    Intent i = new Intent(MainActivity.this, DisplayActivity.class);
+                                    startActivity(i);
                                 }else{
                                     Toast.makeText(getApplicationContext(), "Message Erreur lecture Code Barre", Toast.LENGTH_SHORT).show();
                                 }
