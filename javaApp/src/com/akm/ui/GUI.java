@@ -53,5 +53,4 @@ public class GUI {
         tempPanels[col][row].add(elem);
         panel.add(tempPanels[col][row]);
     }
-
 }

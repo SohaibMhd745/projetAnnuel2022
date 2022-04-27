@@ -8,7 +8,8 @@ module com.akm.akmapp {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.desktop;
 
-    opens com.akm.akmapp to javafx.fxml;
-    exports com.akm.akmapp;
+    opens com.akm.front to javafx.fxml;
+    exports com.akm.front;
 }

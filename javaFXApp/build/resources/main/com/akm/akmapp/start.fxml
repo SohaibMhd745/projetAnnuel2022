@@ -5,7 +5,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.14-internal" fx:controller="com.akm.akmapp.HelloController">
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.14-internal"
+      fx:controller="com.akm.akmapp.AKMController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -16,5 +17,5 @@
    </ImageView>
 
     <Label text="Bienvenue sur l'application Java développée par AKM Gestion pour LoyaltyCard." />
-    <Button onAction="#onHelloButtonClick" text="Gestion de mon compte" />
+    <Button onAction="#switchLogin" text="Gestion de mon compte" />
 </VBox>
