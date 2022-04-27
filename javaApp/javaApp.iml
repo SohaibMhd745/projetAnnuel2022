@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://C:/DevTools/Java libs/json-20220320.jar!/" />
+          <root url="jar://C:/java/libs/json-20220320.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
