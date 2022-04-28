@@ -2697,7 +2697,6 @@ id easeOut
 id east
 id edit_query
 id elastic
-id email
 id end
 id endToStart
 id enterAlways

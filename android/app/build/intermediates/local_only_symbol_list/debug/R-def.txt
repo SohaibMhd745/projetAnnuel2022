@@ -10,7 +10,6 @@ color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 id birthdate
-id email
 id firstname
 id lastname
 id number
