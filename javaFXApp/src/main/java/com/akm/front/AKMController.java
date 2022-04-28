@@ -3,23 +3,26 @@ package com.akm.front;
 import com.akm.back.AkmApi;
 import com.akm.back.AkmException;
 import com.akm.back.JsonHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.json.JSONObject;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class AKMController {
-    private final JTextField mailField = new JTextField(30);
-    private final JPasswordField passField = new JPasswordField(30);
-    private final JButton connect = new JButton("Connexion");
+    @FXML
+    private static TextField email;
+
+    @FXML
+    private static PasswordField password;
 
     public void switchLogin(javafx.event.ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
@@ -30,27 +33,25 @@ public class AKMController {
         stage.setTitle("AKM Gestion - Connexion");
         stage.setScene(scene);
         stage.show();
+        email = (TextField) scene.lookup("#email");
+        password = (PasswordField) scene.lookup("#password");
     }
 
-    public void attemptLogin(javafx.event.ActionEvent event) {
-        this.connect.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                String mail = AKMController.this.mailField.getText();
-                String pass = String.valueOf(AKMController.this.passField.getPassword());
-                HashMap<String, String> params = new HashMap();
-                params.put("email", mail);
-                params.put("password", pass);
-                String body = JsonHandler.toJsonString(params);
-                JSONObject response = AkmApi.requestApi(AkmApi.Actions.SIGN_IN, body);
-                boolean success = response.getBoolean("success");
-                if (success) {
-                    System.out.println("réussi");
-                } else {
-                    AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
-                    System.out.println("échec");
-                }
-
-            }
-        });
+    public void attemptLogin() {
+        String emailValue = AKMController.email.getText();
+        String passwordValue = AKMController.password.getText();
+        HashMap<String, String> params = new HashMap();
+        params.put("email", emailValue);
+        params.put("password", passwordValue);
+        String body = JsonHandler.toJsonString(params);
+        JSONObject response = AkmApi.requestApi(AkmApi.Actions.SIGN_IN, body);
+        boolean success = response.getBoolean("success");
+        if (success) {
+            System.out.println(response.toString());
+        } else {
+            AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
+            System.out.println(response.toString());
+            System.out.println(exception.errorLabel);
+        }
     }
 }

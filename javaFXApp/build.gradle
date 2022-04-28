@@ -24,8 +24,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.akm.akmapp'
-    mainClass = 'com.akm.akmapp.HelloApplication'
+    mainModule = 'com.akm.front'
+    mainClass = 'com.akm.front.AKMApplication'
 }
 
 javafx {
@@ -39,6 +39,7 @@ dependencies {
         exclude(group: 'org.openjfx')
     }
     implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
+    implementation('org.json:json:20220320')
     implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
     implementation('eu.hansolo:tilesfx:11.48') {
         exclude(group: 'org.openjfx')
