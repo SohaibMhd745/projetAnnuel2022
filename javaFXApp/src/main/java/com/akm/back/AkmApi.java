@@ -1,26 +1,11 @@
 package com.akm.back;
 
-import org.json.*;
-import com.akm.back.AkmException;
+import org.json.JSONObject;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLParameters;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.Authenticator;
-import java.net.CookieHandler;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 public class AkmApi {
 
