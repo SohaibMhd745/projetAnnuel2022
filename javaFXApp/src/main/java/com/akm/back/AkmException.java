@@ -15,12 +15,12 @@ public enum AkmException {
 
     //User related Exceptions
     USER_NOT_FOUND(-10, "Utilisateur inconnu"),
-    INCORRECT_USER_CREDENTIALS(-11, "échc de la connexion"),
-    EMAIL_USED(-12, "Email déjà utilisé"),
+    INCORRECT_USER_CREDENTIALS(-11, "Combinaison invalide"),
+    EMAIL_USED(-12, "E-mail déjà utilisée"),
     INVALID_AUTH_TOKEN(-13, "Session expirée"),
 
     //Partner related Exceptions
-    COMPANY_NOT_FOUND(-15, "Ce Partenaire n'existe pas"),
+    COMPANY_NOT_FOUND(-15, "Ce partenaire n'existe pas"),
     INVALID_CODE(-16, "Code sponsor invalide");
 
     public final int code;

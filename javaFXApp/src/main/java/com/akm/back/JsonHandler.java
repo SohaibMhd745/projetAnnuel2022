@@ -40,7 +40,7 @@ public class JsonHandler {
      * @param object Json object to stringify
      * @return Stringified Json object
      */
-    private static String writeJsonToString(JSONObject object){
+    public static String writeJsonToString(JSONObject object){
         StringWriter output = new StringWriter();
         object.write(output);
         return output.toString();

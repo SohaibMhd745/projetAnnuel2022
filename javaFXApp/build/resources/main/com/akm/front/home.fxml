@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -10,15 +9,11 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-      <image>
-         <Image url="@/assets/logo_right.png" />
-      </image>
-   </ImageView>
 
-    <Label text="Bienvenue sur l'application Java développée par AKM Gestion pour LoyaltyCard.">
+    <Label text="Choisissez une action :">
       <font>
-         <Font size="14.0" />
+         <Font size="18.0" />
       </font></Label>
-    <Button onAction="#switchLogin" text="Gestion de mon compte" />
+   <Button defaultButton="true" mnemonicParsing="false" text="Gérer mes prestations" />
+   <Button mnemonicParsing="false" text="Convertir des points en euros" />
 </VBox>
