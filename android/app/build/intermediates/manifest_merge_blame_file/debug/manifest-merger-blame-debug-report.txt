@@ -14,7 +14,11 @@
 11-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:6:5-65
 11-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:6:22-62
 12    <uses-permission android:name="android.permission.INTERNET" />
+<<<<<<< HEAD
 12-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:7:5-67
+=======
+12-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:7:5-66
+>>>>>>> javaApp/javafx
 12-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:7:22-64
 13
 14    <uses-feature
@@ -25,7 +29,11 @@
 16-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:11:9-33
 17
 18    <application
+<<<<<<< HEAD
 18-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:13:5-34:19
+=======
+18-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:13:5-31:19
+>>>>>>> javaApp/javafx
 19        android:allowBackup="true"
 19-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:14:9-35
 20        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -45,6 +53,7 @@
 28        android:usesCleartextTraffic="true" >
 28-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:20:9-44
 29        <activity
+<<<<<<< HEAD
 29-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:22:9-24:40
 30            android:name="com.ashway.akmbarcodescanner.DisplayActivity"
 30-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:23:13-44
@@ -92,3 +101,46 @@
 53    </application>
 54
 55</manifest>
+=======
+29-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:22:9-30:20
+30            android:name="com.ashway.akmbarcodescanner.MainActivity"
+30-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:23:13-41
+31            android:exported="true" >
+31-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:24:13-36
+32            <intent-filter>
+32-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:25:13-29:29
+33                <action android:name="android.intent.action.MAIN" />
+33-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:26:17-69
+33-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:26:25-66
+34
+35                <category android:name="android.intent.category.LAUNCHER" />
+35-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:28:17-77
+35-->C:\Users\SMG4\Documents\ESGI\ESGI 2i1\Semestre 2\Projet annuel\projetAnnuel2022\android\app\src\main\AndroidManifest.xml:28:27-74
+36            </intent-filter>
+37        </activity>
+38
+39        <provider
+39-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:26:9-34:20
+40            android:name="androidx.startup.InitializationProvider"
+40-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:27:13-67
+41            android:authorities="com.ashway.akmbarcodescanner.androidx-startup"
+41-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:28:13-68
+42            android:exported="false" >
+42-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:29:13-37
+43            <meta-data
+43-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:31:13-33:52
+44                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+44-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:32:17-75
+45                android:value="androidx.startup" />
+45-->[androidx.emoji2:emoji2:1.0.0] C:\Users\SMG4\.gradle\caches\transforms-3\278083bef5dd79cb476949a0d92ce592\transformed\emoji2-1.0.0\AndroidManifest.xml:33:17-49
+46            <meta-data
+46-->[androidx.lifecycle:lifecycle-process:2.4.0] C:\Users\SMG4\.gradle\caches\transforms-3\4d932a67b7be3c4366d55752ebd69384\transformed\lifecycle-process-2.4.0\AndroidManifest.xml:31:13-33:52
+47                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+47-->[androidx.lifecycle:lifecycle-process:2.4.0] C:\Users\SMG4\.gradle\caches\transforms-3\4d932a67b7be3c4366d55752ebd69384\transformed\lifecycle-process-2.4.0\AndroidManifest.xml:32:17-78
+48                android:value="androidx.startup" />
+48-->[androidx.lifecycle:lifecycle-process:2.4.0] C:\Users\SMG4\.gradle\caches\transforms-3\4d932a67b7be3c4366d55752ebd69384\transformed\lifecycle-process-2.4.0\AndroidManifest.xml:33:17-49
+49        </provider>
+50    </application>
+51
+52</manifest>
+>>>>>>> javaApp/javafx

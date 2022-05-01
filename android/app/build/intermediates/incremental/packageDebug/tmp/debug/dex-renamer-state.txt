@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #Thu Apr 28 13:21:38 CEST 2022
+=======
+#Thu Apr 28 13:18:03 CEST 2022
+>>>>>>> javaApp/javafx
 path.4=8/classes.dex
 path.3=3/classes.dex
 path.2=1/classes.dex
