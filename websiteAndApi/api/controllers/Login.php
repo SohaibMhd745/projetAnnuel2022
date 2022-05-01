@@ -143,7 +143,7 @@ class Login
         }
 
         echo formatResponse(200, ["Content-Type" => "application/json"],
-            ["success" => true, "token" => $token, "id_partner" => $user->getIdPartner()]);
+            ["success" => true, "token" => $token, "id_partner" => $user->getIdPartnerString()]);
     }
 
     /**

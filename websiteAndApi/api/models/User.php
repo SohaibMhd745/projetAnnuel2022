@@ -397,6 +397,14 @@ class User
     }
 
     /**
+     * @return int : id of parent company (if exists)
+     */
+    public function getIdPartnerString(): string
+    {
+        return strval($this->id_partner);
+    }
+
+    /**
      * @return int
      */
     public function getPoints(): int

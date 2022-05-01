@@ -107,23 +107,24 @@ public class AKMController {
         JSONObject response = AkmApi.requestApi(AkmApi.Actions.SIGN_IN, body);
         System.out.println(response);
         boolean success = response.getBoolean("success");
-        /*if (success) {
+        if (success) {
             partnerID = response.getString("id_partner");
             switchHome();
         } else {
             AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
             loginError.setText(exception.errorLabel + ".");
-        }*/
+        }
     }
 
     /**
      * Gets catalog data for logged partner
      */
-    public void getCatalog() throws IOException {
+    public void getCatalog() {
         HashMap<String, String> params = new HashMap<>();
         params.put("mode", "chrono");
         params.put("reverse", "true");
         params.put("id_partner", partnerID);
+        System.out.println(partnerID);
         String body = JsonHandler.toJsonString(params);
         JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_CATALOG, body);
         boolean success = response.getBoolean("success");
@@ -140,6 +141,6 @@ public class AKMController {
      */
     public void setCatalog(JSONObject response) {
         System.out.println("Setting catalog!");
-        System.out.println(response);
+        System.out.println(response.getJSONArray("table"));
     }
 }
