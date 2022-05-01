@@ -86,7 +86,7 @@
                     <div class="col col-centered">
                         <div id="upgrade-section" class="form">
                             <p class="subtitle">Devenir partenaire</p>
-                            <input class="input input-gold" id="upgrade-partnername" type="text" placeholder="Nom d'entreprise" minlength="2" maxlength="30" required>
+                            <input class="input input-gold" id="upgrade-name" type="text" placeholder="Nom d'entreprise" minlength="2" maxlength="30" required>
                             <input class="input input-gold" id="upgrade-revenue" type="text" placeholder="Chiffre d'affaires" minlength="1" maxlength="20" required>
                             <input class="input input-gold" id="upgrade-website" type="text" placeholder="Site Internet" minlength="3" maxlength="30" required>
                             <input class="input input-gold" id="upgrade-sponsorcode" type="text" placeholder="Code de parrainage (optionnel)" minlength="10" maxlength="10">
