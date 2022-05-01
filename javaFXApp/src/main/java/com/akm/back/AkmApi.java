@@ -1,7 +1,6 @@
 package com.akm.back;
 
 import org.json.JSONObject;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,9 +10,9 @@ public class AkmApi {
 
     /**
      * Sends request to akm api
-     * @param action action to be performed
+     * @param action Action to be performed
      * @param jsonBody Stringified Json body
-     * @return Json Object of
+     * @return JSON Object
      */
     public static JSONObject requestApi(Actions action, String jsonBody){
         String host = "http://akmpa2022.westeurope.cloudapp.azure.com/";
@@ -42,8 +41,7 @@ public class AkmApi {
     }
 
     private enum Controllers {
-        LOGIN("login")
-        ;
+        LOGIN("login");
 
         public final String url;
 
@@ -57,8 +55,7 @@ public class AkmApi {
         REGISTER_COMPANY(Methods.POST, "registercompany", Controllers.LOGIN),
         GENERATE_CODE(Methods.POST, "generatecode", Controllers.LOGIN),
         SIGN_IN(Methods.POST, "signin", Controllers.LOGIN),
-        GET_USER_DATA(Methods.POST, "getdata", Controllers.LOGIN)
-        ;
+        GET_USER_DATA(Methods.POST, "getdata", Controllers.LOGIN);
 
         public final Methods method;
         public final String url;

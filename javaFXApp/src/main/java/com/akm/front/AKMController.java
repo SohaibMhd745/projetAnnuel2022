@@ -87,6 +87,28 @@ public class AKMController {
         stage.show();
     }
 
+    public void switchPrestations(javafx.event.ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("prestations.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
+        stage.getIcons().add(icon);
+        stage.setTitle("AKM Gestion - Prestations");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchConversion(javafx.event.ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("conversion.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
+        stage.getIcons().add(icon);
+        stage.setTitle("AKM Gestion - Conversion");
+        stage.setScene(scene);
+        stage.show();
+    }
+
     /* Utility functions */
 
     /**
