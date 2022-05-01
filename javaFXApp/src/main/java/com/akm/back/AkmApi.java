@@ -41,7 +41,8 @@ public class AkmApi {
     }
 
     private enum Controllers {
-        LOGIN("login");
+        LOGIN("login"),
+        CATALOG("catalog");
 
         public final String url;
 
@@ -55,7 +56,8 @@ public class AkmApi {
         REGISTER_COMPANY(Methods.POST, "registercompany", Controllers.LOGIN),
         GENERATE_CODE(Methods.POST, "generatecode", Controllers.LOGIN),
         SIGN_IN(Methods.POST, "signin", Controllers.LOGIN),
-        GET_USER_DATA(Methods.POST, "getdata", Controllers.LOGIN);
+        GET_USER_DATA(Methods.POST, "getdata", Controllers.LOGIN),
+        GET_CATALOG(Methods.POST, "orderedsearch", Controllers.CATALOG);
 
         public final Methods method;
         public final String url;

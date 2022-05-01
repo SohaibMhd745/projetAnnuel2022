@@ -9,11 +9,4 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-
-    <Label text="Choisissez une action :">
-      <font>
-         <Font size="18.0" />
-      </font></Label>
-   <Button defaultButton="true" mnemonicParsing="false" onAction="#switchPrestations" text="Gérer mes prestations" />
-   <Button mnemonicParsing="false" onAction="#switchConversion" text="Convertir des points en euros" />
 </VBox>

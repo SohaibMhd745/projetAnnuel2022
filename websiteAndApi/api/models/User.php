@@ -10,6 +10,7 @@ class User
     protected string $birth;
     protected string $phone;
     protected int $barcode;
+    protected string $token;
     protected int $id_partner;
     protected int $points;
 
@@ -26,7 +27,7 @@ class User
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q =
-            "SELECT id, firstname, lastname, inscription, birthdate, phone, barcode, id_partner, points FROM akm_users WHERE email = ? AND password = ?";
+            "SELECT id, firstname, lastname, inscription, birthdate, phone, barcode, token, id_partner, points FROM akm_users WHERE email = ? AND password = ?";
         $res = $link->query($q, [$email, preparePassword($password)]);
 
         if ($res === false) {
@@ -56,7 +57,7 @@ class User
         $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
 
         $q =
-            "SELECT email, firstname, lastname, inscription, birthdate, phone, barcode, id_partner, points FROM akm_users WHERE id = ?";
+            "SELECT email, firstname, lastname, inscription, birthdate, phone, barcode, token, id_partner, points FROM akm_users WHERE id = ?";
         $res = $link->query($q, [$id]);
 
         if ($res === false) {
@@ -143,6 +144,7 @@ class User
         $this->inscription = $res["inscription"];
         $this->birth = $res["birthdate"];
         $this->phone = $res["phone"];
+        $this->token = $res["token"];
         $this->barcode = $res["barcode"];
         $this->points = $res["points"];
 
@@ -360,6 +362,14 @@ class User
     public function getPhone(): string
     {
         return $this->phone;
+    }
+
+    /**
+     * @return int : token
+     */
+    public function getToken(): string
+    {
+        return $this->token;
     }
 
     /**

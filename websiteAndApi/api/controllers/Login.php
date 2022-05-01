@@ -390,6 +390,7 @@ class Login
                     "inscription"=>$partner->getInscription(),
                     "birthdate"=>$partner->getBirth(),
                     "phone"=>$partner->getPhone(),
+                    "token"=>$partner->getToken(),
                     "barcode"=>$user->getBarcode(),
                     "id_partner"=>$partner->getIdPartner(),
                     "partner" => [
