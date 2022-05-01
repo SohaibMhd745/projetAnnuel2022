@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class AKMController {
     @FXML
@@ -157,6 +156,15 @@ public class AKMController {
     }
 
     /**
+     * Sets-up prestations page
+     * @param response Data from API
+     */
+    public void setCatalog(JSONObject response) {
+        System.out.println("Setting catalog!");
+        System.out.println(response);
+    }
+
+    /**
      * Gets partner ID
      * @param token Account auth token
      * @return Partner ID
@@ -173,37 +181,5 @@ public class AKMController {
             System.out.println(AkmException.getExceptionFromCode(response.getInt("errorCode")).errorLabel);
             return "null";
         }
-    }
-
-    /* Utility functions */
-
-    /**
-     * Writes token/null in .txt file depending on checkbox value
-     * @param response Returned by API
-     */
-    private void writeTokenInFile(JSONObject response) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("token.txt", false));
-        if(loginCheckbox.isSelected()) writer.write(response.getString("token"));
-        else writer.write("null");
-        writer.close();
-    }
-
-    /**
-     * Reads token/null in .txt file
-     * @return Token string
-     */
-    private String getUserToken() throws FileNotFoundException {
-        File file = new File("token.txt");
-        Scanner scanner = new Scanner(file);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Sets-up prestations page
-     * @param response Data from API
-     */
-    public void setCatalog(JSONObject response) {
-        System.out.println("Setting catalog!");
-        System.out.println(response);
     }
 }
