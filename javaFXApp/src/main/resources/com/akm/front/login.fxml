@@ -19,8 +19,6 @@
       <Label text=" " />
         <PasswordField fx:id="loginPassword" promptText="Mot de passe" />
       <Label text=" " />
-      <CheckBox fx:id="loginCheckbox" mnemonicParsing="false" text="Rester connecté" />
-      <Label text=" " />
         <Button alignment="CENTER" mnemonicParsing="false" onAction="#attemptLoginEmailPass" text="Valider" />
       <Label fx:id="loginError" alignment="CENTER" text=" " textAlignment="CENTER" textFill="RED" />
     </VBox>

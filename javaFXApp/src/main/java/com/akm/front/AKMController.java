@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -25,8 +24,8 @@ public class AKMController {
     private static PasswordField loginPassword;
     @FXML
     private static Label loginError;
-    @FXML
-    private static CheckBox loginCheckbox;
+
+    private String partnerID;
 
     /* Switch window functions */
 
@@ -35,20 +34,17 @@ public class AKMController {
      * @param event Button used to call function
      */
     public void switchLogin(javafx.event.ActionEvent event) throws IOException {
-        if (!isTokenValid()) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
-            Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
-            stage.getIcons().add(icon);
-            stage.setTitle("AKM Gestion - Connexion");
-            stage.setScene(scene);
-            stage.show();
-            loginEmail = (TextField) scene.lookup("#loginEmail");
-            loginPassword = (PasswordField) scene.lookup("#loginPassword");
-            loginError = (Label) scene.lookup("#loginError");
-            loginCheckbox = (CheckBox) scene.lookup("#loginCheckbox");
-        } else switchHome();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
+        stage.getIcons().add(icon);
+        stage.setTitle("AKM Gestion - Connexion");
+        stage.setScene(scene);
+        stage.show();
+        loginEmail = (TextField) scene.lookup("#loginEmail");
+        loginPassword = (PasswordField) scene.lookup("#loginPassword");
+        loginError = (Label) scene.lookup("#loginError");
     }
 
     /**
@@ -78,7 +74,7 @@ public class AKMController {
         stage.setTitle("AKM Gestion - Prestations");
         stage.setScene(scene);
         stage.show();
-        getCatalog(getPartnerID(getUserToken()));
+        getCatalog();
     }
 
     /**
@@ -102,49 +98,32 @@ public class AKMController {
      * Sends login request to API using email and password
      */
     public void attemptLoginEmailPass() throws IOException {
-        String emailValue = AKMController.loginEmail.getText();
-        String passwordValue = AKMController.loginPassword.getText();
-        HashMap<String, String> params = new HashMap<String, String>();
+        String emailValue = loginEmail.getText();
+        String passwordValue = loginPassword.getText();
+        HashMap<String, String> params = new HashMap<>();
         params.put("email", emailValue);
         params.put("password", passwordValue);
         String body = JsonHandler.toJsonString(params);
         JSONObject response = AkmApi.requestApi(AkmApi.Actions.SIGN_IN, body);
+        System.out.println(response);
         boolean success = response.getBoolean("success");
-        if (success) {
-            writeTokenInFile(response);
+        /*if (success) {
+            partnerID = response.getString("id_partner");
             switchHome();
         } else {
             AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
             loginError.setText(exception.errorLabel + ".");
-        }
-    }
-
-    /**
-     * Sends login request to API using token to verify validity
-     * @return Boolean if token is valid
-     */
-    public boolean isTokenValid() throws IOException {
-        String token = getUserToken();
-        if (Objects.equals(token, "null")) return false;
-        else {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("token", token);
-            String body = JsonHandler.toJsonString(params);
-            JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_USER_DATA, body);
-            if (!response.getBoolean("success")) return false;
-            return Objects.equals(response.getString("token"), token);
-        }
+        }*/
     }
 
     /**
      * Gets catalog data for logged partner
-     * @param partnerID ID of logged partner
      */
-    public void getCatalog(String partnerID) throws IOException {
-        HashMap<String, String> params = new HashMap<String, String>();
+    public void getCatalog() throws IOException {
+        HashMap<String, String> params = new HashMap<>();
         params.put("mode", "chrono");
         params.put("reverse", "true");
-        params.put("id_partner", getPartnerID(getUserToken()));
+        params.put("id_partner", partnerID);
         String body = JsonHandler.toJsonString(params);
         JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_CATALOG, body);
         boolean success = response.getBoolean("success");
@@ -162,24 +141,5 @@ public class AKMController {
     public void setCatalog(JSONObject response) {
         System.out.println("Setting catalog!");
         System.out.println(response);
-    }
-
-    /**
-     * Gets partner ID
-     * @param token Account auth token
-     * @return Partner ID
-     */
-    private String getPartnerID(String token) {
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("token", token);
-        String body = JsonHandler.toJsonString(params);
-        JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_USER_DATA, body);
-        boolean success = response.getBoolean("success");
-        if (success) {
-            return response.getString("id_partner");
-        } else {
-            System.out.println(AkmException.getExceptionFromCode(response.getInt("errorCode")).errorLabel);
-            return "null";
-        }
     }
 }
