@@ -578,7 +578,7 @@ class Login
      * @param string $token token to attempt connection with
      * @return User built structure from token
      */
-    public static function attemptConnection(string $key, string $method) : User{
+    public static function attemptConnection(string $key, string $method = "token") : User{
         $user = new User();
         switch ($method) {
             case "token":
