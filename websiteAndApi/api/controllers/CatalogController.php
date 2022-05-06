@@ -104,6 +104,73 @@ class CatalogController
     }
 
     /**
+     * Adds article to the database
+     * @httpmethod post
+     * @return void
+     */
+    public static function updateArticle(){
+        include __DIR__."/../models/Catalog.php";
+
+        $json = json_decode(file_get_contents("php://input"));
+
+        if(!isset($json->id)||empty($json->id))
+            reportMissingParam("id");
+        if(!isset($json->name)||empty($json->name))
+            reportMissingParam("name");
+        if(!isset($json->description)||empty($json->description))
+            reportMissingParam("description");
+        if(!isset($json->price)||empty($json->price))
+            reportMissingParam("price");
+
+        if(!isset($json->token)||empty($json->token))
+            reportMissingParam("token");
+
+
+        $token = $json->token;
+
+        //remove decimals lower than 1 cent (0.01)
+        $json->price *= 100;
+        $json->price = floor($json->price);
+        $json->price /= 100;
+
+        $params = [
+            "name" => $json->name,
+            "description" => $json->description,
+            "price" => $json->price,
+            "id" => $json->id
+        ];
+
+        self::checkParams($params);
+
+        try {
+            Catalog::updateArticle($token, $params['id'], $params["name"], $params["description"], $params["price"]);
+        }catch (Exception $e){
+            switch ($e->getCode()){
+                case INVALID_AUTH_TOKEN:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Invalid Token", "errorCode" => INVALID_AUTH_TOKEN, "step" => "Article registration"]);
+                    break;
+                case MYSQL_EXCEPTION:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Database error", "errorCode" => MYSQL_EXCEPTION, "step" => "Article registration"]);
+                    break;
+                case COMPANY_NOT_FOUND:
+                    echo formatResponse(400, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "User is not linked to company", "errorCode" => COMPANY_NOT_FOUND, "step" => "Article registration"]);
+                    break;
+                default:
+                    echo formatResponse(500, ["Content-Type" => "application/json"],
+                        ["success" => false, "errorMessage" => "Fatal error", "errorCode" => FATAL_EXCEPTION, "step" => "Article registration"]);
+                    break;
+            }
+            die();
+        }
+
+        echo formatResponse(200, ["Content-Type" => "application/json"],
+            ["success" => true]);
+    }
+
+    /**
      * Searc article based on search term
      * @return void
      */

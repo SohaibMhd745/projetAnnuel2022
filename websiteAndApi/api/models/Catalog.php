@@ -224,6 +224,41 @@ class Catalog
     }
 
     /**
+     * @param string $token
+     * @param int $id
+     * @param string $name
+     * @param string $description
+     * @param float $price
+     * @throws Exception:
+     * - INVALID_AUTH_TOKEN if provided token is invalid
+     * - MYSQL_EXCEPTION in case of critical database failure
+     * - COMPANY_NOT_FOUND if the user is not in control of a database
+     */
+    public static function updateArticle(string $token, int $id, string $name, string $description, float $price){
+        $link = new DbLink(HOST, CHARSET, DB, USER, PASS);
+
+        include __DIR__.'/User.php';
+
+        $user = new User();
+        $user->constructFromToken($token);
+
+        if ($user->getIdPartner()===-1) throw new Exception("User does not manage a company", COMPANY_NOT_FOUND);
+
+        $q = "UPDATE akm_prestation SET name = :name, description = :description, price = :price WHERE id = :id";
+
+        $status = $link->insert($q, [
+                "name"=>$name,
+                "description" => $description,
+                "price" => $price,
+                "id_partner" => $user->getIdPartner(),
+                "id" => $id
+            ]
+        );
+
+        if ($status !== true) throw new Exception("Critical Database Failure", MYSQL_EXCEPTION);
+    }
+
+    /**
      *
      * Getters
      *

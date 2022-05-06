@@ -56,7 +56,9 @@ public class AkmApi {
         GENERATE_CODE(Methods.POST, "generatecode", Controllers.LOGIN),
         SIGN_IN(Methods.POST, "signin", Controllers.LOGIN),
         GET_USER_DATA(Methods.POST, "getdata", Controllers.LOGIN),
-        GET_CATALOG(Methods.POST, "orderedsearch", Controllers.CATALOG);
+        GET_CATALOG(Methods.POST, "orderedsearch", Controllers.CATALOG),
+        UPDATE(Methods.POST, "updateprestation", Controllers.CATALOG),
+        DELETE(Methods.POST, "deleteprestation", Controllers.CATALOG);
 
         public final Methods method;
         public final String url;

@@ -3,38 +3,42 @@ package com.akm.front;
 import com.akm.back.AkmApi;
 import com.akm.back.AkmException;
 import com.akm.back.JsonHandler;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class AKMController {
-    @FXML
-    private static TextField loginEmail;
-    @FXML
-    private static PasswordField loginPassword;
-    @FXML
-    private static Label loginError;
+    @FXML private static TextField loginEmail;
+    @FXML private static PasswordField loginPassword;
+    @FXML private static Label loginError;
 
+    private static String token;
     private static String partnerID;
+    private String getToken() {
+        return token;
+    }
     private String getPartnerID() {
         return partnerID;
+    }
+    private void setToken(String token) {
+        AKMController.token = token;
     }
     private void setPartnerID(String partnerID) {
         AKMController.partnerID = partnerID;
@@ -82,15 +86,61 @@ public class AKMController {
      * @param event Button used to call function
      */
     public void switchPrestations(javafx.event.ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("prestations.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
         Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
         stage.getIcons().add(icon);
         stage.setTitle("AKM Gestion - Prestations");
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("mode", "chrono");
+        params.put("reverse", "true");
+        params.put("id_partner", getPartnerID());
+        String body = JsonHandler.toJsonString(params);
+        JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_CATALOG, body);
+
+        boolean success = response.getBoolean("success");
+        if (success) {
+            setCatalog(response, stage);
+        } else {
+            System.out.println(AkmException.getExceptionFromCode(response.getInt("errorCode")).errorLabel);
+        }
+    }
+
+    /**
+     * Shows edit prestation page
+     * @param id Id of prestation to update
+     * @param event Button used to call function
+     * @param name Current name
+     * @param description Current description
+     * @param price Current price
+     */
+    public void switchUpdate(String id, javafx.event.ActionEvent event, String name, String description, double price) throws IOException {
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Image icon = new Image(Objects.requireNonNull(AKMController.class.getResourceAsStream("/assets/logo.png")));
+        stage.getIcons().add(icon);
+
+        VBox root = new VBox();
+        root.setAlignment(Pos.CENTER);
+
+        TextField tfName = new TextField(name);
+        TextField tfDesc = new TextField(description);
+        TextField tfPrice = new TextField(String.valueOf(price));
+        Button submit = new Button("Valider");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) { try {
+                System.out.println("Arrivée dans le setOnAction");
+                updatePrestation(id, tfName.getText(), tfDesc.getText(), tfPrice.getText());
+            } catch (IOException e) { e.printStackTrace(); } }
+        });
+
+        root.getChildren().add(tfName);
+        root.getChildren().add(tfDesc);
+        root.getChildren().add(tfPrice);
+        root.getChildren().add(submit);
+
+        Scene scene = new Scene(root, 1280, 720);
         stage.setScene(scene);
         stage.show();
-        getCatalog();
     }
 
     /**
@@ -125,6 +175,7 @@ public class AKMController {
         JSONObject response = AkmApi.requestApi(AkmApi.Actions.SIGN_IN, body);
         boolean success = response.getBoolean("success");
         if (success) {
+            setToken(response.getString("token"));
             setPartnerID(response.getString("id_partner"));
             switchHome();
         } else {
@@ -134,36 +185,120 @@ public class AKMController {
     }
 
     /**
-     * Gets catalog data for logged partner
+     * Sets-up prestations page
+     * @param response Data from API
+     * @param stage Stage where add the scene
      */
-    public void getCatalog() {
+    public void setCatalog(JSONObject response, Stage stage) throws IOException {
+        JSONArray presArr = response.getJSONArray("table");
+        int length = presArr.length();
+        GridPane gridpane = new GridPane();
+        gridpane.setStyle("-fx-padding: 16;");
+        gridpane.setHgap(10); gridpane.setVgap(10);
+        gridpane.setGridLinesVisible(true);
+
+        int numCols = 6;
+        int numRows = length / numCols;
+        for (int i=0; i<numCols; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100.0 / numCols);
+            gridpane.getColumnConstraints().add(colConst);
+        }
+        for (int i=0; i<numRows; i++) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setPercentHeight(100.0 / numRows);
+            gridpane.getRowConstraints().add(rowConst);
+        }
+
+        int col=0, row=0;
+        for (int i=0; i<length; i++) {
+            JSONObject presCurrent = presArr.getJSONObject(i);
+
+            if (i%4==0 && i!=0) { col=0; row++; } else col++;
+
+            VBox vbox = new VBox(); vbox.setSpacing(10); vbox.setAlignment(Pos.CENTER_LEFT);
+            HBox hbox = new HBox(); hbox.setSpacing(10);
+
+            String presInfo = presCurrent.getString("name") + '\n'
+                    + presCurrent.getString("description") + '\n'
+                    + String.valueOf(presCurrent.getDouble("price"));
+            Label presLabel = new Label(presInfo);
+            Button presUpdate = new Button("Modifier");
+            Button presDelete = new Button("Supprimer");
+
+            presUpdate.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent event) { try {
+                    switchUpdate(
+                            String.valueOf(presCurrent.getInt("id")), event,
+                            presCurrent.getString("name"), presCurrent.getString("description"), presCurrent.getDouble("price")
+                    );
+                } catch (IOException e) { e.printStackTrace(); } }
+            });
+
+            presDelete.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent event) { try {
+                    deletePrestation(String.valueOf(presCurrent.getInt("id")), getToken());
+                } catch (IOException e) { e.printStackTrace(); } }
+            });
+
+            hbox.getChildren().add(presUpdate); hbox.getChildren().add(presDelete);
+            vbox.getChildren().add(presLabel); vbox.getChildren().add(hbox);
+
+            gridpane.add(vbox, col, row);
+        }
+
+        VBox root = new VBox();
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().add(gridpane);
+
+        Scene scene = new Scene(root, 1280, 720);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Updates prestation
+     * @param id ID of prestation
+     * @param name New name
+     * @param description New description
+     * @param price New price
+     */
+    public void updatePrestation(String id, String name, String description, String price) throws IOException {
+        System.out.println("Arrivée dans updatePrestation");
         HashMap<String, String> params = new HashMap<>();
-        params.put("mode", "chrono");
-        params.put("reverse", "true");
-        params.put("id_partner", getPartnerID());
+        params.put("id", id);
+        params.put("name", name);
+        params.put("description", description);
+        params.put("price", price);
+        params.put("token", getToken());
         String body = JsonHandler.toJsonString(params);
-        JSONObject response = AkmApi.requestApi(AkmApi.Actions.GET_CATALOG, body);
+        JSONObject response = AkmApi.requestApi(AkmApi.Actions.UPDATE, body);
         boolean success = response.getBoolean("success");
         if (success) {
-            setCatalog(response);
+            switchHome();
         } else {
-            System.out.println(AkmException.getExceptionFromCode(response.getInt("errorCode")).errorLabel);
+            AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
+            System.out.println(exception.errorLabel);
         }
     }
 
     /**
-     * Sets-up prestations page
-     * @param response Data from API
+     * Deletes prestation
+     * @param id ID of prestation
+     * @param token User auth token
      */
-    public void setCatalog(JSONObject response) {
-        JSONArray presArr = response.getJSONArray("table");
-        GridPane gridpane = new GridPane();
-        gridpane.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY, Insets.EMPTY)));
-        //for (int i=0; i<presArr.length()-1; i++) {
-            //JSONObject presCurrent = presArr.getJSONObject(i);
-
-            Label presName = new Label("Test");
-            gridpane.add(presName, 0, 0);
-        //} presCurrent.getString("name")
+    public void deletePrestation(String id, String token) throws IOException {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("token", token);
+        String body = JsonHandler.toJsonString(params);
+        JSONObject response = AkmApi.requestApi(AkmApi.Actions.DELETE, body);
+        boolean success = response.getBoolean("success");
+        if (success) {
+            switchHome();
+        } else {
+            AkmException exception = AkmException.getExceptionFromCode(response.getInt("errorCode"));
+            System.out.println(exception.errorLabel);
+        }
     }
 }
