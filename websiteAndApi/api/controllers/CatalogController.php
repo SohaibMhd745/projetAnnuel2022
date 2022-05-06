@@ -129,9 +129,10 @@ class CatalogController
         $token = $json->token;
 
         //remove decimals lower than 1 cent (0.01)
-        $json->price *= 100;
-        $json->price = floor($json->price);
-        $json->price /= 100;
+        $price = doubleval($json->price);
+        $price *= 100;
+        $price = floor($price);
+        $price /= 100;
 
         $params = [
             "name" => $json->name,
