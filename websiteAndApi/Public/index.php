@@ -96,7 +96,7 @@ if ($route !== ""){
                             break;
                         case "updateprestation":
                             include __DIR__."/../api/controllers/CatalogController.php";
-                            CatalogController::updatePrestation();
+                            CatalogController::updateArticle();
                             break;
                         case "search":
                             include __DIR__."/../api/controllers/CatalogController.php";

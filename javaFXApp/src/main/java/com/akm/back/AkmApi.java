@@ -26,6 +26,7 @@ public class AkmApi {
 
         try{
             HttpResponse<String> response = client.send(req, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
             return new JSONObject(response.body());
         } catch (Exception e){
             System.out.println(e.getMessage());
