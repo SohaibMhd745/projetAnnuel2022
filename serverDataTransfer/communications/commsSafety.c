@@ -35,8 +35,8 @@ int getFilesize(char* path){
  * @usage generates timestamp
  * @return int: timestamp
  */
-int generateTimestamp(){
-    return (int)time(NULL);
+long generateTimestamp(){
+    return (long)time(NULL);
 }
 
 /**
@@ -44,7 +44,7 @@ int generateTimestamp(){
  * @param id -- store/server id id
  * @return NO_HISTORY if no prior transmission, last communication timestamp otherwise
  */
-int getLastCommunication(int serverId){
+long getLastCommunication(int serverId){
     FILE* history;
     int stamp = NO_HISTORY;
     int number = -1;
@@ -131,7 +131,7 @@ int checkData(loggedData * data, int serverId){
 
     data->previousStamp = getLastCommunication(serverId);
 
-    if (data->previousStamp>data->timestamp){
+    if (data->previousStamp > data->timestamp){
         outputError("Critical 'timestamp' value from received reporting file is incorrect");
         return DATA_CRITICAL_ERROR;
     }
@@ -198,7 +198,7 @@ int sendReport(char* yaml, char* target, char* srvNb){
     int reportSize;
     FILE* reportFile;
     struct curl_slist *headerList = NULL;
-
+    char* renameTo = malloc(50*sizeof (char));
 
     reportFile = fopen("buffer.yaml", "wb+");
     if (reportFile == NULL) {
@@ -215,9 +215,7 @@ int sendReport(char* yaml, char* target, char* srvNb){
 
     if(curlHandler) {
         /* build a list of commands to pass to libcurl */
-        char* renameTo = "RNTO ";
-        strcat(renameTo, srvNb);
-        strcat(renameTo, ".yaml");
+        sprintf(renameTo, "RNTO %s.yaml", srvNb);
 
         headerList = curl_slist_append(headerList, "RNFR buffer.yaml");
         headerList = curl_slist_append(headerList, renameTo);
@@ -240,7 +238,6 @@ int sendReport(char* yaml, char* target, char* srvNb){
         /* Set the size of the file to upload */
         curl_easy_setopt(curlHandler, CURLOPT_INFILESIZE_LARGE,
                          (curl_off_t)reportSize);
-
         do{
             /* Now run off and do what you have been told! */
             res = curl_easy_perform(curlHandler);
@@ -258,7 +255,40 @@ int sendReport(char* yaml, char* target, char* srvNb){
     }
     fclose(reportFile);
     curl_global_cleanup();
+    free(renameTo);
 
     if(attempt==3||!curlHandler) return CURL_FAILURE;
     else return CURL_SUCCESS;
+}
+
+/**
+ * @usage Copies source to dest if source is numeric.
+ * @param source
+ * @param dest
+ * @return READ_FAILURE if non numeric | READ_OK if numeric
+ */
+int isNumeric(char * source, int * dest){
+    for (int i = 0; i < strlen(source); ++i) {
+        if(source[i] < '0' || source[i] > '9')
+             return READ_FAILURE;
+    }
+    *dest = atoi(source);
+    return READ_OK;
+}
+
+/**
+ * @usage Copies source to dest if source is numeric.
+ * @param source
+ * @param dest
+ * @return READ_FAILURE if non numeric | READ_OK if numeric
+ */
+long isLongNumeric(char * source, long * dest){
+    for (int i = 0; i < strlen(source); ++i) {
+        if(source[i] < '0' || source[i] > '9'){
+            printf("%d", source[i]);
+            return READ_FAILURE;
+        }
+    }
+    *dest = atol(source);
+    return READ_OK;
 }

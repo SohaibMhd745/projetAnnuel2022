@@ -49,6 +49,7 @@ void logCommunication(loggedData* data, int mode){
                 char timeBuffer[30];
                 char resBuffer[20];
 
+                memset(buffer, 0,200);
                 {
                     time_t now;
                     struct tm ts;
@@ -63,8 +64,9 @@ void logCommunication(loggedData* data, int mode){
 
                 ///timestamp|store n° (only on receiver)|result(success/failure)|
                 /// datetime(YYYY/MM/DD h:m:s)|#of transactions sent
-                if (mode == SEND_MODE) sprintf(buffer, "%d|%s|%s|%d\n", data->timestamp, resBuffer, timeBuffer, data->listLength);
-                else sprintf(buffer, "%d|%d|%s|%s|%d\n", data->timestamp, data->serverId,resBuffer, timeBuffer, data->listLength);
+                printf("%ld", data->timestamp);
+                if (mode == SEND_MODE) sprintf(buffer, "%ld|%s|%s|%d\n", data->timestamp, resBuffer, timeBuffer, data->listLength);
+                else sprintf(buffer, "%ld|%d|%s|%s|%d\n", data->timestamp, data->serverId,resBuffer, timeBuffer, data->listLength);
 
                 fputs(buffer, logFile);
                 if(currentSize > 0) fputs(fileBuffer, logFile);

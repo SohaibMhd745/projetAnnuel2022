@@ -3,7 +3,6 @@
 #include <string.h>
 #include <dirent.h>
 
-#include <yaml.h>
 #include <curl/curl.h>
 #include <xlsxwriter.h>
 #include <mysql.h>
@@ -20,8 +19,6 @@
  * @param argc command line args amount
  * @param argv command line args
  * @return Execution mode: SEND_MODE or RECEIVE_MODE, breaks the program if needed
- *
- * TODO: Making the function return "NULL_MODE" instead of breaking the execution and letting main handle the exceptions could be better
  */
 int parseArgs(int argc, char **argv){
     FILE* useTest;
