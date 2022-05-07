@@ -100,10 +100,8 @@ long getLastCommunication(int serverId){
 
                 number = atoi(val2);
 
-                if (number == serverId) stamp = atoi(val);
-
+                if (number == serverId) stamp = atol(val);
             }
-
         }
     }
 

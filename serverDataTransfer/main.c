@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 
         case RECEIVE_MODE:
             readReceived(argv[3]);
+            printf("\n\nFinished parsing received content.\n\n\n");
             break;
 
         default:

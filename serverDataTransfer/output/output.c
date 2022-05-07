@@ -21,7 +21,11 @@ Communication History:
 
  @format:
 
- timestamp|store n° (only on receiver)|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent
+ send:
+ timestamp|result(success/failure)|datetime(YYYY/MM/DD h:m:s)|#of transactions sent
+
+ receive:
+ timestamp|server n°|datetime(YYYY/MM/DD h:m:s)|#of transactions received
 
  @important: must write from the start of the file when adding to the history
  **/
@@ -61,11 +65,8 @@ void logCommunication(loggedData* data, int mode){
                 if (data->result == CURL_SUCCESS) strcpy(resBuffer, "Success");
                 else strcpy(resBuffer, "Failure");
 
-                ///timestamp|store n° (only on receiver)|result(success/failure)|
-                /// datetime(YYYY/MM/DD h:m:s)|#of transactions sent
-                printf("%ld", data->timestamp);
                 if (mode == SEND_MODE) sprintf(buffer, "%ld|%s|%s|%d\n", data->timestamp, resBuffer, timeBuffer, data->listLength);
-                else sprintf(buffer, "%ld|%d|%s|%s|%d\n", data->timestamp, data->serverId,resBuffer, timeBuffer, data->listLength);
+                else sprintf(buffer, "%ld|%d|%s|%d\n", data->timestamp, data->serverId, timeBuffer, data->listLength);
 
                 fputs(buffer, logFile);
                 if(currentSize > 0) fputs(fileBuffer, logFile);

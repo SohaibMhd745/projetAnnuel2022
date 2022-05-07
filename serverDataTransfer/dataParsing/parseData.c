@@ -500,12 +500,19 @@ int readReceived(char* dirPath) {
                         } else {
                             int status = parseYaml(fullName, &dataMainNode);
                             if (status != READ_FAILURE){
-                                printf("\nFile -  %s parsed contents:\n", fullName);
+                                printf("\nFile -  %s parsed contents:", fullName);
                                 printList(dataMainNode.firstLog);
 
                                 checkData(&dataMainNode, dataMainNode.serverId);
 
-                                //TODO: Output to xlsx
+                                if(dataMainNode.previousStamp == dataMainNode.timestamp){
+                                    printf("\nIgnoring duplicate report");
+                                    outputError("Duplicate report received");
+                                }else{
+                                    logCommunication(&dataMainNode, RECEIVE_MODE);
+
+                                    //TODO: Output to xlsx
+                                }
 
                                 freeList(&dataMainNode);
                             }else{
