@@ -2,7 +2,6 @@
 #define SERVERDATATRANSFER_PARSEDATA_H
 
 #include <mysql.h>
-#include <yaml.h>
 
 typedef struct database{
     MYSQL* connection;
@@ -41,8 +40,6 @@ typedef struct loggedData{
     loggedOrder * firstLog;
 }loggedData;
 
-void printYamlError(yaml_emitter_t* emitter, yaml_event_t* event);
-
 int outputYaml(loggedData* data, char* output);
 
 long getLastStamp();
@@ -60,8 +57,6 @@ int generateReport(char* credentials, loggedData* data, char* reportBuffer);
 int generateList(database* db, loggedData* data);
 
 int parseYaml(char* yaml, loggedData* outputData);
-
-void printParserError(yaml_parser_t* parser, yaml_event_t* event);
 
 int readReceived(char* dirPath);
 
