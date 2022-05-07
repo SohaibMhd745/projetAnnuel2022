@@ -192,7 +192,7 @@ static size_t read_callback(char *ptr, size_t size, size_t nmemb, void *stream){
  * @param target -- target URL
  * @return CURL_SUCCESS | CURL_FAILURE
  */
-int sendReport(char* yaml, char* target){
+int sendReport(char* yaml, char* target, char* srvNb){
     CURL *curlHandler;
     CURLcode res;
     int reportSize;
@@ -214,12 +214,13 @@ int sendReport(char* yaml, char* target){
     curlHandler = curl_easy_init();
 
     if(curlHandler) {
-        do{
-
-        }
         /* build a list of commands to pass to libcurl */
+        char* renameTo = "RNTO ";
+        strcat(renameTo, srvNb);
+        strcat(renameTo, ".yaml");
+
         headerList = curl_slist_append(headerList, "RNFR buffer.yaml");
-        headerList = curl_slist_append(headerList, "RNTO report.yaml");
+        headerList = curl_slist_append(headerList, renameTo);
 
         /* we want to use our own read function */
         curl_easy_setopt(curlHandler, CURLOPT_READFUNCTION, read_callback);

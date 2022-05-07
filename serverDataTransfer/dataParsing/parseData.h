@@ -63,4 +63,6 @@ int parseYaml(char* yaml, loggedData* outputData);
 
 void printParserError(yaml_parser_t* parser, yaml_event_t* event);
 
+int readReceived(char* dirPath);
+
 #endif //SERVERDATATRANSFER_PARSEDATA_H

@@ -11,6 +11,6 @@ int getLastCommunication(int serverId);
 
 int checkData(loggedData * data, int serverId);
 
-int sendReport(char* yaml, char* target);
+int sendReport(char* yaml, char* target, char* srvNb);
 
 #endif //SERVERDATATRANSFER_COMMSSAFETY_H

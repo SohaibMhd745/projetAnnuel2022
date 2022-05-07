@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 #include <yaml.h>
 #include <curl/curl.h>
 #include <xlsxwriter.h>
 #include <mysql.h>
-
-
-#include <sys/socket.h>
-#include <netinet/in.h>
 
 #include "macros.h"
 
@@ -38,9 +35,9 @@ int parseArgs(int argc, char **argv){
     if (argv[1][0] == '-'){//If the argument starts with - (parameter)
         switch (argv[1][1]) {//Switch depending on the parameter
             case 'h'://help
-                printf("h\t\t\t\t\t\t\t:\tHelp"
-                "\ns [DB Credentials Filepath] [target url]\t\t:\tStart the program in sender mode"
-                "\nr [Central Excel Sheet] [port]\t\t\t\t:\tStart the program in receiver mode"
+                printf("h\t\t\t\t\t\t\t\t\t:\tHelp"
+                "\ns [DB Credentials Filepath] [target url] [Server Number]\t\t:\tStart the program in sender mode"
+                "\nr [Central Excel Sheet] [ftp directory root]\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
             case 's'://Send
@@ -51,15 +48,31 @@ int parseArgs(int argc, char **argv){
                     exit(-1);
                 }
                 fclose(useTest);
+
+                if (argc < 5) {
+                    printf("Error: missing argument.\nUse -h for help");
+                    exit(-1);
+                }
+
                 return SEND_MODE;
             case 'r'://Receive
                 useTest = fopen(argv[2],"rb");
                 if (useTest == NULL){
                     fclose(useTest);
                     printf("\nCould not open excel sheet\n");
+                    outputError("Could not open excel sheet");
                     exit(-1);
                 }
                 fclose(useTest);
+
+                DIR* dir = opendir(argv[3]);
+                if (dir) closedir(dir);
+                else {
+                    printf("\nCould not open ftp directory");
+                    outputError("Could not open ftp directory");
+                    exit(-1);
+                }
+
                 return RECEIVE_MODE;
             default://Ignore incorrect parameters
                 printf("Unknown parameter : %c\nUse -h for help", argv[1][1]);
@@ -106,7 +119,7 @@ int main(int argc, char **argv) {
 
             fprintf(stdout, "Sending to: %s\n", argv[3]);
 
-            data.result = sendReport(report, argv[3]);
+            data.result = sendReport(report, argv[3], argv[5]);
 
             logCommunication(&data, SEND_MODE);
 
@@ -114,59 +127,7 @@ int main(int argc, char **argv) {
             break;
 
         case RECEIVE_MODE:
-            printf("Initializing sockets...");
-            int sockFile = socket(AF_INET, SOCK_STREAM, 0);
-
-            if(sockFile == -1) {
-                outputError("Could not open socket");
-                printf("\nFatal Error: Could not open socket.");
-                exit(-1);
-            }
-
-            int opt = 1;
-            if (setsockopt(sockFile, SOCK_STREAM, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof opt)!=0){
-                char errBuff[255];
-                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
-                strcat(errBuff, strerror(errno));
-
-                printf("\n%s\n", errBuff);
-                outputError(errBuff);
-
-                exit(-1);
-            }
-
-            struct sockaddr_in address;
-
-            address.sin_family = AF_INET;
-
-            address.sin_addr.s_addr = INADDR_ANY;
-
-            address.sin_port = htons(atoi(argv[4]));
-
-            if (bind(sockFile, (struct sockaddr *) &address, sizeof(address)) != 0) {
-                char errBuff[255];
-                strcpy(errBuff, "Fatal Error: Could not parameter socket: ");
-                strcat(errBuff, strerror(errno));
-
-                printf("\n%s\n", errBuff);
-                outputError(errBuff);
-                exit(-1);
-            }
-
-            listen(sockFile, 0);
-
-            int s = 0;
-            int size = sizeof(address);
-            printf("3\n");
-            s = accept(sockFile, (struct sockaddr *) &address, &size);
-            printf("4\n");
-            if (s != INVALID_SOCKET) {
-                printf("5\n");
-                recv(s , reply , 2000 , 0);
-                send(s, "Wesh", 5, 0);
-
-            }
-
+            readReceived(argv[3]);
             break;
 
         default:

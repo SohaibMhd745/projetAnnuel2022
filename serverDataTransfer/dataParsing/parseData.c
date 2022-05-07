@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <dirent.h>
+#include <regex.h>
 
 #include <yaml.h>
 #include <mysql.h>
@@ -988,4 +990,80 @@ unsigned int getLastStamp(){
 
     fclose(history);
     return stamp;
+}
+
+int readReceived(char* dirPath){
+    DIR *d= opendir(dirPath);
+    struct dirent *dir;
+    char* fname;
+    short ignore;
+    loggedData dataMainNode;
+    char *fileBuffer;
+    FILE *report;
+    char *fullName;
+
+    if (d){
+        while ((dir = readdir(d)) != NULL){
+            //Only .yaml files that are shorter than 25 characters
+            if (strlen(dir->d_name) > 5 && !strcmp(dir->d_name + strlen(dir->d_name) - 5, ".yaml") && strlen(dir->d_name)<25) {
+                //get filename without extension
+                fname = malloc(sizeof (char) * 20);
+                strcpy(fname, dir->d_name);
+                fname[strlen(dir->d_name)-5]='\0';
+
+                //Check if filename is numeric
+                ignore = 0;
+                for (int i = 0; i < strlen(fname); ++i) {
+                    if(fname[i] < '0' || fname[i] > '9')
+                        ignore = 1;
+                }
+
+                if(!ignore){
+                    fullName = malloc(sizeof (char)*(strlen(dirPath)+dir->d_namlen+10));
+                    strcpy(fullName, dirPath);
+                    strcat(fullName, "/");
+                    strcat(fullName, dir->d_name);
+
+                    dataMainNode.serverId = atoi(fname);
+
+
+                    unsigned long fSize = getFilesize(fullName);
+                    if (fSize>1000000) outputError("Report file is too large to be read.");
+                    else if (fSize==0) outputError("Report file is empty.");
+                    else {
+                        report = fopen(fullName, "rb");
+                        if (report==NULL){
+                            printf("\nCould not open report file for server Id: %d", dataMainNode.serverId);
+                            outputError("Could not open reporting file");
+                        }else{
+                            fileBuffer = malloc(fSize+10);
+
+                            fread(fileBuffer,1,fSize, report);
+                            fileBuffer[fSize]='\0';
+
+                            parseYaml(fileBuffer, &dataMainNode);
+
+                            checkData(&dataMainNode, dataMainNode.serverId);
+
+                            //TODO: Output to xlsx
+
+                            freeList(&dataMainNode);
+
+                            free(fileBuffer);
+                        }
+
+
+                        fclose(report);
+                    }
+
+                    free(fullName);
+                }
+
+                free(fname);
+            }
+        }
+        closedir(d);
+    }
+
+    return 0;
 }
