@@ -2,7 +2,6 @@
 #define SERVERDATATRANSFER_PARSEDATA_H
 
 #include <mysql.h>
-#include <yaml.h>
 
 typedef struct database{
     MYSQL* connection;
@@ -20,7 +19,7 @@ typedef struct database{
 
 typedef struct loggedOrder{
     unsigned int id;
-    unsigned int timestamp;//TODO: Unix smallest unit: seconds, milliseconds precision cannot be stored in an int, might need change later on
+    long timestamp;
     char dateTime[20];
     int change;
     char article[11];
@@ -30,8 +29,8 @@ typedef struct loggedOrder{
 }loggedOrder;
 
 typedef struct loggedData{
-    unsigned int timestamp;
-    unsigned int previousStamp;
+    long timestamp;
+    long previousStamp;
     int result; ///1 --> success or 0 --> failure, used when logging the communication at the end of execution
 
     int listLength;
@@ -41,11 +40,9 @@ typedef struct loggedData{
     loggedOrder * firstLog;
 }loggedData;
 
-void printYamlError(yaml_emitter_t* emitter, yaml_event_t* event);
-
 int outputYaml(loggedData* data, char* output);
 
-unsigned int getLastStamp();
+long getLastStamp();
 
 int parseCredentials(char* path, database* db);
 
@@ -61,6 +58,6 @@ int generateList(database* db, loggedData* data);
 
 int parseYaml(char* yaml, loggedData* outputData);
 
-void printParserError(yaml_parser_t* parser, yaml_event_t* event);
+int readReceived(char* dirPath);
 
 #endif //SERVERDATATRANSFER_PARSEDATA_H

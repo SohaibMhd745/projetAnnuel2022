@@ -5,12 +5,16 @@
 
 int getFilesize(char* path);
 
-int generateTimestamp();
+long generateTimestamp();
 
-int getLastCommunication(int serverId);
+long getLastCommunication(int serverId);
 
 int checkData(loggedData * data, int serverId);
 
-int sendReport(char* yaml, char* target);
+int sendReport(char* yaml, char* target, char* srvNb);
+
+int isNumeric(char * source, int * dest);
+
+long isLongNumeric(char * source, long * dest);
 
 #endif //SERVERDATATRANSFER_COMMSSAFETY_H

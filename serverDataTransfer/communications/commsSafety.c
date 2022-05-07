@@ -35,8 +35,8 @@ int getFilesize(char* path){
  * @usage generates timestamp
  * @return int: timestamp
  */
-int generateTimestamp(){
-    return (int)time(NULL);
+long generateTimestamp(){
+    return (long)time(NULL);
 }
 
 /**
@@ -44,7 +44,7 @@ int generateTimestamp(){
  * @param id -- store/server id id
  * @return NO_HISTORY if no prior transmission, last communication timestamp otherwise
  */
-int getLastCommunication(int serverId){
+long getLastCommunication(int serverId){
     FILE* history;
     int stamp = NO_HISTORY;
     int number = -1;
@@ -100,10 +100,8 @@ int getLastCommunication(int serverId){
 
                 number = atoi(val2);
 
-                if (number == serverId) stamp = atoi(val);
-
+                if (number == serverId) stamp = atol(val);
             }
-
         }
     }
 
@@ -131,7 +129,7 @@ int checkData(loggedData * data, int serverId){
 
     data->previousStamp = getLastCommunication(serverId);
 
-    if (data->previousStamp>data->timestamp){
+    if (data->previousStamp > data->timestamp){
         outputError("Critical 'timestamp' value from received reporting file is incorrect");
         return DATA_CRITICAL_ERROR;
     }
@@ -181,46 +179,114 @@ int checkData(loggedData * data, int serverId){
     return status;
 }
 
+static size_t read_callback(char *ptr, size_t size, size_t nmemb, void *stream){
+    size_t retcode = fread(ptr, size, nmemb, stream);
+    return retcode;
+}
+
 /**
  * @usage send report to target
  * @param yaml -- formatted yaml string
  * @param target -- target URL
  * @return CURL_SUCCESS | CURL_FAILURE
  */
-int sendReport(char* yaml, char* target){
-    CURL* curlHandler;
-    CURLcode returnCode;
-    int attempt = 0;
-    char post[MAX_BUFFER+20];
+int sendReport(char* yaml, char* target, char* srvNb){
+    CURL *curlHandler;
+    CURLcode res;
+    int reportSize;
+    FILE* reportFile;
+    struct curl_slist *headerList = NULL;
+    char* renameTo = malloc(50*sizeof (char));
 
-    strcpy(post, "report=");
-    strcat(post, yaml);
+    reportFile = fopen("buffer.yaml", "wb+");
+    if (reportFile == NULL) {
+        outputError("Program does not have writing perms");
+        exit(-1);
+    }
+    fprintf(reportFile, "%s", yaml);
 
+    reportSize = getFilesize("buffer.yaml");
     curl_global_init(CURL_GLOBAL_ALL);
+
+    int attempt=0;
     curlHandler = curl_easy_init();
 
     if(curlHandler) {
+        /* build a list of commands to pass to libcurl */
+        sprintf(renameTo, "RNTO %s.yaml", srvNb);
+
+        headerList = curl_slist_append(headerList, "RNFR buffer.yaml");
+        headerList = curl_slist_append(headerList, renameTo);
+
+        /* we want to use our own read function */
+        curl_easy_setopt(curlHandler, CURLOPT_READFUNCTION, read_callback);
+
+        /* enable uploading */
+        curl_easy_setopt(curlHandler, CURLOPT_UPLOAD, 1L);
+
+        /* specify target */
         curl_easy_setopt(curlHandler, CURLOPT_URL, target);
-        curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, post);
 
+        /* pass in that last of FTP commands to run after the transfer */
+        curl_easy_setopt(curlHandler, CURLOPT_POSTQUOTE, headerList);
+
+        /* now specify which file to upload */
+        curl_easy_setopt(curlHandler, CURLOPT_READDATA, reportFile);
+
+        /* Set the size of the file to upload */
+        curl_easy_setopt(curlHandler, CURLOPT_INFILESIZE_LARGE,
+                         (curl_off_t)reportSize);
         do{
-            returnCode = curl_easy_perform(curlHandler);
-            if(returnCode != CURLE_OK){
-                char errStr[500];
-                strcpy(errStr, "Failed to start CURL POST request: ");
-                strcat(errStr, curl_easy_strerror(returnCode));
-
-                fprintf(stderr, "%s\n" ,errStr);
-                outputError(errStr);
-
+            /* Now run off and do what you have been told! */
+            res = curl_easy_perform(curlHandler);
+            /* Check for errors */
+            if(res != CURLE_OK){
+                outputError(curl_easy_strerror(res));
                 attempt++;
             }
-        }while(returnCode!=CURLE_OK && attempt != 3);
+        } while (attempt>0&&attempt<3);
 
+        /* clean up the FTP commands list */
+        curl_slist_free_all(headerList);
+        /* always cleanup */
         curl_easy_cleanup(curlHandler);
     }
+    fclose(reportFile);
     curl_global_cleanup();
+    free(renameTo);
 
-    if (attempt == 3) return CURL_FAILURE;
+    if(attempt==3||!curlHandler) return CURL_FAILURE;
     else return CURL_SUCCESS;
+}
+
+/**
+ * @usage Copies source to dest if source is numeric.
+ * @param source
+ * @param dest
+ * @return READ_FAILURE if non numeric | READ_OK if numeric
+ */
+int isNumeric(char * source, int * dest){
+    for (int i = 0; i < strlen(source); ++i) {
+        if(source[i] < '0' || source[i] > '9')
+             return READ_FAILURE;
+    }
+    *dest = atoi(source);
+    return READ_OK;
+}
+
+/**
+ * @usage Copies source to dest if source is numeric.
+ * @param source
+ * @param dest
+ * @return READ_FAILURE if non numeric | READ_OK if numeric
+ */
+long isLongNumeric(char * source, long * dest){
+    for (int i = 0; i < strlen(source); ++i) {
+        if(source[i] < '0' || source[i] > '9'){
+            printf("%d", source[i]);
+            return READ_FAILURE;
+        }
+    }
+    *dest = atol(source);
+    return READ_OK;
 }
