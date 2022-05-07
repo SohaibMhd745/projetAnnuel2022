@@ -3,7 +3,6 @@
 #include <string.h>
 #include <time.h>
 #include <dirent.h>
-#include <regex.h>
 
 #include <yaml.h>
 #include <mysql.h>

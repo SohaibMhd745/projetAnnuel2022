@@ -40,10 +40,3 @@ include_directories(${mysql_INCLUDE_DIRS})
 link_directories(${mysql_LIBRARY_DIRS})
 add_definitions(${mysql_CFLAGS_OTHER})
 target_link_libraries(serverDataTransfer ${mysql_LIBRARIES})
-
-# Add regex to project
-pkg_check_modules(regex REQUIRED regex)
-include_directories(${regex_INCLUDE_DIRS})
-link_directories(${regex_LIBRARY_DIRS})
-add_definitions(${regex_CFLAGS_OTHER})
-target_link_libraries(serverDataTransfer ${regex_LIBRARIES})
