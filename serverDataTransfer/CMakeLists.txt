@@ -20,13 +20,6 @@ link_directories(${CURL_LIBRARY_DIRS})
 add_definitions(${CURL_CFLAGS_OTHER})
 target_link_libraries(serverDataTransfer ${CURL_LIBRARIES})
 
-# Add xlsx writer to project
-pkg_check_modules(libxlsxwriter REQUIRED xlsxwriter)
-include_directories(${libxlsxwriter_INCLUDE_DIRS})
-link_directories(${libxlsxwriter_LIBRARY_DIRS})
-add_definitions(${libxlsxwriter_CFLAGS_OTHER})
-target_link_libraries(serverDataTransfer ${libxlsxwriter_LIBRARIES})
-
 # Add mysql to project
 pkg_check_modules(mysql REQUIRED libmariadb)
 include_directories(${mysql_INCLUDE_DIRS})

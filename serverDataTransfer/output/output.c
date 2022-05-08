@@ -3,11 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-
-#include <curl/curl.h>
-#include <xlsxwriter.h>
-#include <mysql.h>
-
 #include "../macros.h"
 
 #include "../dataParsing/parseData.h"

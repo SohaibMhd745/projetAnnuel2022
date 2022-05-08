@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <dirent.h>
 
 #include <mysql.h>
@@ -238,6 +237,7 @@ int generateList(database* db, loggedData* data){
     printf("%s\n", db->database);
      */
     //TODO: Debug this
+    //TODO: Could not find the error in this line, all values are correct: lib error ?
     if (!mysql_real_connect(db->connection, "localhost", "akmadmin", "akmgestion123", "c_testdb", 3306, NULL, 0)) {
     //if (!mysql_real_connect(db->connection, db->server, db->user, db->password, db->database, 3306, NULL, 0)) {
             fprintf(stderr, "\n%s\n", mysql_error(db->connection));
@@ -510,7 +510,7 @@ int readReceived(char* dirPath, char* outputPath) {
                                     outputError("Duplicate report received");
                                 }else{
                                     logCommunication(&dataMainNode, RECEIVE_MODE);
-
+                                    printf("\nOutputting data to .csv file...\n");
                                     outputData(dataMainNode.firstLog, outputPath);
                                 }
 

@@ -3,8 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-#include <yaml.h>
-#include <mysql.h>
 #include <curl/curl.h>
 
 #include "../dataParsing/parseData.h"
