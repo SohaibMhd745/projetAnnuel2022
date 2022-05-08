@@ -58,6 +58,6 @@ int generateList(database* db, loggedData* data);
 
 int parseYaml(char* yaml, loggedData* outputData);
 
-int readReceived(char* dirPath);
+int readReceived(char* dirPath, char* outputPath);
 
 #endif //SERVERDATATRANSFER_PARSEDATA_H

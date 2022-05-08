@@ -34,7 +34,7 @@ int parseArgs(int argc, char **argv){
             case 'h'://help
                 printf("h\t\t\t\t\t\t\t\t\t:\tHelp"
                 "\ns [DB Credentials Filepath] [target url] [Server Number]\t\t:\tStart the program in sender mode"
-                "\nr [Central Excel Sheet] [ftp directory root]\t\t\t\t:\tStart the program in receiver mode"
+                "\nr [Output .csv file] [ftp directory root]\t\t\t\t:\tStart the program in receiver mode"
                 "\n");
                 exit(0);
             case 's'://Send
@@ -56,8 +56,8 @@ int parseArgs(int argc, char **argv){
                 useTest = fopen(argv[2],"rb");
                 if (useTest == NULL){
                     fclose(useTest);
-                    printf("\nCould not open excel sheet\n");
-                    outputError("Could not open excel sheet");
+                    printf("\nCould not open csv file\n");
+                    outputError("Could not open csv file");
                     exit(-1);
                 }
                 fclose(useTest);
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
             break;
 
         case RECEIVE_MODE:
-            readReceived(argv[3]);
+            readReceived(argv[3], argv[2]);
             printf("\n\nFinished parsing received content.\n\n\n");
             break;
 

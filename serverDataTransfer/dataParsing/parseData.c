@@ -463,7 +463,7 @@ long getLastStamp(){
     return stamp;
 }
 
-int readReceived(char* dirPath) {
+int readReceived(char* dirPath, char* outputPath) {
     DIR *d = opendir(dirPath);
     struct dirent *dir;
     char *fname;
@@ -511,7 +511,7 @@ int readReceived(char* dirPath) {
                                 }else{
                                     logCommunication(&dataMainNode, RECEIVE_MODE);
 
-                                    //TODO: Output to xlsx
+                                    outputData(dataMainNode.firstLog, outputPath);
                                 }
 
                                 freeList(&dataMainNode);

@@ -30,6 +30,40 @@ Communication History:
  @important: must write from the start of the file when adding to the history
  **/
 
+
+void outputData(loggedOrder *firstNode, char * path){
+    if (strlen(path) > 5 && !strcmp(path + strlen(path) - 4, ".csv")) {
+        FILE * outputFile = fopen(path, "r");
+        if (outputFile == NULL){
+            outputFile = fopen(path, "ab+");
+            if (outputFile == NULL){
+                printf("\nError: could not write to output file");
+                outputError("Could not write to output file");
+                exit(-1);
+            } else fprintf(outputFile,"Code Article, Changement, Date Et Heure, Timestamp\n");
+        }else{
+            fclose(outputFile);
+            if (getFilesize(path) <= 0){
+                outputFile = fopen(path, "ab+");
+                fprintf(outputFile,"Code Article, Changement, Date Et Heure, Timestamp\n");
+            }else outputFile = fopen(path, "ab+");
+        }
+
+
+
+        loggedOrder * currentNode = firstNode;
+        while (currentNode!=NULL){
+            fprintf(outputFile,"%s, %d, %s, %ld\n", currentNode->article, currentNode->change, currentNode->dateTime, currentNode->timestamp);
+
+            currentNode = currentNode->next;
+        }
+    }else{
+        printf("\nError: Output file is of the wrong format.");
+        outputError("Output file is of the wrong format.");
+        exit(-1);
+    }
+}
+
 void logCommunication(loggedData* data, int mode){
     FILE* logFile = fopen("history","ab+");
 
